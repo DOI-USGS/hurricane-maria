@@ -76,7 +76,7 @@ fetch:
     location: cache/view-limits-mobile.rds
     reader: rds
     fetcher: view_limits
-    bbox: [-67, 19, -61, 25]
+    bbox: [-67, 17, -61, 21]
     depends:
       metadata: "mobile-metadata"
     scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/plotting_utils.R]
@@ -101,4 +101,14 @@ process:
       polygons: "islands-mobile"
     mimetype: application/zip
 visualize:
+  -
+    id: base-map-mobile
+    location: cache/base-map-mobile.svg
+    visualizer: svg_base_map
+    depends: 
+      view-limits: view-limits-mobile
+      storm-islands: storm-islands-mobile
+    scripts: ["scripts/visualize/plotting_utils.R", "scripts/visualize/visualize.svg_base_map.R"]
+    reader: svg_map
+    mimetype: image/svg+xml
 publish:
