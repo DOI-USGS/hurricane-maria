@@ -16,3 +16,6 @@ Makefile
 .Rapp.history
 # Session Data files
 .RData
+
+# silly file that alison's code makes (and shouldn't, and won't one day). you can ignore it
+null
