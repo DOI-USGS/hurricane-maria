@@ -8,14 +8,17 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   svg <- depends[["base-map"]]
 
   xml_attr(svg, "id") <- viz[['id']]
+  vb <- strsplit(xml_attr(svg, 'viewBox'),'[ ]')[[1]]
   
   # get the big dog that has all the stuff that is geo:
   map.elements <- xml2::xml_find_first(svg, "//*[local-name()='g'][@id='map-elements']") 
   
+  non.geo.bot <- xml_add_sibling(xml_children(svg)[[1]], 'g', 'id' = 'non-geo-bottom', .where='before')
   xml_add_sibling(xml_children(svg)[[1]], 'desc', .where='before', viz[["alttext"]])
   xml_add_sibling(xml_children(svg)[[1]], 'title', .where='before', viz[["title"]])
+  non.geo.top <- xml_add_sibling(xml_children(svg)[[1]], 'g', 'id' = 'non-geo-top')
   
-  xml_add_child(non.geo, 'rect', width="100%", height="100%", class='ocean-water viz-pause', id='ocean-background')
+  xml_add_child(non.geo.bot, 'rect', width="100%", height="100%", class='ocean-water viz-pause', id='ocean-background')
   
   g.tool <- xml_add_child(svg,'g',id='tooltip-group')
   map.elements.top <- xml_add_child(svg, 'g', id=sprintf('map-elements-%s-top', mode))
