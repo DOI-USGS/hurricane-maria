@@ -24,7 +24,7 @@ info:
       ref: v0.2.0
     dplyr:
       repo: CRAN
-      version: 0.5.0
+      version: 0.7.2
   contributors:
     -
       name: Jordan Read
