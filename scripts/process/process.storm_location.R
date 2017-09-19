@@ -14,6 +14,7 @@ process.storm_location <- function(viz = as.viz('storm-location')){
   
   # write a time parser for identifying times in the shapefiles
   as.time <- function(YEAR, MONTH, DAY, HHMM){
+    as.POSIXct(sprintf('%s-%s-%s %s', YEAR, MONTH, DAY, HHMM), format='%Y-%m-%d %H%M', tz="America/Puerto_Rico")
   }
   
   # make a very temporary directory to work in
@@ -22,7 +23,6 @@ process.storm_location <- function(viz = as.viz('storm-location')){
     dir.create(shp.path)
   }
   
-  times <- as.POSIXct(strptime(depends[['timesteps']]$times, format = '%b %d %I:%M %p', tz = "America/New_York"))
   # unpack the zipped shapefiles into the temptempdir
   unzip(track.meta$location, exdir = shp.path)
   

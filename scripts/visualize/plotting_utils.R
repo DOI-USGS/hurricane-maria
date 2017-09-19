@@ -234,7 +234,7 @@ createHurricaneSnapshot <- function(fig_height, fig_width, css, time_stamp, stat
   
   counties@data$col <- NA_character_
   # process precip to get county & color category together w/ time
-  time_stamp <- as.POSIXct(time_stamp, tz = "America/New_York")
+  time_stamp <- as.POSIXct(time_stamp, tz = "America/Puerto_Rico")
   time_idx <- which(timesteps == time_stamp)
   
   for (j in 1:nrow(counties@data)){
@@ -285,7 +285,7 @@ visualize.map_thumbnail <- function(viz){
   counties <- depends[["storm-counties"]]
   precip_breaks <- depends[["precip-breaks"]]
   precip_cols <- depends[["precip-colors"]]
-  timesteps <- as.POSIXct(strptime(depends[['timesteps']]$times, format = '%b %d %I:%M %p', tz = "America/New_York"))
+  timesteps <- as.POSIXct(strptime(depends[['timesteps']]$times, format = '%b %d %I:%M %p', tz = "America/Puerto_Rico"))
   storm <- depends[["storm-location"]]
   hurricane_track <- depends[["storm-track"]]
   flood_sites <- depends[['flood-sites']]
@@ -313,7 +313,7 @@ visualize.timelapse_gif <- function(viz){
   counties <- depends[["storm-counties"]]
   precip_breaks <- depends[["precip-breaks"]]
   precip_cols <- depends[["precip-colors"]]
-  timesteps <- as.POSIXct(strptime(depends[['timesteps']]$times, format = '%b %d %I:%M %p', tz = "America/New_York"))
+  timesteps <- as.POSIXct(strptime(depends[['timesteps']]$times, format = '%b %d %I:%M %p', tz = "America/Puerto_Rico"))
   storm <- depends[["storm-location"]]
   hurricane_track <- depends[["storm-track"]]
   storm_sites <- depends[['storm-sites']]
