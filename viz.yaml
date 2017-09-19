@@ -90,5 +90,15 @@ fetch:
       view-limits: "view-limits-mobile"
     mimetype: application/zip
 process:
+  -
+    id: storm-islands-mobile
+    location: cache/storm-islands-mobile.rds
+    reader: rds
+    processor: geopolygons
+    classname: island-polygon
+    scripts: scripts/process/process.geopolygons.R
+    depends: 
+      polygons: "islands-mobile"
+    mimetype: application/zip
 visualize:
 publish:
