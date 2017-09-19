@@ -5,7 +5,7 @@ info:
   date: 2017-09-19
   publish-date: 2017-10-03
   path: /hurricane-maria
-  analytics-id:
+  analytics-id: UA-78530187-9
   description: >-
     Hurricane Maria's impact on precipitation and river gage height
   keywords: >-
@@ -22,9 +22,44 @@ info:
       version: 0.2.0
       name: USGS-VIZLAB/vizlab
       ref: v0.2.0
+    rgeos:
+      repo: CRAN
+      version: 0.3.23
+    sp:
+      repo: CRAN
+      version: 1.2.5
+    rgdal:
+      repo: CRAN
+      version: 1.2.8
     dplyr:
       repo: CRAN
       version: 0.7.2
+    svglite: 
+      repo: github
+      version: 1.2.0.9003
+      name: jread-usgs/svglite
+      ref: svgnano_03
+    mapdata:
+      repo: CRAN
+      version: 2.2.6
+    maps:
+      repo: CRAN
+      version: 3.2.0
+    httr:
+      repo: CRAN
+      version: 1.3.1
+    xml2:
+      repo: CRAN
+      version: 1.1.1
+    jsonlite:
+      repo: CRAN
+      version: 1.5
+    RColorBrewer:
+      repo: CRAN
+      version: 1.1.2
+    dataRetrieval:
+      repo: GRAN
+      version: 2.7.3
   contributors:
     -
       name: Jordan Read
@@ -54,8 +89,33 @@ info:
       name: Alison Appling
       email: aappling@usgs.gov
       affiliation: U.S. Geological Survey
+      
 parameter:
+  -
+    id: mobile-metadata
+    height: 10
+    width: 8
+    pointsize: 12
+    proj.string: '+init=epsg:3991'
 fetch:
+  -
+    id: view-limits-mobile
+    location: cache/view-limits-mobile.rds
+    reader: rds
+    fetcher: view_limits
+    bbox: [-67, 17, -61, 21]
+    depends:
+      metadata: "mobile-metadata"
+    scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/plotting_utils.R]
+  -
+    id: islands-mobile
+    location: cache/islands.rds
+    reader: rds
+    fetcher: islands
+    scripts: [scripts/fetch/fetch.islands.R, scripts/visualize/plotting_utils.R, scripts/fetch/utils.R]
+    depends: 
+      view-limits: "view-limits-mobile"
+    mimetype: application/zip
   -
     id: hurricane-track
     storm: MARIA
@@ -69,5 +129,25 @@ fetch:
     mimetype: application/zip
     metadata: "Updates every 6 hours on http://www.nhc.noaa.gov/gis/"
 process:
+  -
+    id: storm-islands-mobile
+    location: cache/storm-islands-mobile.rds
+    reader: rds
+    processor: geopolygons
+    classname: island-polygon
+    scripts: scripts/process/process.geopolygons.R
+    depends: 
+      polygons: "islands-mobile"
+    mimetype: application/zip
 visualize:
+  -
+    id: base-map-mobile
+    location: cache/base-map-mobile.svg
+    visualizer: svg_base_map
+    depends: 
+      view-limits: view-limits-mobile
+      storm-islands: storm-islands-mobile
+    scripts: ["scripts/visualize/plotting_utils.R", "scripts/visualize/visualize.svg_base_map.R"]
+    reader: svg_map
+    mimetype: image/svg+xml
 publish:
