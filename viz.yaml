@@ -92,11 +92,15 @@ info:
       name: Alison Appling
       email: aappling@usgs.gov
       affiliation: U.S. Geological Survey
+    -
+      name: Garritt Moede
+      email: gmoede@usgs.gov
+      affiliation: U.S. Geological Survey, UW-Madison
       
 parameter:
   -
     id: mobile-metadata
-    height: 10
+    height: 8
     width: 8
     pointsize: 12
     proj.string: '+init=epsg:3991'
@@ -104,13 +108,22 @@ parameter:
     id: dates
     startDate: "2017-09-18"
     endDate: "2017-09-19"
+  -
+    id: config
+    pCode: "00065"
 fetch:
+  -
+    id: usgs-watermark 
+    location: cache/usgs-watermark.xml
+    reader: svg_map
+    fetcher: usgs_watermark 
+    scripts: scripts/fetch/fetch.watermark.R 
   -
     id: view-limits-mobile
     location: cache/view-limits-mobile.rds
     reader: rds
     fetcher: view_limits
-    bbox: [-67, 17, -61, 21]
+    bbox: [-67.2, 17, -64.2, 19]
     depends:
       metadata: "mobile-metadata"
     scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/plotting_utils.R]
@@ -154,6 +167,32 @@ fetch:
     scripts: scripts/fetch/hurricaneTrack.R
     mimetype: application/zip
     metadata: "Updates every 6 hours on http://www.nhc.noaa.gov/gis/"
+  -
+    id: nws-conversion
+    location: cache/nws_conversion.rds
+    fetcher: nws_conversion
+    reader: rds
+    states: ["PR"]
+    scripts: scripts/fetch/fetch.nws_conversion.R
+  -
+    id: nwis-sites
+    location: cache/sites.rds
+    fetcher: sites
+    reader: rds
+    depends: 
+      nws: nws-conversion
+      config: config
+      dates: dates
+    scripts: scripts/fetch/fetch.sites.R
+  -
+    id: nws-data
+    location: cache/nws-data.rds
+    fetcher: nws_data
+    scripts: scripts/fetch/fetch.nws_data.R
+    reader: rds
+    depends: 
+      sites: nwis-sites
+      nws: nws-conversion
 process:
   -
     id: storm-islands-mobile
@@ -196,6 +235,7 @@ visualize:
     visualizer: hurricane_map_portrait
     depends: 
       base-map: base-map-mobile 
+      watermark: usgs-watermark
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: portrait
