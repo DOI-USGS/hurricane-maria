@@ -117,6 +117,15 @@ fetch:
       view-limits: "view-limits-mobile"
     mimetype: application/zip
   -
+    id: timesteps
+    location: cache/times.json
+    fetcher: timesteps
+    scripts: scripts/fetch/fetch.timesteps.R
+    reader: json
+    #depends: "precip-cell-data"
+    export: true
+    mimetype: application/javascript
+  -
     id: hurricane-track
     storm: MARIA
     location: cache/hurricane.zip
