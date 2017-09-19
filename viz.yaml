@@ -97,6 +97,10 @@ parameter:
     width: 8
     pointsize: 12
     proj.string: '+init=epsg:3991'
+  -
+    id: dates
+    startDate: "2017-09-18"
+    endDate: "2017-09-19"
 fetch:
   -
     id: view-limits-mobile
@@ -115,6 +119,16 @@ fetch:
     scripts: [scripts/fetch/fetch.islands.R, scripts/visualize/plotting_utils.R, scripts/fetch/utils.R]
     depends: 
       view-limits: "view-limits-mobile"
+    mimetype: application/zip
+  -
+    id: precip_shapefiles
+    location: cache/precip_shp/
+    reader: rds
+    fetcher: precip_shapefiles
+    scripts: [scripts/fetch/fetch.precip_shapefiles.R]
+    url_base: "http://www.srh.noaa.gov/data/ridge2/Precip/qpehourlyshape/2017/201709/"
+    depends: 
+      dates: "dates"
     mimetype: application/zip
   -
     id: hurricane-track
