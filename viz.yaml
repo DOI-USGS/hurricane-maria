@@ -22,6 +22,15 @@ info:
       version: 0.2.0
       name: USGS-VIZLAB/vizlab
       ref: v0.2.0
+    rgeos:
+      repo: CRAN
+      version: 0.3.23
+    sp:
+      repo: CRAN
+      version: 1.2.5
+    rgdal:
+      repo: CRAN
+      version: 1.2.8
     dplyr:
       repo: CRAN
       version: 0.7.2
