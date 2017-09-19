@@ -178,3 +178,78 @@ visualize:
     title: "Hurricane Maria's impact on precipitation and river gage height in Puerto Rico"
     alttext: "Map of Hurricane Maria's water footprint"
 publish:
+  -
+    id: header
+    publisher: section
+    template: header-template
+    context:
+      title: Hurricane Maria's Water Footprint
+  -
+    id: footer
+    publisher: footer
+    template: footer-template
+    depends:
+      usgs-logo: lib-usgs-logo
+    context:
+      blogsInFooter: FALSE
+      usgsLogo: usgs-logo
+      github-url: https://github.com/USGS-VIZLAB/hurricane-maria
+    vizzies:
+      -
+        url: https://owi.usgs.gov/vizlab/hurricane-irma/
+        name: Hurricane Irma
+        thumbLoc: https://owi.usgs.gov/vizlab/hurricane-irma/images/thumb-twitter.png
+  -
+    id: map-section-mobile
+    publisher: section
+    template: simplefigure
+    depends:
+      figure: hurricane-map-mobile
+    context:
+      id: map-figure
+      figure: figure
+      caption: Puerto Rico and the Virgin Islands
+  -
+    id: maria-page
+    name: index
+    publisher: page
+    template: fullpage
+    depends:
+      map-section: map-section-mobile
+      header: header
+      footer: footer
+      figure-css: map-figure-css
+      jquery-js: lib-jquery-js
+      animate-js: animate-js
+      vizlab-js: lib-vizlab-javascript
+      svg-injector-js: lib-svg-injector-js
+      svg-css: svg-css
+      vizlab-favicon: lib-vizlab-favicon
+      header-css: lib-header-css
+      footer-css: lib-footer-css
+      sourcesanspro: sourcesanspro
+    comment: missing from depends are the thumbnails which should be added back
+    context:
+      sections: [ map-section ]
+      resources: [ figure-css, jquery-js, vizlab-js, svg-injector-js, animate-js, svg-css,
+        header-css, footer-css, vizlab-favicon, sourcesanspro]
+  -
+    id: animate-js
+    location: layout/js/animate.js
+    mimetype: text/javascript
+    publisher: resource
+  -
+    id: map-figure-css
+    location: layout/css/map-figure.css
+    mimetype: text/css
+    publisher: resource
+  -
+    id: svg-css
+    location: layout/css/hurricane-svg.css
+    mimetype: text/css
+    publisher: resource
+  -
+    id: sourcesanspro
+    publisher: googlefont
+    family: Source Sans Pro
+    weight: [300, 400, 600]

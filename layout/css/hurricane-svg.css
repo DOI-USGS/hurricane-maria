@@ -1,0 +1,212 @@
+line, polyline, path{
+  fill: none;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-miterlimit: 10.00;
+}
+
+.svg-text {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;   /* Chrome/Safari/Opera */
+	-khtml-user-select: none;    /* Konqueror */
+	-moz-user-select: none;      /* Firefox */
+	-ms-user-select: none;       /* Internet Explorer/Edge */
+	cursor: default;
+}
+
+.rain-box {
+  stroke:white;
+}
+
+.legend-text{
+  fill: black;
+  fill-opacity: 0.55;
+}
+
+.floodline {
+  stroke: #FF6347;
+  stroke-width: 2;
+  fill: #ff7000;
+  fill-opacity: 0.6;
+  stroke-opacity: 0.9;
+}
+
+.ocean-name-landscape {
+  fill: #C0C0C0;
+  fill-opacity: 0.5;
+  font-style: italic;
+  font-size:1.2em;
+}
+
+.ocean-name-portrait{
+  fill: #C0C0C0;
+  fill-opacity: 0.5;
+  font-style: italic;
+}
+
+.state-name {
+  fill: #C0C0C0;
+  fill-opacity: 0.7;
+  font-size:0.8em;
+}
+
+#map-elements-portrait, #map-elements-portrait-top, #map-elements-portrait-mid {
+  /* doesn't work in IE */
+  transform: translate(-80px, -174px) scale(1.55)
+}
+
+
+#map-elements-landscape, #map-elements-landscape-top, #map-elements-landscape-mid {
+  /* doesn't work in IE */
+  transform: translate(0px, -130px) scale(1.2);
+}
+
+
+.sparklines-overlay {
+  opacity: 0;
+}
+
+.state-borders-overlay {
+  stroke: #057083;
+  stroke-opacity: 0.7;
+  fill: white;
+  fill-opacity: 0;
+}
+
+.county-borders-overlay {
+  stroke: white;
+  fill-opacity: 0;
+  fill: white;
+}
+.county-borders-mousers {
+  stroke: white;
+  opacity: 0;
+  fill: white;
+}
+
+
+.light-rain-legend {
+  fill:white;
+  font-size: 0.7em;
+}
+.dark-rain-legend {
+  fill: black;
+  fill-opacity: 0.55;
+  font-size: 0.7em;
+}
+
+.time-text {
+  font-style:italic;
+}
+.nwis-dot, .nwis, .nwis-dot-legend {
+  stroke:#385F71;
+  sroke-width: 0.5;
+  fill: #73877B;
+  fill-opacity:0.8;
+}
+
+.nwis-flooding-legend{
+  stroke: #057083;
+  sroke-width: 0.5;
+  fill: #ff7000;
+  fill-opacity:0.8;
+}
+.mouser-nwis {
+  fill-opacity: 0;
+  stroke-opacity: 0;
+}
+
+.nwis-bold, .mouser-bold, .nwis-dot:hover, .nwis:hover, .mouser-nwis:hover {
+  fill-opacity: 0.8;
+  stroke-width:2;
+  fill: #80b2b2;
+  stroke:#80b2b2;
+  stroke-opacity: 1;
+}
+  
+.inactive-dot {
+  stroke:grey;
+  fill:grey;
+  fill-opacity:0.6;
+}
+.county-polygon {
+  fill: #efefef;
+  stroke: #c6c6c6;
+  stroke-width:0.5;
+}
+
+#storm-track{
+  stroke-width:2;
+  stroke: black;
+  opacity: 0.7;
+}
+#storm-track-highlight{
+  stroke-width:3.5;
+  stroke: white;
+}
+
+.state-polygon{
+  fill: #9a9a9a;
+  stroke: #5f5f5f;
+  stroke-width:0.5;
+}
+
+.island-polygon{
+  fill: #d1d6d8;
+}
+
+.ocean-water {
+  fill: #e3eaef;
+  stroke: none;
+}
+
+.tooltip-box{
+  stroke-width: 0.5;
+  stroke: grey;
+  opacity: 0.9;
+  fill: #E8E8E8;
+}
+
+.smallprint-text {
+  font-size: 0.8em;
+}
+
+.hidden {
+  opacity: 0;
+}
+.shown {
+  opacity: 1;
+}
+.storm-dot, .storm-dot-legend {
+  fill: #F29E4C;
+  stroke:white;
+}
+.storm-dot {
+  opacity: 0;
+}
+.sparkline, .sparklines-overlay {
+	stroke: #057083;
+	fill: #69a9b4;
+	stroke-width: 2;
+}
+.sparkline-bold,.sparkline:hover, .sparklines-overlay:hover  {
+  cursor: pointer;
+  stroke: #80b2b2;
+  stroke-width: 3;
+  fill: #9bc5cd;
+  opacity: 1.0;
+}
+
+.legend-box {
+  fill: #C0C0C0;
+  fill-opacity: 0.7;
+  stroke: none;
+}
+
+.watermark {
+  cursor: pointer;
+  fill: #DCDCDC;
+  stroke: #c6c6c6;
+  stroke-width:0.5;
+  opacity: 0.8;
+}
