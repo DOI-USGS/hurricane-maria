@@ -4,6 +4,7 @@ user/
 figures/
 vizlab/
 Makefile
+preferences.yaml
 
 # RStudio files
 *.Rproj

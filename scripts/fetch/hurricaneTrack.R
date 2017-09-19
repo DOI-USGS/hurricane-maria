@@ -1,8 +1,4 @@
 #' Pull the shapefile(s) for a hurricane and writes the file(s) to disk
-#' viz fields:
-#' ocean: al or ep
-#' stormnum: 01-n
-#' year: 2017
 fetch.hurricaneTrack <- function(viz=as.viz('hurricane-track')) {
   # create the folder and use the built-in url fetcher to download the item
   setupFoldersForFile(file = viz[['location']])
@@ -15,6 +11,10 @@ fetchTimestamp.hurricaneTrack <- function(viz=as.viz('hurricane-track')) {
   fetchTimestamp(fetchviz)
 }
 
+#' viz fields:
+#' ocean: al or ep
+#' stormnum: 01-n
+#' year: 2017
 getHurricaneTrackURLfetcher <- function(viz=as.viz('hurricane-track')) {
   library(httr)
   library(magrittr)
