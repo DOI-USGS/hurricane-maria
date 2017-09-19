@@ -112,7 +112,7 @@ fetch:
     location: cache/islands.rds
     reader: rds
     fetcher: islands
-    scripts: [scripts/fetch/fetch.islands.R, scripts/visualize/plotting_utils.R]
+    scripts: [scripts/fetch/fetch.islands.R, scripts/visualize/plotting_utils.R, scripts/fetch/utils.R]
     depends: 
       view-limits: "view-limits-mobile"
     mimetype: application/zip
