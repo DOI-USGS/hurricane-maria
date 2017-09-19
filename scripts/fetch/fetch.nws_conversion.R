@@ -17,6 +17,4 @@ fetch.nws_conversion <- function(viz = as.viz("nws-conversion")){
   saveRDS(conversion.table.all, file=location)
 }
 
-fetchTimestamp.nws_conversion <- function(){
-  invisible()
-}
+fetchTimestamp.nws_conversion <- vizlab:::fetchTimestamp.file

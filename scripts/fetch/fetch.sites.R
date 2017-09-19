@@ -19,3 +19,7 @@ fetch.sites <- function(viz = as.viz("nwis-sites")){
   
   saveRDS(sites, file=viz[["location"]])
 }
+
+fetchTimestamp.sites <- function(){
+  invisible()
+}
