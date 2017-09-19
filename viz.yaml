@@ -198,12 +198,21 @@ visualize:
       base-map: base-map-mobile 
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
+    orientation: portrait
     height: 720
     width: 576
     export: true
     title: "Hurricane Maria's impact on precipitation and river gage height in Puerto Rico"
     alttext: "Map of Hurricane Maria's water footprint"
 publish:
+  -
+    id: hurricane-map-landscape
+    location: figures/hurricane-map-mobile.svg
+    comment: this should be removed when visualizer is completed
+    mimetype: image/svg+xml
+    orientation: landscape
+    title: "Hurricane Maria's impact on precipitation and river gage height in Puerto Rico"
+    alttext: "Map of Hurricane Maria's water footprint"
   -
     id: header
     publisher: section
@@ -226,22 +235,26 @@ publish:
         name: Hurricane Irma
         thumbLoc: https://owi.usgs.gov/vizlab/hurricane-irma/images/thumb-twitter.png
   -
-    id: map-section-mobile
+    id: map-section
     publisher: section
-    template: simplefigure
+    template: layout/templates/mapFigure.mustache
     depends:
-      figure: hurricane-map-mobile
+      figure-portrait: hurricane-map-mobile
+      figure-landscape: hurricane-map-landscape
+      play: play-icon
     context:
       id: map-figure
-      figure: figure
+      figure-portrait: figure-portrait
+      figure-landscape: figure-landscape
       caption: Puerto Rico and the Virgin Islands
+      playIcon: play
   -
     id: maria-page
     name: index
     publisher: page
     template: fullpage
     depends:
-      map-section: map-section-mobile
+      map-section: map-section
       header: header
       footer: footer
       figure-css: map-figure-css
@@ -274,6 +287,18 @@ publish:
     location: layout/css/hurricane-svg.css
     mimetype: text/css
     publisher: resource
+  -
+    id: play-icon
+    location: images/arrow.png
+    mimetype: image/png
+    title: "play icon"
+    alttext: "play icon"
+  -
+    id: loading-icon
+    location: images/loader-01.png
+    mimetype: image/png
+    title: "loading icon"
+    alttext: "loading icon"
   -
     id: sourcesanspro
     publisher: googlefont
