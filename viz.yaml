@@ -1,13 +1,16 @@
 vizlab: "0.2.0"
 info:
   id: hurricane-maria
-  name: Visualization long name
+  name: Hurricane Maria's Water Footprint
   date: 2017-09-19
   publish-date: 2017-10-03
   path: /hurricane-maria
-  analytics-id: UA-78530187-1
+  analytics-id:
   description: >-
-    Describe project here
+    Hurricane Maria's impact on precipitation and river gage height
+  keywords: >-
+    water, hurricane, maria, USGS, NOAA, VIZLAB, NWIS, flood
+  audience: 
   thumbnail:
     url:
     width: 250
@@ -22,6 +25,31 @@ info:
     dplyr:
       repo: CRAN
       version: 0.5.0
+  contributors:
+    -
+      name: Jordan Read
+      email: jread@usgs.gov
+      affiliation: U.S. Geological Survey
+    -
+      name: Marty Wernimont
+      email: mwernimont@usgs.gov
+      affiliation: U.S. Geological Survey
+    -
+      name: Jordan Walker
+      email: jiwalker@usgs.gov
+      affiliation: U.S. Geological Survey
+    - 
+      name: Alicia Rhodes
+      email: arhoades@usgs.gov
+      affiliation: U.S. Geological Survey
+    - 
+      name: Dave Blodgett
+      email: dblodgett@usgs.gov
+      affiliation: U.S. Geological Survey
+    -
+      name: Alison Appling
+      email: aappling@usgs.gov
+      affiliation: U.S. Geological Survey
 parameter:
 fetch:
 process:
