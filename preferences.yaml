@@ -1,3 +1,4 @@
 timetolive:
   nws_data: Inf
   nws-conversion: Inf
+  nwis-sites: 20 days

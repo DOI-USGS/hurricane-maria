@@ -174,6 +174,15 @@ fetch:
       config: config
       dates: dates
     scripts: scripts/fetch/fetch.sites.R
+  -
+    id: nws-data
+    location: cache/nws-data.rds
+    fetcher: nws_data
+    scripts: scripts/fetch/fetch.nws_data.R
+    reader: rds
+    depends: 
+      sites: nwis-sites
+      nws: nws-conversion
 process:
   -
     id: storm-islands-mobile
