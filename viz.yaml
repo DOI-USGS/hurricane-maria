@@ -9,7 +9,7 @@ info:
   description: >-
     Hurricane Maria's impact on precipitation and river gage height
   keywords: >-
-    water, hurricane, maria, USGS, NOAA, VIZLAB, NWIS, flood
+    water, hurricane, maria, USGS, NOAA, VIZLAB, NWIS, flood, Puerto Rico
   audience: 
   thumbnail:
     url:
@@ -135,7 +135,20 @@ visualize:
     depends: 
       view-limits: view-limits-mobile
       storm-islands: storm-islands-mobile
-    scripts: ["scripts/visualize/plotting_utils.R", "scripts/visualize/visualize.svg_base_map.R"]
+    scripts: ["scripts/visualize/plotting_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
     reader: svg_map
     mimetype: image/svg+xml
+  -
+    id: hurricane-map-mobile
+    location: figures/hurricane-map-mobile.svg
+    visualizer: hurricane_map_portrait
+    depends: 
+      base-map: base-map-mobile 
+    scripts: scripts/visualize/visualize.hurricane_map.R
+    mimetype: image/svg+xml
+    height: 720
+    width: 576
+    export: true
+    title: "Hurricane Maria's impact on precipitation and river gage height in Puerto Rico"
+    alttext: "Map of Hurricane Maria's water footprint"
 publish:
