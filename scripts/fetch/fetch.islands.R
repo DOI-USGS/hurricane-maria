@@ -21,9 +21,7 @@ to_sp <- function(..., proj.string, within = NULL){
   return(map.sp.t)
 }
 
-fetchTimestamp.islands <- function(viz){
-  return(NULL)
-}
+fetchTimestamp.islands <- vizlab:::fetchTimestamp.file
 
 fetch_map_data <- function(..., viz){
   

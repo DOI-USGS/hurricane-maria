@@ -76,7 +76,7 @@ fetch:
     location: cache/view-limits-mobile.rds
     reader: rds
     fetcher: view_limits
-    bbox: [-69, 19, -60, 25]
+    bbox: [-67, 19, -61, 25]
     depends:
       metadata: "mobile-metadata"
     scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/plotting_utils.R]

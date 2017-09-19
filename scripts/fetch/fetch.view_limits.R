@@ -19,6 +19,4 @@ fetch.view_limits <- function(viz = as.viz('view-limits-mobile')){
   saveRDS(out, viz[['location']])
 }
 
-fetchTimestamp.view_limits <- function(viz){
-  NULL
-}
+fetchTimestamp.view_limits <- vizlab:::fetchTimestamp.file
