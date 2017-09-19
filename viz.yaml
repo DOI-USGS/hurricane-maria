@@ -93,7 +93,7 @@ info:
 parameter:
   -
     id: mobile-metadata
-    height: 10
+    height: 8
     width: 8
     pointsize: 12
     proj.string: '+init=epsg:3991'
@@ -109,7 +109,7 @@ fetch:
     location: cache/view-limits-mobile.rds
     reader: rds
     fetcher: view_limits
-    bbox: [-67, 17, -61, 21]
+    bbox: [-67.2, 17, -64.2, 19]
     depends:
       metadata: "mobile-metadata"
     scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/plotting_utils.R]
