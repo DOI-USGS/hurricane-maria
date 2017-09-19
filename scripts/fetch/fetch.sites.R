@@ -10,8 +10,12 @@ fetch.sites <- function(viz = as.viz("nwis-sites")){
                                             service="site",
                                             seriesCatalogOutput=TRUE)
                                             
-  USGS_sites <- USGS_sites %>%
-    filter(parm_cd %in% params[["pCode"]])
+  sites <- USGS_sites %>%
+    filter(parm_cd %in% params[["pCode"]],
+           data_type_cd %in% "uv") %>%
+    left_join(select(site_table, NWS, site_no=USGS), by="site_no") %>%
+    select(NWS, site_no, dec_lat_va, dec_long_va, station_nm) %>%
+    distinct()
   
-  saveRDS(conversion.table.all, file=viz[["location"]])
+  saveRDS(sites, file=viz[["location"]])
 }
