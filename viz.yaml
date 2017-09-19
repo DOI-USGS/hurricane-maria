@@ -130,6 +130,18 @@ fetch:
     depends: 
       dates: "dates"
     mimetype: application/zip
+  -
+    id: hurricane-track
+    storm: MARIA
+    location: cache/hurricane.zip
+    ocean: al
+    stormnum: 15
+    year: 2017
+    reader: shp
+    fetcher: hurricaneTrack
+    scripts: scripts/fetch/hurricaneTrack.R
+    mimetype: application/zip
+    metadata: "Updates every 6 hours on http://www.nhc.noaa.gov/gis/"
 process:
   -
     id: storm-islands-mobile
