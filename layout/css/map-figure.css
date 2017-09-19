@@ -109,6 +109,20 @@ figurecaption{
   }
 }
 
+/* following two rules could be moved to vizlab css
+ if it existed and was consistantly used */
+@media screen and (orientation:portrait){
+  .vizlab-landscape{
+    display: none;
+  }
+}
+
+@media screen and (orientation:landscape){
+  .vizlab-portrait{
+    display: none;
+  }
+}
+
 .footerThumnail {
   width: 150px;
 }
