@@ -99,6 +99,12 @@ parameter:
     proj.string: '+init=epsg:3991'
 fetch:
   -
+    id: usgs-watermark 
+    location: cache/usgs-watermark.xml
+    reader: svg_map
+    fetcher: usgs_watermark 
+    scripts: scripts/fetch/fetch.watermark.R 
+  -
     id: view-limits-mobile
     location: cache/view-limits-mobile.rds
     reader: rds
@@ -156,6 +162,7 @@ visualize:
     visualizer: hurricane_map_portrait
     depends: 
       base-map: base-map-mobile 
+      watermark: usgs-watermark
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     height: 720
