@@ -60,6 +60,9 @@ info:
     dataRetrieval:
       repo: GRAN
       version: 2.7.3
+    rvest:
+      repo: CRAN
+      version: 0.3.2
   contributors:
     -
       name: Jordan Read
@@ -121,6 +124,15 @@ fetch:
       view-limits: "view-limits-mobile"
     mimetype: application/zip
   -
+    id: timesteps
+    location: cache/times.json
+    fetcher: timesteps
+    scripts: scripts/fetch/fetch.timesteps.R
+    reader: json
+    #depends: "precip-cell-data"
+    export: true
+    mimetype: application/javascript
+  -
     id: precip_shapefiles
     location: cache/precip_shp/
     reader: rds
@@ -153,6 +165,20 @@ process:
     depends: 
       polygons: "islands-mobile"
     mimetype: application/zip
+  -
+    id: storm-track
+    location: cache/storm-track.rds
+    processor: storm_track
+    scripts: scripts/process/process.storm_track.R
+    reader: rds
+    depends: ["view-limits-mobile", "hurricane-track"]
+  -
+    id: storm-location
+    location: cache/storm-location.rds
+    processor: storm_location
+    scripts: scripts/process/process.storm_location.R
+    reader: rds
+    depends: ["view-limits-mobile", "hurricane-track", "timesteps"] 
 visualize:
   -
     id: base-map-mobile
