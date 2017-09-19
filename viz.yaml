@@ -1,0 +1,29 @@
+vizlab: "0.2.0"
+info:
+  id: hurricane-maria
+  name: Visualization long name
+  date: 2017-09-19
+  publish-date: 2017-10-03
+  path: /hurricane-maria
+  analytics-id: UA-78530187-1
+  description: >-
+    Describe project here
+  thumbnail:
+    url:
+    width: 250
+    height: 250
+    alttext:
+  required-packages:
+    vizlab:
+      repo: github
+      version: 0.2.0
+      name: USGS-VIZLAB/vizlab
+      ref: v0.2.0
+    dplyr:
+      repo: CRAN
+      version: 0.5.0
+parameter:
+fetch:
+process:
+visualize:
+publish:
