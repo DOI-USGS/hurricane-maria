@@ -1,4 +1,4 @@
-
+#' Make a SpatialLines object from the storm track data
 process.storm_track <- function(viz = as.viz('storm-track')){
   library(rgeos)
   library(sp)
