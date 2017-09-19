@@ -1,4 +1,6 @@
-fetchTimestamp.precip_shapefiles <- vizlab:::fetchTimestamp.file
+fetchTimestamp.precip_shapefiles <- function(viz) {
+  invisible()
+}
 
 fetch.precip_shapefiles <- function(viz = as.viz('precip_shapefiles')){
   
