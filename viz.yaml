@@ -101,6 +101,9 @@ parameter:
     id: dates
     startDate: "2017-09-18"
     endDate: "2017-09-19"
+  -
+    id: config
+    pCode: "00065"
 fetch:
   -
     id: view-limits-mobile
@@ -142,6 +145,23 @@ fetch:
     scripts: scripts/fetch/hurricaneTrack.R
     mimetype: application/zip
     metadata: "Updates every 6 hours on http://www.nhc.noaa.gov/gis/"
+  -
+    id: nws-conversion
+    location: cache/nws_conversion.rds
+    fetcher: nws_conversion
+    reader: rds
+    states: ["PR"]
+    scripts: scripts/fetch/fetch.nws_conversion.R
+  -
+    id: nwis-sites
+    location: cache/sites.rds
+    fetcher: sites
+    reader: rds
+    depends: 
+      nws: nws-conversion
+      config: config
+      dates: dates
+    scripts: scripts/fetch/fetch.sites.R
 process:
   -
     id: storm-islands-mobile
