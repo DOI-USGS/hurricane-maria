@@ -22,8 +22,40 @@ info:
     dplyr:
       repo: CRAN
       version: 0.5.0
+    svglite: 
+      repo: github
+      version: 1.2.0.9003
+      name: jread-usgs/svglite
+      ref: svgnano_03
+    mapdata:
+      repo: CRAN
+      version: 2.2.6
 parameter:
+  -
+    id: mobile-metadata
+    height: 10
+    width: 8
+    pointsize: 12
+    proj.string: '+init=epsg:3991'
 fetch:
+  -
+    id: view-limits-mobile
+    location: cache/view-limits-mobile.rds
+    reader: rds
+    fetcher: view_limits
+    bbox: [-69, 19, -60, 25]
+    depends:
+      metadata: "mobile-metadata"
+    scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/plotting_utils.R]
+  -
+    id: islands-mobile
+    location: cache/islands.rds
+    reader: rds
+    fetcher: islands
+    scripts: [scripts/fetch/fetch.islands.R, scripts/visualize/plotting_utils.R]
+    depends: 
+      view-limits: "view-limits-mobile"
+    mimetype: application/zip
 process:
 visualize:
 publish:
