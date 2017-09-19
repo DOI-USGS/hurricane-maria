@@ -37,10 +37,6 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   warning('need to extract color and bin info from other targets')
   add_legend(g.legend, n.bins = 9, color.name = "Blues")
   
-  # --- this is all temporary so we can see it w/o publish and css in place: -----
-  xml_attr(map.elements, 'style') <- "fill: green;"
-  xml_attr(non.geo.bot, 'style') <- "fill: blue;"
-  # --- this is all temporary so we can see it w/o publish and css in place: -----
   
   return(svg)
 }
