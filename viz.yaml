@@ -60,6 +60,9 @@ info:
     dataRetrieval:
       repo: GRAN
       version: 2.7.3
+    rvest:
+      repo: CRAN
+      version: 0.3.2
   contributors:
     -
       name: Jordan Read
@@ -105,6 +108,9 @@ parameter:
     id: dates
     startDate: "2017-09-18"
     endDate: "2017-09-19"
+  -
+    id: config
+    pCode: "00065"
 fetch:
   -
     id: usgs-watermark 
@@ -131,6 +137,15 @@ fetch:
       view-limits: "view-limits-mobile"
     mimetype: application/zip
   -
+    id: timesteps
+    location: cache/times.json
+    fetcher: timesteps
+    scripts: scripts/fetch/fetch.timesteps.R
+    reader: json
+    #depends: "precip-cell-data"
+    export: true
+    mimetype: application/javascript
+  -
     id: precip_shapefiles
     location: cache/precip_shp/
     reader: rds
@@ -152,6 +167,32 @@ fetch:
     scripts: scripts/fetch/hurricaneTrack.R
     mimetype: application/zip
     metadata: "Updates every 6 hours on http://www.nhc.noaa.gov/gis/"
+  -
+    id: nws-conversion
+    location: cache/nws_conversion.rds
+    fetcher: nws_conversion
+    reader: rds
+    states: ["PR"]
+    scripts: scripts/fetch/fetch.nws_conversion.R
+  -
+    id: nwis-sites
+    location: cache/sites.rds
+    fetcher: sites
+    reader: rds
+    depends: 
+      nws: nws-conversion
+      config: config
+      dates: dates
+    scripts: scripts/fetch/fetch.sites.R
+  -
+    id: nws-data
+    location: cache/nws-data.rds
+    fetcher: nws_data
+    scripts: scripts/fetch/fetch.nws_data.R
+    reader: rds
+    depends: 
+      sites: nwis-sites
+      nws: nws-conversion
 process:
   -
     id: storm-islands-mobile
@@ -163,6 +204,20 @@ process:
     depends: 
       polygons: "islands-mobile"
     mimetype: application/zip
+  -
+    id: storm-track
+    location: cache/storm-track.rds
+    processor: storm_track
+    scripts: scripts/process/process.storm_track.R
+    reader: rds
+    depends: ["view-limits-mobile", "hurricane-track"]
+  -
+    id: storm-location
+    location: cache/storm-location.rds
+    processor: storm_location
+    scripts: scripts/process/process.storm_location.R
+    reader: rds
+    depends: ["view-limits-mobile", "hurricane-track", "timesteps"] 
 visualize:
   -
     id: base-map-mobile
