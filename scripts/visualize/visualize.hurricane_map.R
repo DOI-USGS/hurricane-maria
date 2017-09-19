@@ -33,6 +33,10 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
                                                 as.character(as.numeric(vb[3])-110), 
                                                 as.character(as.numeric(vb[4])-40))
   
+  g.legend <- xml_add_child(non.geo.top, 'g', id='legend', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-50))
+  warning('need to extract color and bin info from other targets')
+  add_legend(g.legend, n.bins = 9, color.name = "Blues")
+  
   # --- this is all temporary so we can see it w/o publish and css in place: -----
   xml_attr(map.elements, 'style') <- "fill: green;"
   xml_attr(non.geo.bot, 'style') <- "fill: blue;"
@@ -57,4 +61,42 @@ visualize.hurricane_map_landscape <- function(viz = as.viz('hurricane-map-landsc
   svg <- visualize_hurricane_map(viz, height = height, width = width, mode =  'landscape')
   
   write_xml(svg, file = viz[['location']])
+}
+
+add_legend <- function(parent.ele, n.bins, color.name){
+  
+  # lower left legend:
+  xml_add_child(parent.ele, 'text', "Total rainfall amount (inches)", class='svg-text legend-text', dy="-1em",
+                transform="translate(0,35)")
+  g.rains <- xml_add_child(parent.ele, 'g', id = 'rain-legend')
+  g.irma <- xml_add_child(parent.ele, 'g', id = 'irma-legend', transform="translate(15,-65)")
+  g.gage_isFlood <- xml_add_child(parent.ele, 'g', id = 'gage-legend', transform="translate(15,-10)")
+  g.gage_predFlood <- xml_add_child(parent.ele, 'g', id = 'gage-legend', transform="translate(15,-25)")
+  g.rains.bn <- xml_add_child(g.rains, 'g', id = 'rain-legend-bin', transform="translate(0,35)")
+  g.rains.tx <- xml_add_child(g.rains, 'g', id = 'rain-legend-text', transform="translate(0,35)")
+  xml_add_child(g.irma, 'circle', r="8", class="storm-dot-legend")
+  xml_add_child(g.gage_isFlood, 'circle', r="4", class="nwis-flooding-legend")
+  xml_add_child(g.irma, 'text', "Hurricane Maria", class='svg-text legend-text', dx='20', dy="0.33em")
+  xml_add_child(g.gage_isFlood, 'text', "Above flood stage", class='svg-text legend-text', dx='20', dy="0.33em")
+  xml_add_child(g.gage_predFlood, 'circle', r="4", class="nwis-dot-legend")
+  xml_add_child(g.gage_predFlood, 'text', "Below flood stage", class='svg-text legend-text', dx='20', dy="0.33em")
+  
+  g.main_gage_text <- xml_add_child(parent.ele, 'text', "USGS Stream Gages", class='svg-text legend-text', dy="-1em",
+                                    transform="translate(0,-23)")
+  g.main_gage_text <- xml_add_child(parent.ele, 'text', "(< 1% of US total)", class='svg-text smallprint-text legend-text', dy="-1.33em",
+                                    transform="translate(135,-23)")
+  
+  
+  rain.w <- 28 # width of a rain legend bin
+  rain.h <- 14
+  x0 <- 0
+  
+  cols <- RColorBrewer::brewer.pal(n.bins, color.name)
+  for (i in 1:n.bins){
+    xml_add_child(g.rains.bn, 'rect', x=as.character(x0), y="-10", 
+                  height = as.character(rain.h), width = as.character(rain.w), 
+                  class='rain-box', style=sprintf("fill:%s;",cols[i]))
+    x0 <- x0+rain.w
+  }
+  
 }

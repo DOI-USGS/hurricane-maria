@@ -1,5 +1,8 @@
 fetch.view_limits <- function(viz = as.viz('view-limits-mobile')){
   bbox <- viz[['bbox']]
+  if (is(bbox, 'list')){
+    bbox <- unlist(bbox)
+  }
   metadata <- readDepends(viz)[['metadata']]
   sp.bbox <- as.sp_box(xs = bbox[c(1,3)], ys = bbox[c(2,4)], 
                        proj.string = sp::CRS("+proj=longlat +datum=WGS84"))
