@@ -227,11 +227,12 @@ publish:
       vizlab-favicon: lib-vizlab-favicon
       header-css: lib-header-css
       footer-css: lib-footer-css
-      opensanspro: opensanspro
+      sourcesanspro: sourcesanspro
     comment: missing from depends are the thumbnails which should be added back
     context:
       sections: [ map-section ]
-      resources: [ figure-css, jquery-js, vizlab-js, svg-injector-js, animate-js, svg-css, header-css, footer-css, vizlab-favicon, opensanspro]
+      resources: [ figure-css, jquery-js, vizlab-js, svg-injector-js, animate-js, svg-css,
+        header-css, footer-css, vizlab-favicon, sourcesanspro]
   -
     id: animate-js
     location: layout/js/animate.js
@@ -248,7 +249,7 @@ publish:
     mimetype: text/css
     publisher: resource
   -
-    id: opensanspro
+    id: sourcesanspro
     publisher: googlefont
-    family: Open Sans Pro
-    weight: [300, 400, 700]
+    family: Source Sans Pro
+    weight: [300, 400, 600]
