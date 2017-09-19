@@ -89,6 +89,10 @@ info:
       name: Alison Appling
       email: aappling@usgs.gov
       affiliation: U.S. Geological Survey
+    -
+      name: Garritt Moede
+      email: gmoede@usgs.gov
+      affiliation: U.S. Geological Survey, UW-Madison
       
 parameter:
   -
