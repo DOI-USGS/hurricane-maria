@@ -92,11 +92,15 @@ info:
       name: Alison Appling
       email: aappling@usgs.gov
       affiliation: U.S. Geological Survey
+    -
+      name: Garritt Moede
+      email: gmoede@usgs.gov
+      affiliation: U.S. Geological Survey, UW-Madison
       
 parameter:
   -
     id: mobile-metadata
-    height: 10
+    height: 8
     width: 8
     pointsize: 12
     proj.string: '+init=epsg:3991'
@@ -109,11 +113,17 @@ parameter:
     pCode: "00065"
 fetch:
   -
+    id: usgs-watermark 
+    location: cache/usgs-watermark.xml
+    reader: svg_map
+    fetcher: usgs_watermark 
+    scripts: scripts/fetch/fetch.watermark.R 
+  -
     id: view-limits-mobile
     location: cache/view-limits-mobile.rds
     reader: rds
     fetcher: view_limits
-    bbox: [-67, 17, -61, 21]
+    bbox: [-67.2, 17, -64.2, 19]
     depends:
       metadata: "mobile-metadata"
     scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/plotting_utils.R]
@@ -225,6 +235,7 @@ visualize:
     visualizer: hurricane_map_portrait
     depends: 
       base-map: base-map-mobile 
+      watermark: usgs-watermark
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     height: 720
