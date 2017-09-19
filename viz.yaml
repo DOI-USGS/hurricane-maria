@@ -60,6 +60,9 @@ info:
     dataRetrieval:
       repo: GRAN
       version: 2.7.3
+    rvest:
+      repo: CRAN
+      version: 0.3.2
   contributors:
     -
       name: Jordan Read
