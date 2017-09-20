@@ -278,7 +278,7 @@ process:
     scripts: scripts/process/process.precip_colors.R
     reader: rds
     depends: ["precip-colors"]
-    stepSize: 1.5
+    stepSize: 0.5
   -
     id: compiled-precip
     location: cache/compiled-precip.rds
