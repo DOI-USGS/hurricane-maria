@@ -1,6 +1,6 @@
 
 
-fetchTimestamp.islands <- vizlab:::fetchTimestamp.file
+fetchTimestamp.islands <- alwaysCurrent
 
 fetch_map_data <- function(..., viz){
   

@@ -12,4 +12,4 @@ fetch.gage_data <- function(viz = as.viz("gage-data")){
   saveRDS(gage, file=viz[['location']])
 }
 
-fetchTimestamp.gage_data <- vizlab:::fetchTimestamp.file
+fetchTimestamp.gage_data <- neverCurrent
