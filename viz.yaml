@@ -215,7 +215,7 @@ fetch:
     depends: 
       nws-data: nws-data
       config: config
-      dates: dates
+      timesteps: timesteps
   -
     id: markdown-text
     location: data/caption-text.yaml
@@ -441,10 +441,11 @@ publish:
   -
     id: description-section
     publisher: section
-    template: printall
+    template: layout/templates/text-section.mustache
     depends: markdown-text
     context:
       text: markdown-text.description
+      id: textSection
   -
     id: maria-page
     name: index

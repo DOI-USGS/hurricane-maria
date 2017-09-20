@@ -16,7 +16,7 @@ process.classified_sites <- function(viz = as.viz("classified-sites")) {
   #actually create the classes
   for(site in site_nos) {
     flood_stage <- nws_data$flood.stage[which(nws_data$site_no == site)]
-    which_floods <- which(gage_data[[site]]$y > flood_stage)
+    which_floods <- which(gage_data[[site]] > flood_stage)
     site_class <- paste(paste("f", which_floods, sep = "-"), collapse = " ")
     class_df_row <- data.frame(site_no = site, class = site_class, 
                                stringsAsFactors = FALSE)

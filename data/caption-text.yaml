@@ -10,14 +10,18 @@ description: |+
   conditions. The USGS has many more permanent 
   [gaging stations](https://maps.waterdata.usgs.gov/) across the country; 
   less than 1% are represented in this visualization. The USGS also collects additional 
-  information with [Short-Term Network gages](http://stn.wim.usgs.gov/FEV/#IrmaSep2017).  
+  information with [Short-Term Network gages](http://stn.wim.usgs.gov/FEV/#IrmaSep2017). 
+  More information about water science in Puerto Rico can be found at the [Caribbean 
+  Water Science Center.](https://pr.water.usgs.gov/)
   
   ### Data Sources
   *Gage Height*: U.S. Geological Survey [National Water Information 
   System](https://waterdata.usgs.gov/nwis). Time series 
   of gage height at selected sites impacted by the storm are shown through time, ordered 
   by latitude and normalized to site-specific maximum gage height observed over the 
-  duration of the hurricane.  
+  duration of the hurricane. Due to the severity of flooding from Hurricane Maria,
+  some gages may go offline temporarily. Gages' normalized stage is not shown and 
+  the location is an x on the map when offline.
   
   *Precipitation*: [National Weather Service River Forecasting Center multi-sensor 
   (radar and rain gauge) precipitation estimate](http://www.srh.noaa.gov/ridge2/RFC_Precip/) 
