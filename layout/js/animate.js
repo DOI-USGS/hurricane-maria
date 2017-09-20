@@ -13,7 +13,7 @@ if (window.innerWidth > window.innerHeight) {
   filename = 'images/hurricane-map-landscape.svg';
 }
 else {
-  filename = 'images/hurricane-map-portrait.svg';
+  filename = 'images/hurricane-map-mobile.svg';
 }
 
 var fetchSvg = $.ajax({
