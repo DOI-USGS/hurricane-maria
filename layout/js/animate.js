@@ -60,6 +60,7 @@ var getAnimator = function(duration) {
   var start = null;
   var elapsed = 0;
   var prevIndex = -1;
+  var toCancel = null;
   var animateFrame = function(timestamp) {
     if (!start) start = timestamp - elapsed;
     elapsed = timestamp - start;
@@ -70,7 +71,7 @@ var getAnimator = function(duration) {
         animatePrcp(index);
         prevIndex = index;
       }
-      window.requestAnimationFrame(animateFrame);
+      toCancel = window.requestAnimationFrame(animateFrame);
     } else {
       start = null;
       elapsed = 0;
@@ -78,6 +79,7 @@ var getAnimator = function(duration) {
     }
   };
   var pauseFrame = function() {
+    window.cancelAnimationFrame(toCancel);
     start = null;
     prevIndex = -1;
   };
