@@ -139,6 +139,16 @@ fetch:
     depends: 
       view-limits: "view-limits-mobile"
     mimetype: application/zip
+#  - 
+#    id: san-juan
+##    location: cache/san-juan.rds
+#    reader: rds
+##    fetcher: capital_city
+#    country: "Puerto Rico"
+#    scripts: [scripts/fetch/fetch.islands.R, scripts/visualize/plotting_utils.R, scripts/fetch/utils.R]
+#    depends: 
+#      view-limits: "view-limits-mobile"
+#    mimetype: application/zip
   -
     id: timesteps
     location: cache/times.json
@@ -271,8 +281,7 @@ process:
     processor: precip_colors
     scripts: scripts/process/process.precip_colors.R
     reader: json
-    bins: 9
-    pallete: "Blues"
+    cols: ["#A9D09C","#83BF7C","#5EA059","#3B6A3B", "#F5CF63","#E68F4F","#DF5936","#CA4034"]
     mimetype: application/javascript
     export: true
   -
@@ -299,7 +308,21 @@ process:
     scripts: scripts/process/process.classified_precip.R
     reader: rds
     depends: ["compiled-precip", "timesteps", "precip-breaks"]
-    
+  - 
+    id: discharge-sparks
+    location: cache/discharge-sparks.rds
+    processor: discharge_sparks
+    scripts: scripts/process/process.discharge_sparks.R
+    reader: rds
+    depends: ["storm-gage-height", "nwis-sites"]
+  - 
+    id: flood-sparks
+    location: cache/flood-sparks.rds
+    processor: flood_sparks
+    scripts: scripts/process/process.discharge_sparks.R
+    reader: rds
+    depends: ["storm-gage-height", "nwis-sites", "nws-data"]
+
 visualize:
   -
     id: base-map-mobile
@@ -324,6 +347,8 @@ visualize:
       watermark: usgs-watermark
       precip-colors: precip-colors
       precip-breaks: precip-breaks
+      flood-sparks: flood-sparks
+      gage-sparks: discharge-sparks
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: portrait
@@ -342,6 +367,8 @@ visualize:
       watermark: usgs-watermark
       precip-colors: precip-colors
       precip-breaks: precip-breaks
+      flood-sparks: flood-sparks
+      gage-sparks: discharge-sparks
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: landscape

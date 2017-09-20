@@ -15,3 +15,7 @@ fetch_map_data <- function(..., viz){
 fetch.islands <- function(viz = as.viz('islands')){
   fetch_map_data('world2Hires', "(?!USA)", xlim = c(275, 300), ylim = c(16, 30), viz = viz)
 }
+
+
+#fetch.capital_city
+#maps::map.cities(country = 'Puerto Rico', capitals = 1)
