@@ -142,7 +142,7 @@ fetch:
     fetcher: timesteps
     scripts: scripts/fetch/fetch.timesteps.R
     reader: json
-    depends: "compiled-precip"
+    depends: "precip-shapefiles"
     export: true
     mimetype: application/javascript
   -
