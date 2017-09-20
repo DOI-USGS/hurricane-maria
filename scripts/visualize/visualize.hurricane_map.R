@@ -34,7 +34,7 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
                                                 as.character(as.numeric(vb[4])-40))
   
   g.legend <- xml_add_child(non.geo.top, 'g', id='legend', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-50))
-  add_legend(g.legend, colors = depends$`precip-colors`)
+  add_legend(g.legend, colors = depends$`precip-colors`, break.step = getContentInfo('precip-breaks')$stepSize)
   
   
   return(svg)
@@ -58,7 +58,7 @@ visualize.hurricane_map_landscape <- function(viz = as.viz('hurricane-map-landsc
   write_xml(svg, file = viz[['location']])
 }
 
-add_legend <- function(parent.ele, colors){
+add_legend <- function(parent.ele, colors, break.step){
   
   # lower left legend:
   xml_add_child(parent.ele, 'text', "Total rainfall amount (inches)", class='svg-text legend-text', dy="-1em",
@@ -86,11 +86,20 @@ add_legend <- function(parent.ele, colors){
   rain.h <- 14
   x0 <- 0
   n.bins <- length(colors)
+  col.breaks <- seq(0, length.out = n.bins, by = break.step)
+  col.rng <- paste(head(col.breaks, -1L), tail(col.breaks, -1L), sep='-')
+  col.txt <- c(col.rng, sprintf('%s+', tail(col.breaks, 1)))
   
   for (i in 1:n.bins){
+    
     xml_add_child(g.rains.bn, 'rect', x=as.character(x0), y="-10", 
                   height = as.character(rain.h), width = as.character(rain.w), 
                   class='rain-box', style=sprintf("fill:%s;",colors[i]))
+    if (i == 1 | i == n.bins){
+      # only do the extreme values
+      text.class <- ifelse(any(col2rgb(colors[i]) < 100), 'svg-text light-rain-legend', 'svg-text dark-rain-legend')
+      xml_add_child(g.rains.tx, 'text', col.txt[i], class = text.class, x= as.character(x0+rain.w/2), 'text-anchor'='middle')  
+    }
     x0 <- x0+rain.w
   }
   
