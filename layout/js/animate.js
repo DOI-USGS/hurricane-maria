@@ -86,7 +86,7 @@ var getAnimator = function(duration) {
   return [animateFrame, pauseFrame];
 };
 
-var animator = getAnimator(4000);
+var animator = getAnimator(8000);
 var runAnimation = animator[0];
 var pauseAnimation = animator[1];
 

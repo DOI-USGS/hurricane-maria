@@ -315,6 +315,14 @@ process:
     scripts: scripts/process/process.classified_precip.R
     reader: rds
     depends: ["compiled-precip", "timesteps", "precip-breaks"]
+#  -
+#    id: cell-precip
+#    location: cache/cell-precip.rds
+#    processor: cell_precip
+#    scripts: scripts/process/process.cell_precip.R
+#    width: 1000
+#    reader: rds
+#    depends: classified-precip
   - 
     id: discharge-sparks
     location: cache/discharge-sparks.rds

@@ -49,8 +49,8 @@ visualize_hurricane_map <- function(viz, mode, ...){
   add_legend(g.legend, colors = depends$`precip-colors`, break.step = getContentInfo('precip-breaks')$stepSize)
   
   cp <- xml_add_child(d, 'clipPath', id="islands-clip")
-  storm.states <- xml_attr(xml_children(xml_find_first(svg, "//*[local-name()='g'][@id='storm-islands']") ), 'id')
-  .jnk <- lapply(storm.states, function(x) xml_add_child(cp, 'use', 'xlink:href'=sprintf("#%s", x)))
+  storm.islands <- xml_attr(xml_children(xml_find_first(svg, "//*[local-name()='g'][@id='storm-islands']") ), 'id')
+  .jnk <- lapply(storm.islands, function(x) xml_add_child(cp, 'use', 'xlink:href'=sprintf("#%s", x)))
   
   xml_add_child(non.geo.bot, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', 
                 y=as.character(as.numeric(vb[4])-40), x = vb[3], dy = "-0.4em", dx = "-1em", 'text-anchor'='end')
@@ -193,5 +193,5 @@ precip_centroids_to_paths <- function(centroids){
     xml_attr(dot, 'cx') <- NULL
     xml_attr(dot, 'cy') <- NULL
   }
-  xml_attr(centroids, "clip-path") <- "url(#islands-clip)"
+  xml_attr(precip.dots, "clip-path") <- "url(#islands-clip)"
 }
