@@ -2,7 +2,7 @@ fetchTimestamp.precip_shapefiles <- function(viz) {
   invisible()
 }
 
-fetch.precip_shapefiles <- function(viz = as.viz('precip_shapefiles')){
+fetch.precip_shapefiles <- function(viz = as.viz('precip-shapefiles')){
   
   seDates <- readDepends(viz)[["dates"]]
   startDate <- as.Date(seDates$startDate)
