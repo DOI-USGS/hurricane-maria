@@ -48,7 +48,7 @@ process.compile_precip <- function(viz = as.viz("compiled-precip")) {
     sp::SpatialPointsDataFrame(precip_data_points[c("lon", "lat")],
                                data = data.frame(id=precip_data_points$id,
                                                  stringsAsFactors = F),
-                               proj4string = sp::CRS("+init=EPSG:4326"))
+                               proj4string = sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))
   
   precip_cells_transformed <- sp::spTransform(precip_data_points, sp::CRS(metadata$proj.string))
   

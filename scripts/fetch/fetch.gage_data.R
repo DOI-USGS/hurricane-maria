@@ -1,5 +1,5 @@
 fetch.gage_data <- function(viz = as.viz("gage-data")){
-  
+  library('dplyr')
   depData <- readDepends(viz)
   
   sites <- depData[["nws-data"]][['site_no']]
