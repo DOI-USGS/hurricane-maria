@@ -4,11 +4,14 @@ visualize_hurricane_map <- function(viz, mode, ...){
   library(xml2)
   
   depends <- readDepends(viz)
-  checkRequired(depends, c("base-map", "watermark", "precip-colors", "precip-breaks"))
+  checkRequired(depends, c("base-map", "watermark", "precip-colors", "precip-breaks", "gage-sparks", "flood-sparks"))
   svg <- depends[["base-map"]]
+  sparks <- depends[["gage-sparks"]]
+  fl.sparks <- depends[["flood-sparks"]]
 
   xml_attr(svg, "id") <- viz[['id']]
   vb <- strsplit(xml_attr(svg, 'viewBox'),'[ ]')[[1]]
+  side.panel <- 145
   
   # get the big dog that has all the stuff that is geo:
   map.elements <- xml2::xml_find_first(svg, "//*[local-name()='g'][@id='map-elements']") 
@@ -51,6 +54,33 @@ visualize_hurricane_map <- function(viz, mode, ...){
   
   xml_add_child(non.geo.bot, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', 
                 y=as.character(as.numeric(vb[4])-40), x = vb[3], dy = "-0.4em", dx = "-1em", 'text-anchor'='end')
+  
+  
+  g.spark <- xml_add_child(non.geo.top, 'g', id = 'sparkline-container', transform=sprintf('translate(%s,0)', as.numeric(vb[3])-side.panel))
+  xml_add_child(g.spark, 'rect', width = as.character(side.panel), height='100%', class='legend-box')
+  # sparklines within container:
+  g.sparkle.blck <- xml_add_child(g.spark, 'g', id = sprintf('sparkline-squiggle-block-%s', mode))
+  xml_add_child(g.sparkle.blck, 'text', x=as.character(side.panel/2), 'Featured USGS gages', dy="1.5em", 'text-anchor'='middle', class='svg-text legend-text')
+  xml_add_child(g.sparkle.blck, 'text', x=as.character(side.panel/2), '(normalized stage)', dy='3em', 'text-anchor'='middle', class='svg-text smallprint-text legend-text')
+  g.sparkles <- xml_add_child(g.sparkle.blck, 'g', id = sprintf('sparkline-squiggles-%s', mode))
+  
+  ys <- seq(45, as.numeric(vb[4]) - 120, length.out = nrow(sparks))
+  
+  for (i in 1:nrow(sparks)){ 
+    g.single <- xml_add_child(g.sparkles, 'g', transform=sprintf('translate(0,%s)', ys[i])) 
+    do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), sparks[i, ]))
+    fl.spark <- fl.sparks[i,]
+    cp <- xml_add_child(d, "clipPath", id=sprintf("flood-clip-%s", strsplit(fl.spark$id, '[-]')[[1]][2]))
+    xml_add_child(cp, 'rect', width ='100%', height = fl.spark$y, y = "0")
+    fl.spark$y <- NULL
+    fl.spark$points <- sparks[i, ]$points
+    do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), fl.spark))
+    # now add flood spark
+  }
+  
+  xml_add_child(g.sparkle.blck, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', 
+                y=as.character(ys[i]+50), x = as.character(side.panel/2), 'text-anchor'='middle')
+  
   
   return(svg)
 }
