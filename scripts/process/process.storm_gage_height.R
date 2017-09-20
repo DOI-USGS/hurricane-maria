@@ -15,9 +15,9 @@ process.storm_gage_height <- function(viz = as.viz("storm-gage-height")) {
   interp_q <- function(site.no) {
     use.i <- gage_height$site_no == site.no
     gage_obs <- gage_height$p_Inst[use.i]
-    gage_obs[which(gage_obs == -999999.00)] <- 0
+    gage_obs[which(gage_obs == -999999.00)] <- min(gage_obs[which(gage_obs > 0)])
     out <- approx(x = gage_height$dateTime[use.i], y = gage_obs, xout = times)
-    out$y[which(is.na(out$y))] <- 0
+    out$y[which(is.na(out$y))] <- min(gage_obs[which(gage_obs > 0)])
     out
   }
   sites <- unique(gage_height$site_no)
