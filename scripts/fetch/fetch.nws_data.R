@@ -46,10 +46,9 @@ fetch.nws_data <- function(viz=as.viz("nws-data")){
     }
   }
   
-  sites <- sites %>% filter(!is.na(flood.stage))
-  sites_forecast_list <- list(sites = sites, forecasts = forecastDF)
+  sites <- sites %>% filter(!is.na(flood.stage)) %>% select(site_no, flood.stage)
   
-  saveRDS(sites_forecast_list, file=viz[['location']])
+  saveRDS(sites, file=viz[['location']])
 
 }
 

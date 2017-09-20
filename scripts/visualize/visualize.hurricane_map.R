@@ -1,10 +1,10 @@
 #' function for placing add-ons to the svg base map
 #' 
-visualize_hurricane_map <- function(viz, height, width, mode, ...){
+visualize_hurricane_map <- function(viz, mode, ...){
   library(xml2)
   
   depends <- readDepends(viz)
-  checkRequired(depends, c("base-map", "watermark"))
+  checkRequired(depends, c("base-map", "watermark", "precip-colors", "precip-breaks"))
   svg <- depends[["base-map"]]
 
   xml_attr(svg, "id") <- viz[['id']]
@@ -12,12 +12,14 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   
   # get the big dog that has all the stuff that is geo:
   map.elements <- xml2::xml_find_first(svg, "//*[local-name()='g'][@id='map-elements']") 
-  
+  precip.centroids <- xml2::xml_find_first(svg, "//*[local-name()='g'][@id='precip-centroids']") 
+  precip_centroids_to_paths(precip.centroids)
   
   non.geo.bot <- xml_add_sibling(map.elements, 'g', 'id' = 'non-geo-bottom', .where='before')
   xml_add_sibling(xml_children(svg)[[1]], 'desc', .where='before', viz[["alttext"]])
   xml_add_sibling(xml_children(svg)[[1]], 'title', .where='before', viz[["title"]])
   non.geo.top <- xml_add_sibling(map.elements, 'g', 'id' = 'non-geo-top')
+  d <- xml_add_child(svg, 'defs', .where='before') 
   
   xml_add_child(non.geo.bot, 'rect', width="100%", height="100%", class='ocean-water viz-pause', id='ocean-background')
   
@@ -34,32 +36,34 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
                                                 as.character(as.numeric(vb[4])-40))
   
   g.legend <- xml_add_child(non.geo.top, 'g', id='legend', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-50))
-  warning('need to extract color and bin info from other targets')
-  add_legend(g.legend, n.bins = 9, color.name = "Blues")
+  add_legend(g.legend, colors = depends$`precip-colors`, break.step = getContentInfo('precip-breaks')$stepSize)
   
+  cp <- xml_add_child(d, 'clipPath', id="islands-clip")
+  storm.states <- xml_attr(xml_children(xml_find_first(svg, "//*[local-name()='g'][@id='storm-islands']") ), 'id')
+  .jnk <- lapply(storm.states, function(x) xml_add_child(cp, 'use', 'xlink:href'=sprintf("#%s", x)))
+  
+  xml_add_child(non.geo.bot, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', 
+                y=as.character(as.numeric(vb[4])-40), x = vb[3], dy = "-0.4em", dx = "-1em", 'text-anchor'='end')
   
   return(svg)
 }
 
 
 visualize.hurricane_map_portrait <- function(viz = as.viz('hurricane-map-portrait')){
-  height <- viz[['height']]
-  width <- viz[['width']]
-  svg <- visualize_hurricane_map(viz, height = height, width = width, mode =  'portrait')
+
+  svg <- visualize_hurricane_map(viz, mode =  'portrait')
   
   write_xml(svg, file = viz[['location']])
   
 }
 
 visualize.hurricane_map_landscape <- function(viz = as.viz('hurricane-map-landscape')){
-  height <- viz[['height']]
-  width <- viz[['width']]
-  svg <- visualize_hurricane_map(viz, height = height, width = width, mode =  'landscape')
+  svg <- visualize_hurricane_map(viz, mode =  'landscape')
   
   write_xml(svg, file = viz[['location']])
 }
 
-add_legend <- function(parent.ele, n.bins, color.name){
+add_legend <- function(parent.ele, colors, break.step){
   
   # lower left legend:
   xml_add_child(parent.ele, 'text', "Total rainfall amount (inches)", class='svg-text legend-text', dy="-1em",
@@ -86,13 +90,40 @@ add_legend <- function(parent.ele, n.bins, color.name){
   rain.w <- 28 # width of a rain legend bin
   rain.h <- 14
   x0 <- 0
+  n.bins <- length(colors)
+  col.breaks <- seq(0, length.out = n.bins, by = break.step)
+  col.rng <- paste(head(col.breaks, -1L), tail(col.breaks, -1L), sep='-')
+  col.txt <- c(col.rng, sprintf('%s+', tail(col.breaks, 1)))
   
-  cols <- RColorBrewer::brewer.pal(n.bins, color.name)
   for (i in 1:n.bins){
+    
     xml_add_child(g.rains.bn, 'rect', x=as.character(x0), y="-10", 
                   height = as.character(rain.h), width = as.character(rain.w), 
-                  class='rain-box', style=sprintf("fill:%s;",cols[i]))
+                  class='rain-box', style=sprintf("fill:%s;",colors[i]))
+    if (i == 1 | i == n.bins){
+      # only do the extreme values
+      text.class <- ifelse(any(col2rgb(colors[i]) < 100), 'svg-text light-rain-legend', 'svg-text dark-rain-legend')
+      xml_add_child(g.rains.tx, 'text', col.txt[i], class = text.class, x= as.character(x0+rain.w/2), 'text-anchor'='middle')  
+    }
     x0 <- x0+rain.w
   }
   
+}
+
+precip_centroids_to_paths <- function(centroids){
+  
+  precip.dots <- xml_children(centroids)
+  xs <- sort(as.numeric(sapply(precip.dots, xml_attr, attr = 'cx')))
+  offset <- unique(sort(round(diff(xs))))[2]*2 + 0.9 # weird orientation
+  for (dot in precip.dots){
+    xml_name(dot) <- 'path'
+    x <- as.numeric(xml_attr(dot, 'cx')) - offset/2
+    y <- as.numeric(xml_attr(dot, 'cy')) - offset/2
+    xml_attr(dot, 'd') <- sprintf("M%1.1f,%1.1f l%1.1f,%1.1f l-%1.1f,%1.1f l-%1.1f,-%1.1fZ", 
+                                  x, y, offset, offset, offset, offset, offset, offset)
+    xml_attr(dot, 'r') <- NULL
+    xml_attr(dot, 'cx') <- NULL
+    xml_attr(dot, 'cy') <- NULL
+  }
+  xml_attr(centroids, "clip-path") <- "url(#islands-clip)"
 }

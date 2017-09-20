@@ -12,11 +12,17 @@ fetch.precip_shapefiles <- function(viz = as.viz('precip_shapefiles')){
 
     for(dFile in precip_files) {
       outfile <- file.path(precip_dir, dFile)
+      precip.tars <- c(precip.tars, outfile)
       if(!file.exists(outfile)) {
         download.file(paste0(precip_page_url, dFile), outfile)
       }
     }
   }
+  # remove files that shouldn't be there
+  files.now <- dir(precip_dir)
+  rmv.i <- !(files.now %in% basename(precip.tars))
+  unlink(file.path(precip_dir, files.now[rmv.i]))
+  
   # update the timstamp of the last outfile to make sure the directory timestamp
   # is always updated by now, even if there were no new files to download
   Sys.setFileTime(precip_dir, Sys.time())
@@ -58,7 +64,7 @@ get_precip_page_urls <- function(viz = as.viz('precip_shapefiles')) {
   seDates <- readDepends(viz)[["dates"]]
   startDate <- as.Date(seDates$startDate)
   endDate <- as.Date(seDates$endDate)
-  dates <- seq(startDate, endDate, by="days")
+  dates <- seq(startDate, min(endDate, as.Date(Sys.time())), by="days")
   
   precip_page_url_base <- viz[["url_base"]]
   precip_page_urls <- paste0(precip_page_url_base, 
