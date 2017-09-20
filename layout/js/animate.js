@@ -1,7 +1,7 @@
 var prcpColors;
 var prcpTimes;
 var pt;
-var svg
+var svg;
 
 var filename;
 
