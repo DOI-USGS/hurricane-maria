@@ -18,13 +18,20 @@ visualize_hurricane_map <- function(viz, mode, ...){
   non.geo.bot <- xml_add_sibling(map.elements, 'g', 'id' = 'non-geo-bottom', .where='before')
   xml_add_sibling(xml_children(svg)[[1]], 'desc', .where='before', viz[["alttext"]])
   xml_add_sibling(xml_children(svg)[[1]], 'title', .where='before', viz[["title"]])
+  
   non.geo.top <- xml_add_sibling(map.elements, 'g', 'id' = 'non-geo-top')
+  g.tool <- xml_add_sibling(non.geo.top,'g',id='tooltip-group')
   d <- xml_add_child(svg, 'defs', .where='before') 
   
   xml_add_child(non.geo.bot, 'rect', width="100%", height="100%", class='ocean-water viz-pause', id='ocean-background')
   
-  g.tool <- xml_add_child(svg,'g',id='tooltip-group')
-  map.elements.top <- xml_add_child(svg, 'g', id=sprintf('map-elements-%s-top', mode))
+  
+  
+  # map-elements-{mode}-top is where all of the mouseovers, tips, and click events go
+  map.elements.top <- xml_add_child(svg, 'g', id = "map-elements-mouser")
+  
+  to.mouse <- c('nwis-gages') # and sparklines, cities, etc later
+  as.mouse_topper(svg, to.mouse[1], mouser.parent.id = 'map-elements-mouser')
   
   xml_add_child(g.tool, 'rect', id="tooltip-box", height="24", class="tooltip-box")
   xml_add_child(g.tool, 'path', id="tooltip-point", d="M-6,-11 l6,10 l6,-11", class="tooltip-box")
@@ -48,8 +55,35 @@ visualize_hurricane_map <- function(viz, mode, ...){
   return(svg)
 }
 
+#' remove mouser events from style geometries, and add them to a new invisible mouser group overlay
+as.mouse_topper <- function(svg, style.group.id, mouser.parent.id){
+  
+  style.kids <- xml_children(
+    xml_find_first(
+      svg, sprintf("//*[local-name()='g'][@id='%s']", style.group.id)
+      )
+    )
+  
+  parent.element <- xml_find_first(
+    svg, sprintf("//*[local-name()='g'][@id='%s']", mouser.parent.id)
+  )
+  g.mouser <- xml_add_child(parent.element, 'g', id = paste0(style.group.id, '-mousers'))
+  
+  
+  transfers <- c('onmousemove', 'onmouseout', 'onclick')
+  for (style.kid in style.kids){
+    mouse.kid <- xml_add_child(g.mouser, 'use', 'xlink:href'=sprintf("#%s", xml_attr(style.kid, 'id')), class = 'mouser')
+    .jnk <- lapply(X = transfers, FUN = function(x) {
+        xml_attr(mouse.kid, x) <- xml_attr(style.kid, x)
+        xml_attr(style.kid, x) <- NULL
+      }
+      )
+  }
+  # does it work to let the reference element keep its class? no
+  
+}
 
-visualize.hurricane_map_portrait <- function(viz = as.viz('hurricane-map-portrait')){
+visualize.hurricane_map_portrait <- function(viz = as.viz('hurricane-map-mobile')){
 
   svg <- visualize_hurricane_map(viz, mode =  'portrait')
   

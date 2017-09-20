@@ -272,7 +272,7 @@ process:
     scripts: scripts/process/process.precip_colors.R
     reader: json
     bins: 9
-    pallete: "Blues"
+    cols: ["#A9D09C","#83BF7C","#5EA059","#3B6A3B","#F5CF63","#E68F4F","#DF5936","#CA4034"]
     mimetype: application/javascript
     export: true
   -
