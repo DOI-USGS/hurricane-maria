@@ -11,7 +11,7 @@ grab_spark <- function(vals){
 }
 
 
-# Should rename at some point. Not always going to be discharge.
+
 process.discharge_sparks <- function(viz = as.viz('discharge-sparks')){
   library(dplyr)
   depends <- readDepends(viz)
