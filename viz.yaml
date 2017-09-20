@@ -146,15 +146,15 @@ fetch:
     export: true
     mimetype: application/javascript
   -
-    id: precip_shapefiles
+    id: precip-shapefiles
     location: cache/precip_shp/
-    reader: rds
+    reader: folder
     fetcher: precip_shapefiles
-    scripts: [scripts/fetch/fetch.precip_shapefiles.R]
+    scripts: scripts/fetch/fetch.precip_shapefiles.R
     url_base: "http://www.srh.noaa.gov/data/ridge2/Precip/qpehourlyshape/2017/201709/"
     depends: 
       dates: "dates"
-    mimetype: application/zip
+    mimetype: text/directory
   -
     id: hurricane-track
     storm: MARIA
@@ -279,7 +279,14 @@ process:
     reader: rds
     depends: ["precip-colors"]
     stepSize: 1.5
-  
+  -
+    id: compile-precip
+    location: cache/compiled-precip.rds
+    processor: compile_precip
+    scripts: scripts/process/process.compile_precip.R
+    reader: rds
+    depends: ["precip-shapefiles"]
+    
 visualize:
   -
     id: base-map-mobile
