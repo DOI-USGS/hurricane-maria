@@ -15,8 +15,6 @@ visualize_hurricane_map <- function(viz, mode, ...){
   
   # get the big dog that has all the stuff that is geo:
   map.elements <- xml2::xml_find_first(svg, "//*[local-name()='g'][@id='map-elements']") 
-  precip.centroids <- xml2::xml_find_first(svg, "//*[local-name()='g'][@id='precip-centroids']") 
-  precip_centroids_to_paths(precip.centroids)
   
   non.geo.bot <- xml_add_sibling(map.elements, 'g', 'id' = 'non-geo-bottom', .where='before')
   xml_add_sibling(xml_children(svg)[[1]], 'desc', .where='before', viz[["alttext"]])
@@ -176,22 +174,4 @@ add_legend <- function(parent.ele, colors, break.step){
     x0 <- x0+rain.w
   }
   
-}
-
-precip_centroids_to_paths <- function(centroids){
-  
-  precip.dots <- xml_children(centroids)
-  xs <- sort(as.numeric(sapply(precip.dots, xml_attr, attr = 'cx')))
-  offset <- unique(sort(round(diff(xs))))[2]*2 + 0.9 # weird orientation
-  for (dot in precip.dots){
-    xml_name(dot) <- 'path'
-    x <- as.numeric(xml_attr(dot, 'cx')) - offset/2
-    y <- as.numeric(xml_attr(dot, 'cy')) - offset/2
-    xml_attr(dot, 'd') <- sprintf("M%1.1f,%1.1f l%1.1f,%1.1f l-%1.1f,%1.1f l-%1.1f,-%1.1fZ", 
-                                  x, y, offset, offset, offset, offset, offset, offset)
-    xml_attr(dot, 'r') <- NULL
-    xml_attr(dot, 'cx') <- NULL
-    xml_attr(dot, 'cy') <- NULL
-  }
-  xml_attr(precip.dots, "clip-path") <- "url(#islands-clip)"
 }
