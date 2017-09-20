@@ -7,18 +7,33 @@ process.storm_gage_height <- function(viz = as.viz("storm-gage-height")) {
   
   times <- as.POSIXct(strptime(unlist(deps[["timesteps"]]),'%b %d %I:%M %p'), tz = "America/Puerto_Rico")
   
+  no_value <- -999999
+  
   gage_height <- deps[["gage-height"]]
-  attr(gage_height$dateTime, "tzone") <- "America/Puerto_Rico"
   
-  gage_height <- gage_height %>% 
-    group_by(site_no)
   
-  interp_q <- function(site.no) {
-    use.i <- gage_height$site_no == site.no
-    approx(x = gage_height$dateTime[use.i], y = gage_height$p_Inst[use.i], xout = times)
+  gage_mins <- gage_height %>% 
+    filter(p_Inst != no_value) %>%
+    group_by(site_no) %>%
+    summarize(min = min(p_Inst))
+  
+  gage_height <- left_join(gage_height, gage_mins, by="site_no") %>%
+    mutate(p_Inst = ifelse(p_Inst == no_value, min, p_Inst)) %>%
+    select(-min)
+  
+  sites <- gage_mins$site_no
+  
+  timestep.q <- list()
+  
+  for(site in sites){
+    gage_tvp <- filter(gage_height, site_no == site) %>%
+      select(dateTime, p_Inst)
+    
+    out <- approx(x = gage_tvp$dateTime, y = gage_tvp$p_Inst, 
+                  xout = times)
+    out$y[is.na(out$y)] <- gage_mins$min[gage_mins$site_no == site]
+    timestep.q[[site]] <- out$y
   }
-  sites <- unique(gage_height$site_no)
-  timestep.q <- lapply(sites, interp_q) %>% setNames(sites)
-  
+
   saveRDS(timestep.q, file = viz[['location']])
 }

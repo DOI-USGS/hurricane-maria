@@ -215,7 +215,7 @@ fetch:
     depends: 
       nws-data: nws-data
       config: config
-      dates: dates
+      timesteps: timesteps
   -
     id: markdown-text
     location: data/caption-text.yaml
@@ -288,7 +288,7 @@ process:
     processor: precip_colors
     scripts: scripts/process/process.precip_colors.R
     reader: json
-    cols: ["#A9D09C","#83BF7C","#5EA059","#3B6A3B", "#F5CF63","#E68F4F","#DF5936","#CA4034"]
+    cols: ["#A9D09C","#83BF7C","#5EA059","#3B6A3B", "#F5CF63","#E68F4F","#DF5936","#CA4034", "#A0302E"]
     mimetype: application/javascript
     export: true
   -
@@ -315,20 +315,42 @@ process:
     scripts: scripts/process/process.classified_precip.R
     reader: rds
     depends: ["compiled-precip", "timesteps", "precip-breaks"]
-  - 
-    id: discharge-sparks
-    location: cache/discharge-sparks.rds
-    processor: discharge_sparks
-    scripts: scripts/process/process.discharge_sparks.R
+  -
+    id: cell-precip
+    location: cache/cell-precip.rds
+    processor: cell_precip
+    scripts: [scripts/process/process.cell_precip.R, scripts/visualize/plotting_utils.R]
+    cell.offset: 8100
     reader: rds
-    depends: ["storm-gage-height", "nwis-sites"]
+    depends: 
+      classified-precip: classified-precip
+      clip: storm-islands-mobile
+  -
+    id: order-sites
+    reader: rds
+    location: cache/order_sites.rds
+    scripts: scripts/process/process.order_sites.R
+    depends: nwis-sites
+    processor: order_sites
+  - 
+    id: gage-sparks
+    location: cache/gage-sparks.rds
+    processor: gage_sparks
+    scripts: scripts/process/process.sparks.R
+    reader: rds
+    depends: 
+      gage-data: storm-gage-height
+      sites: order-sites
   - 
     id: flood-sparks
     location: cache/flood-sparks.rds
     processor: flood_sparks
-    scripts: scripts/process/process.discharge_sparks.R
+    scripts: scripts/process/process.sparks.R
     reader: rds
-    depends: ["storm-gage-height", "nwis-sites", "nws-data"]
+    depends: 
+      gage-data: storm-gage-height
+      sites: order-sites
+      nws-data: nws-data
 
 visualize:
   -
@@ -340,7 +362,7 @@ visualize:
       storm-islands: storm-islands-mobile
       storm-track: storm-track-mobile
       storm-location: storm-location-mobile
-      precip-centroids: classified-precip
+      cell-precip: cell-precip
       nwis-gages: classified-sites
     scripts: ["scripts/visualize/plotting_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
     reader: svg_map
@@ -355,12 +377,10 @@ visualize:
       precip-colors: precip-colors
       precip-breaks: precip-breaks
       flood-sparks: flood-sparks
-      gage-sparks: discharge-sparks
+      gage-sparks: gage-sparks
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: portrait
-    height: 720
-    width: 576
     export: true
     title: "Hurricane Maria's impact on precipitation and river gage height in Puerto Rico"
     alttext: "Map of Hurricane Maria's water footprint"
@@ -375,12 +395,10 @@ visualize:
       precip-colors: precip-colors
       precip-breaks: precip-breaks
       flood-sparks: flood-sparks
-      gage-sparks: discharge-sparks
+      gage-sparks: gage-sparks
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: landscape
-    height: 720
-    width: 576
     export: true
     title: "Hurricane Maria's impact on precipitation and river gage height in Puerto Rico"
     alttext: "Map of Hurricane Maria's water footprint"
@@ -431,10 +449,11 @@ publish:
   -
     id: description-section
     publisher: section
-    template: printall
+    template: layout/templates/text-section.mustache
     depends: markdown-text
     context:
       text: markdown-text.description
+      id: textSection
   -
     id: maria-page
     name: index

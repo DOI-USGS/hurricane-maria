@@ -2,7 +2,7 @@ grab_spark <- function(vals){
   
   xs <- seq_len(length(vals))
   xs <- c(head(xs, 1), xs, tail(xs, 1))
-  ys <- c(min(vals), vals, min(vals))
+  ys <- c(min(vals, na.rm = T), vals, min(vals, na.rm = T))
   x = svglite::xmlSVG({
     par(omi=c(0,0,0,0), mai=c(0,0,0,0))
     plot(xs, ys, type='l', axes=F, ann=F)
@@ -10,37 +10,27 @@ grab_spark <- function(vals){
   xml2::xml_attr(xml2::xml_find_first(x, '//*[local-name()="polyline"]'),'points')
 }
 
-
-
-process.discharge_sparks <- function(viz = as.viz('discharge-sparks')){
+process.gage_sparks <- function(viz = as.viz('gage-sparks')){
   library(dplyr)
   depends <- readDepends(viz)
-  checkRequired(depends, c("storm-gage-height", "nwis-sites"))
+  checkRequired(depends, c("gage-data", "sites"))
   
-  sites <- depends[["nwis-sites"]]
-  gage_data <- depends[["storm-gage-height"]]
+  sites <- depends[["sites"]]
+  gage_data <- depends[["gage-data"]]
   
-  site.nos <- names(gage_data)
-  
-  sparks <- data.frame(points = sapply(gage_data, function(x) grab_spark(x$y), USE.NAMES = FALSE),
+  site.nos <- sites$site_no[which(sites$site_no %in% names(gage_data))]
+
+  sparks <- data.frame(points = sapply(site.nos, function(x) grab_spark(gage_data[[x]]), USE.NAMES = FALSE),
                        site_no = site.nos, stringsAsFactors = FALSE) %>% 
     mutate(class = "sparkline", 
            id = sprintf("sparkline-%s", site_no), 
            style = "mask: url(#spark-opacity);",
            onmouseover=sprintf("setBold('nwis-%s');", site_no), 
            onmouseout=sprintf("setNormal('nwis-%s');hovertext(' ');", site_no),
-           onclick=sprintf("openNWIS('%s', evt);", site_no),
-           onmousemove=sprintf("hovertext('USGS %s',evt);", site_no))
-  
-  sites <- sites[c("site_no", "dec_lat_va")]
-  
-  sparks <- sparks %>% 
-    left_join(sites, by = "site_no") %>%
-    arrange(desc(dec_lat_va)) %>%
-    select(-site_no, -dec_lat_va) 
-  
-  sparks <- unique(sparks)
-  
+           onclick=sprintf("openNWIS('%s', evt);", site_no)) %>%
+    left_join(select(sites, site_no, station_nm), by="site_no") %>%
+    mutate(onmousemove=sprintf("hovertext(%s',evt);", station_nm))
+
   saveRDS(sparks, viz[['location']])
 }
 
@@ -63,21 +53,18 @@ grab_clip_rect <- function(vals, flood){
 process.flood_sparks <- function(viz = as.viz('flood-sparks')){
   library(dplyr)
   depends <- readDepends(viz)
-  checkRequired(depends, c("storm-gage-height", "nwis-sites", "nws-data"))
+  checkRequired(depends, c("gage-data", "sites", "nws-data"))
   
-  sites <- depends[["nwis-sites"]]
+  sites <- depends[["sites"]]
   nws_data <- depends[["nws-data"]]
-  gage_data <- depends[["storm-gage-height"]]
-  site.nos <- names(depends[["storm-gage-height"]])
-
-  sparks <- data.frame(site_no = site.nos, 
-                       y = NA, stringsAsFactors = FALSE)
+  gage_data <- depends[["gage-data"]]
   
-  for (row in 1:nrow(sparks)){
-    site <- sparks$site_no[row]
-    flood <- filter(nws_data, site_no == site) %>% .$flood.stage %>% .[1]
-    sparks$y[row] = grab_clip_rect(gage_data[[site]]$y, flood)
-  }
+  site.nos <- sites$site_no[which(sites$site_no %in% names(gage_data))]
+
+  sparks <- data.frame(y = sapply(site.nos, function(x) grab_clip_rect(gage_data[[x]], 
+                                                                            nws_data$flood.stage[nws_data$site_no == x]), 
+                                       USE.NAMES = FALSE),
+                       site_no = site.nos, stringsAsFactors = FALSE) 
   
   sparks <- sparks %>% 
     mutate(class = "floodline", 
@@ -86,17 +73,9 @@ process.flood_sparks <- function(viz = as.viz('flood-sparks')){
            "clip-path"=sprintf("url(#flood-clip-%s)", site_no), 
            onmouseover=sprintf("setBold('nwis-%s');setBold('sparkline-%s');", site_no, site_no),
            onmouseout=sprintf("setNormal('nwis-%s');setNormal('sparkline-%s');hovertext(' ');", site_no, site_no),
-           onclick=sprintf("openNWIS('%s', evt);", site_no),
-           onmousemove=sprintf("hovertext('USGS %s',evt);", site_no))
-  
-  sites <- sites[,c("site_no", "dec_lat_va")]
-  
-  sparks <- sparks %>% 
-    left_join(sites, by = "site_no") %>%
-    arrange(desc(dec_lat_va)) %>%
-    select(-site_no, -dec_lat_va) 
-  
-  sparks <- unique(sparks)
-  
+           onclick=sprintf("openNWIS('%s', evt);", site_no)) %>%
+    left_join(select(sites, site_no, station_nm), by="site_no") %>%
+    mutate(onmousemove=sprintf("hovertext(%s',evt);", station_nm))
+           
   saveRDS(sparks, viz[['location']])
 }

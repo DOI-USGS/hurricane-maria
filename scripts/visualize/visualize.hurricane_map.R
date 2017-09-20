@@ -15,8 +15,6 @@ visualize_hurricane_map <- function(viz, mode, ...){
   
   # get the big dog that has all the stuff that is geo:
   map.elements <- xml2::xml_find_first(svg, "//*[local-name()='g'][@id='map-elements']") 
-  precip.centroids <- xml2::xml_find_first(svg, "//*[local-name()='g'][@id='precip-centroids']") 
-  precip_centroids_to_paths(precip.centroids)
   
   non.geo.bot <- xml_add_sibling(map.elements, 'g', 'id' = 'non-geo-bottom', .where='before')
   xml_add_sibling(xml_children(svg)[[1]], 'desc', .where='before', viz[["alttext"]])
@@ -49,8 +47,8 @@ visualize_hurricane_map <- function(viz, mode, ...){
   add_legend(g.legend, colors = depends$`precip-colors`, break.step = getContentInfo('precip-breaks')$stepSize)
   
   cp <- xml_add_child(d, 'clipPath', id="islands-clip")
-  storm.states <- xml_attr(xml_children(xml_find_first(svg, "//*[local-name()='g'][@id='storm-islands']") ), 'id')
-  .jnk <- lapply(storm.states, function(x) xml_add_child(cp, 'use', 'xlink:href'=sprintf("#%s", x)))
+  storm.islands <- xml_attr(xml_children(xml_find_first(svg, "//*[local-name()='g'][@id='storm-islands']") ), 'id')
+  .jnk <- lapply(storm.islands, function(x) xml_add_child(cp, 'use', 'xlink:href'=sprintf("#%s", x)))
   
   xml_add_child(non.geo.bot, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', 
                 y=as.character(as.numeric(vb[4])-40), x = vb[3], dy = "-0.4em", dx = "-1em", 'text-anchor'='end')
@@ -77,6 +75,10 @@ visualize_hurricane_map <- function(viz, mode, ...){
     do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), fl.spark))
     # now add flood spark
   }
+  
+  m = xml_add_child(d, 'mask', id="spark-opacity", x="0", y="-1", width="1", height="3", maskContentUnits="objectBoundingBox")
+  xml_add_child(m, 'rect', x="0", y="-1", width="1", height="3", style="fill-opacity: 0.18; fill: white;", id='spark-light-mask')
+  xml_add_child(m, 'rect', x="0", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='spark-full-mask')
   
   xml_add_child(g.sparkle.blck, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', 
                 y=as.character(ys[i]+50), x = as.character(side.panel/2), 'text-anchor'='middle')
@@ -172,22 +174,4 @@ add_legend <- function(parent.ele, colors, break.step){
     x0 <- x0+rain.w
   }
   
-}
-
-precip_centroids_to_paths <- function(centroids){
-  
-  precip.dots <- xml_children(centroids)
-  xs <- sort(as.numeric(sapply(precip.dots, xml_attr, attr = 'cx')))
-  offset <- unique(sort(round(diff(xs))))[2]*2 + 0.9 # weird orientation
-  for (dot in precip.dots){
-    xml_name(dot) <- 'path'
-    x <- as.numeric(xml_attr(dot, 'cx')) - offset/2
-    y <- as.numeric(xml_attr(dot, 'cy')) - offset/2
-    xml_attr(dot, 'd') <- sprintf("M%1.1f,%1.1f l%1.1f,%1.1f l-%1.1f,%1.1f l-%1.1f,-%1.1fZ", 
-                                  x, y, offset, offset, offset, offset, offset, offset)
-    xml_attr(dot, 'r') <- NULL
-    xml_attr(dot, 'cx') <- NULL
-    xml_attr(dot, 'cy') <- NULL
-  }
-  xml_attr(centroids, "clip-path") <- "url(#islands-clip)"
 }
