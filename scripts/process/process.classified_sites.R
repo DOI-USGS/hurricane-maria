@@ -19,7 +19,7 @@ process.classified_sites <- function(viz = as.viz("classified-sites")) {
                                stringsAsFactors = FALSE)
     class_df <- dplyr::bind_rows(class_df, class_df_row)
   }
-  
+  library(sp)
   sites <- nwis_sites[which(nwis_sites@data$site_no %in% site_nos), ]
   
   sites@data <- data.frame(id = paste0('nwis-', sites@data$site_no), 
