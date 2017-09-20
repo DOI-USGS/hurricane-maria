@@ -2,7 +2,7 @@ grab_spark <- function(vals){
   
   xs <- seq_len(length(vals))
   xs <- c(head(xs, 1), xs, tail(xs, 1))
-  ys <- c(min(vals), vals, min(vals))
+  ys <- c(min(vals, na.rm = T), vals, min(vals, na.rm = T))
   x = svglite::xmlSVG({
     par(omi=c(0,0,0,0), mai=c(0,0,0,0))
     plot(xs, ys, type='l', axes=F, ann=F)

@@ -29,8 +29,8 @@ var animatePrcp = function(timestep) {
     }
   });
 
-  $('.nwis-dot').css('fill', '#73877B').css('stroke', "#385F71");
-  $('.f-' + timestep).css('fill', '#ff7000');
+  $('.nwis-dot').css('fill', '#4BA3C3').css('stroke', "white");
+  $('.f-' + timestep).css('fill', '#175676');
   $('#timestamp-text').html(prcpTimes.times[timestep - 1]);
 
   var darkWidth = (timestep+1)/prcpTimes.times.length;
@@ -86,7 +86,7 @@ var getAnimator = function(duration) {
   return [animateFrame, pauseFrame];
 };
 
-var animator = getAnimator(4000);
+var animator = getAnimator(8000);
 var runAnimation = animator[0];
 var pauseAnimation = animator[1];
 
