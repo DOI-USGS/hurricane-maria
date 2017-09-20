@@ -6,5 +6,5 @@ visualize.monitor_gages <- function(viz=as.viz('monitor_gages')) {
     scale_x_datetime(date_breaks = '24 hours', date_labels="%m/%d") +
     facet_wrap(~ site_no, scales='free_y') + 
     theme_classic()
-  ggsave(filename=viz$location, plot=g)
+  ggsave(filename=viz$location, plot=g, width=12, height=8)
 }
