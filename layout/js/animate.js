@@ -79,7 +79,7 @@ var getAnimator = function(duration) {
     elapsed = timestamp - start;
 
     if (elapsed < duration) {
-      var index = Math.ceil(elapsed / duration * prcpTimes.times.length);
+      var index = Math.floor(elapsed / duration * prcpTimes.times.length) + 1; // 1-indexed
       if (index !== prevIndex) {
         animatePrcp(index);
         prevIndex = index;
