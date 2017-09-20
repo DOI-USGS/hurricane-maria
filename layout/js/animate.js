@@ -41,8 +41,8 @@ var animatePrcp = function(timestep) {
     $currentStormDot.data('cy', stormY);
   }
 
-  cache('.nwis-dot').css('fill', '#73877B').css('stroke', "#385F71");
-  cache('.f-' + timestep).css('fill', '#ff7000');
+  cache('.nwis-dot').css('fill', '#4BA3C3').css('stroke', "white");
+  cache('.f-' + timestep).css('fill', '#175676');
   cache('#timestamp-text').html(prcpTimes.times[timestep - 1]);
 
   var darkWidth = (timestep+1)/prcpTimes.times.length;
@@ -99,7 +99,7 @@ var getAnimator = function(duration) {
   return [animateFrame, pauseFrame];
 };
 
-var animator = getAnimator(5000);
+var animator = getAnimator(8000);
 var runAnimation = animator[0];
 var pauseAnimation = animator[1];
 

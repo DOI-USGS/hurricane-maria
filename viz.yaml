@@ -288,7 +288,7 @@ process:
     processor: precip_colors
     scripts: scripts/process/process.precip_colors.R
     reader: json
-    cols: ["#A9D09C","#83BF7C","#5EA059","#3B6A3B", "#F5CF63","#E68F4F","#DF5936","#CA4034"]
+    cols: ["#A9D09C","#83BF7C","#5EA059","#3B6A3B", "#F5CF63","#E68F4F","#DF5936","#CA4034", "#A0302E"]
     mimetype: application/javascript
     export: true
   -
@@ -316,6 +316,16 @@ process:
     reader: rds
     compress: false
     depends: ["compiled-precip", "timesteps", "precip-breaks"]
+  -
+    id: cell-precip
+    location: cache/cell-precip.rds
+    processor: cell_precip
+    scripts: [scripts/process/process.cell_precip.R, scripts/visualize/plotting_utils.R]
+    cell.offset: 8100
+    reader: rds
+    depends: 
+      classified-precip: classified-precip
+      clip: storm-islands-mobile
   -
     id: order-sites
     reader: rds
@@ -353,7 +363,7 @@ visualize:
       storm-islands: storm-islands-mobile
       storm-track: storm-track-mobile
       storm-location: storm-location-mobile
-      precip-centroids: classified-precip
+      cell-precip: cell-precip
       nwis-gages: classified-sites
     scripts: ["scripts/visualize/plotting_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
     reader: svg_map
@@ -372,8 +382,6 @@ visualize:
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: portrait
-    height: 720
-    width: 576
     export: true
     title: "Hurricane Maria's impact on precipitation and river gage height in Puerto Rico"
     alttext: "Map of Hurricane Maria's water footprint"
@@ -392,8 +400,6 @@ visualize:
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: landscape
-    height: 720
-    width: 576
     export: true
     title: "Hurricane Maria's impact on precipitation and river gage height in Puerto Rico"
     alttext: "Map of Hurricane Maria's water footprint"
