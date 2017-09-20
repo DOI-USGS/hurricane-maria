@@ -15,4 +15,4 @@ fetch.timesteps <- function(viz = as.viz('timesteps')){
   cat(jsonlite::toJSON(list(times=times)), file = viz[['location']])
 }
 
-fetchTimestamp.timesteps <- vizlab:::fetchTimestamp.file
+fetchTimestamp.timesteps <- alwaysCurrent

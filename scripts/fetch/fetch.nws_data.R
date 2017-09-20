@@ -53,4 +53,4 @@ fetch.nws_data <- function(viz=as.viz("nws-data")){
 
 }
 
-fetchTimestamp.nws_data <- vizlab:::fetchTimestamp.file
+fetchTimestamp.nws_data <- neverCurrent

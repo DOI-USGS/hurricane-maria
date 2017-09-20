@@ -20,4 +20,4 @@ fetch.sites <- function(viz = as.viz("nwis-sites")){
   saveRDS(sites, file=viz[["location"]])
 }
 
-fetchTimestamp.sites <- vizlab:::fetchTimestamp.file
+fetchTimestamp.sites <- alwaysCurrent
