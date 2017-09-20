@@ -3,7 +3,7 @@ var prcpTimes;
 var pt;
 var svg
 
-var animator, pauseAnimation = getAnimator(4000);
+
 var filename;
 
 var fetchPrcpColors = $.ajax({url:'js/precip-colors.json', dataType: 'json'});
@@ -13,14 +13,15 @@ var animatePrcp = function(timestep) {
   prcpColors.forEach(function(color, index) {
     var bin = index + 1;
     var $prcpBin = $('.p-' + timestep + '-' + bin);
-    var stormX = $currentStormDot.attr('cx');
-    var stormY = $currentStormDot.attr('cy');
     $prcpBin.css("fill", color);
     
     var $stormDot = $('.storm-dot');
     $stormDot.css("opacity", "0").css("transform", "scale(0.1");
     var $currentStormDot = $('#storm-' + timestep);
     $currentStormDot.css('opacity', '1.0').css('transform', 'scale(1)');
+    
+    var stormX = $currentStormDot.attr('cx');
+    var stormY = $currentStormDot.attr('cy');
     
     if ($currentStormDot){
       $currentStormDot.data('cx', stormX);
@@ -43,8 +44,8 @@ var play = function() {
   var button = $('#playButton');
   ga('send', 'event', 'figure', 'user pressed play');
   button.css('display', 'none');
-  window.requestAnimationFrame(animator);
-}
+  window.requestAnimationFrame(runAnimation);
+};
 var pause = function() {
   ga('send', 'event', 'figure', 'user pressed pause');
   pauseAnimation();
@@ -53,7 +54,7 @@ var pause = function() {
 var endAnimation = function() {
   var button = $('#playButton');
   button.css('display', 'block');
-}
+};
 
 var getAnimator = function(duration) {
   var start = null;
@@ -64,7 +65,7 @@ var getAnimator = function(duration) {
     elapsed = timestamp - start;
 
     if (elapsed < duration) {
-      var index = Math.floor(duration / elapsed * prcpTimes.times.length);
+      var index = Math.floor(elapsed / duration * prcpTimes.times.length);
       if (index !== prevIndex) {
         animatePrcp(index);
         prevIndex = index;
@@ -79,23 +80,24 @@ var getAnimator = function(duration) {
   var pauseFrame = function() {
     start = null;
     prevIndex = -1;
-  }
+  };
   return [animateFrame, pauseFrame];
-}
+};
 
-$('document').on('vizlab.ready', function() {
-  $('#map-figure figure').html(data);
-  $('#map-figure svg').ready(function() {
-      $.when(fetchPrcpColors, fetchPrcpTimes).done(function() {
-        prcpTimes = fetchPrcpTimes.responseJSON;
-        prcpColors = fetchPrcpColors.responseJSON;
-        svg = document.querySelector("svg");
-        pt = svg.createSVGPoint();
-        $('.viz-pause').on('click', function(){
-          pause();
-        });
-        play();
-      });
+var animator = getAnimator(4000);
+var runAnimation = animator[0];
+var pauseAnimation = animator[1];
+
+vizlab.ready(function() {
+  $.when(fetchPrcpColors, fetchPrcpTimes).done(function() {
+    prcpTimes = fetchPrcpTimes.responseJSON;
+    prcpColors = fetchPrcpColors.responseJSON;
+    svg = document.querySelector("svg");
+    pt = svg.createSVGPoint();
+    $('.viz-pause').on('click', function(){
+      pause();
+    });
+    play();
   });
 });
 
