@@ -65,7 +65,7 @@ process.storm_location <- function(viz = as.viz('storm-location')){
   row.names(sp.data.frame) <- row.names(data.out) # i think this line is unnecessary but harmless
   
   # transform to the shared proj.string
-  location <- spTransform(sp.data.frame, CRS(depends[['view-limits-mobile']]$proj.string))
+  location <- spTransform(sp.data.frame, CRS(depends[['view-limits']]$proj.string))
   
   # write the SpatialPointsDataFrame to file
   saveRDS(location, viz[['location']])
