@@ -38,7 +38,8 @@ process.classified_precip <- function(viz){
   library(dplyr)
   precip.classified <- precip.data %>% 
     group_by(id) %>% arrange(time_stamp) %>% 
-    summarize(class = precip_to_class(precip_inches, time_stamp, times, precip.breaks))
+    mutate(cumulative.p = cumsum(precip_inches)) %>% 
+    summarize(class = precip_to_class(cumulative.p, time_stamp, times, precip.breaks))
   
   
   sp.out <- deps$`compiled-precip`$precip_cell_points
