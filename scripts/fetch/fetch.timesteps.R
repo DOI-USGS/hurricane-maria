@@ -26,6 +26,8 @@ fetch.timesteps <- function(viz = as.viz('timesteps')){
     as.POSIXct %>% 
     format('%b %d %I:%M %p')
   cat(jsonlite::toJSON(list(times=times)), file = viz[['location']])
+  
+  fetchTimestamp(viz) # update the timestamp to match the newly written file (optional but saves one fetch)
 }
 
-fetchTimestamp.timesteps <- vizlab:::fetchTimestamp.file
+fetchTimestamp.timesteps <- alwaysCurrent
