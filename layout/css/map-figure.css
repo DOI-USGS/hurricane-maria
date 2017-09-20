@@ -31,7 +31,8 @@ figurecaption{
   font-size:1.1em;
 }
 
-#textSection h2{
+#textSection h2,
+#textSection h3{
   font-weight:400;
   margin-bottom:10px;
 }
