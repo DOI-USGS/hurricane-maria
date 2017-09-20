@@ -216,6 +216,13 @@ fetch:
       nws-data: nws-data
       config: config
       dates: dates
+  -
+    id: markdown-text
+    location: data/caption-text.yaml
+    reader: md
+    mimetype: text/yaml
+    scripts: 
+    
 process:
   -
     id: storm-islands-mobile
@@ -410,12 +417,20 @@ publish:
       caption: Puerto Rico and the Virgin Islands
       playIcon: play
   -
+    id: description-section
+    publisher: section
+    template: printall
+    depends: markdown-text
+    context:
+      text: markdown-text.description
+  -
     id: maria-page
     name: index
     publisher: page
     template: fullpage
     depends:
       map-section: map-section
+      description-section: description-section
       header: header
       footer: footer
       figure-css: map-figure-css
@@ -432,7 +447,7 @@ publish:
       sourcesanspro: sourcesanspro
     comment: missing from depends are the thumbnails which should be added back
     context:
-      sections: [ map-section ]
+      sections: [ map-section, description-section ]
       resources: [ figure-css, jquery-js, vizlab-js, svg-injector-js, animate-js, svg-css,
         header-css, footer-css, vizlab-favicon, sourcesanspro]
   -
