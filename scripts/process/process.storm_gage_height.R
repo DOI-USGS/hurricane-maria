@@ -11,9 +11,7 @@ process.storm_gage_height <- function(viz = as.viz("storm-gage-height")) {
   attr(gage_height$dateTime, "tzone") <- "America/Puerto_Rico"
   
   gage_height <- gage_height %>% 
-    group_by(site_no) %>% 
-    filter(min(dateTime) >= times[2], max(dateTime) <= tail(times, 2L)[2]) %>%
-    rename(p_Inst = X_00065_00000)
+    group_by(site_no)
   
   interp_q <- function(site.no) {
     use.i <- gage_height$site_no == site.no
