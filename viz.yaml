@@ -314,20 +314,26 @@ process:
     location: cache/order_sites.rds
     scripts: scripts/process/process.order_sites.R
     depends: nwis-sites
+    processor: order_sites
   - 
-    id: discharge-sparks
-    location: cache/discharge-sparks.rds
-    processor: discharge_sparks
-    scripts: scripts/process/process.discharge_sparks.R
+    id: gage-sparks
+    location: cache/gage-sparks.rds
+    processor: gage_sparks
+    scripts: scripts/process/process.sparks.R
     reader: rds
-    depends: ["storm-gage-height", "nwis-sites"]
+    depends: 
+      gage-data: storm-gage-height
+      sites: order-sites
   - 
     id: flood-sparks
     location: cache/flood-sparks.rds
     processor: flood_sparks
-    scripts: scripts/process/process.discharge_sparks.R
+    scripts: scripts/process/process.sparks.R
     reader: rds
-    depends: ["storm-gage-height", "nwis-sites", "nws-data"]
+    depends: 
+      gage-data: storm-gage-height
+      sites: order-sites
+      nws-data: nws-data
 
 visualize:
   -
@@ -354,7 +360,7 @@ visualize:
       precip-colors: precip-colors
       precip-breaks: precip-breaks
       flood-sparks: flood-sparks
-      gage-sparks: discharge-sparks
+      gage-sparks: gage-sparks
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: portrait
@@ -374,7 +380,7 @@ visualize:
       precip-colors: precip-colors
       precip-breaks: precip-breaks
       flood-sparks: flood-sparks
-      gage-sparks: discharge-sparks
+      gage-sparks: gage-sparks
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: landscape
