@@ -7,7 +7,9 @@ fetch.gage_data <- function(viz = as.viz("gage-data")){
   dates <- depData[["dates"]]
   
   gage <- dataRetrieval::readNWISuv(sites, parameterCd = config_data$pCode,
-                            startDate = dates$startDate, endDate = dates$endDate)
+                            startDate = dates$startDate, endDate = dates$endDate) %>%
+    rename(p_Inst = X_00065_00000,
+           p_Inst_cd = X_00065_00000_cd)
   
   saveRDS(gage, file=viz[['location']])
 }
