@@ -4,7 +4,7 @@ process.classified_sites <- function(viz){
   sites <- deps[['sites']]
   site.no <- sites$site_no
 
-  
+  warning('need to add calculation for timestep class for flood or no flood')
   sites@data <- data.frame(id = paste0('nwis-', site.no), 
                                     class = 'nwis-dot', 
                                     r = '3.5',
