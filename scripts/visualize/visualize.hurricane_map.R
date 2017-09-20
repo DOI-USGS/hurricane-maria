@@ -4,7 +4,7 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   library(xml2)
   
   depends <- readDepends(viz)
-  checkRequired(depends, c("base-map", "watermark"))
+  checkRequired(depends, c("base-map", "watermark", "precip-colors", "precip-breaks"))
   svg <- depends[["base-map"]]
 
   xml_attr(svg, "id") <- viz[['id']]
@@ -34,8 +34,7 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
                                                 as.character(as.numeric(vb[4])-40))
   
   g.legend <- xml_add_child(non.geo.top, 'g', id='legend', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-50))
-  warning('need to extract color and bin info from other targets')
-  add_legend(g.legend, n.bins = 9, color.name = "Blues")
+  add_legend(g.legend, colors = depends$`precip-colors`)
   
   
   return(svg)
@@ -59,7 +58,7 @@ visualize.hurricane_map_landscape <- function(viz = as.viz('hurricane-map-landsc
   write_xml(svg, file = viz[['location']])
 }
 
-add_legend <- function(parent.ele, n.bins, color.name){
+add_legend <- function(parent.ele, colors){
   
   # lower left legend:
   xml_add_child(parent.ele, 'text', "Total rainfall amount (inches)", class='svg-text legend-text', dy="-1em",
@@ -86,12 +85,12 @@ add_legend <- function(parent.ele, n.bins, color.name){
   rain.w <- 28 # width of a rain legend bin
   rain.h <- 14
   x0 <- 0
+  n.bins <- length(colors)
   
-  cols <- RColorBrewer::brewer.pal(n.bins, color.name)
   for (i in 1:n.bins){
     xml_add_child(g.rains.bn, 'rect', x=as.character(x0), y="-10", 
                   height = as.character(rain.h), width = as.character(rain.w), 
-                  class='rain-box', style=sprintf("fill:%s;",cols[i]))
+                  class='rain-box', style=sprintf("fill:%s;",colors[i]))
     x0 <- x0+rain.w
   }
   

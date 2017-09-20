@@ -261,6 +261,24 @@ process:
       sites: "sp-sites"
       gage-height: "storm-gage-height"
       nws-threshold: "nws-data"
+  -
+    id: precip-colors
+    location: cache/precip-colors.json
+    processor: precip_colors
+    scripts: scripts/process/process.precip_colors.R
+    reader: json
+    bins: 9
+    pallete: "Blues"
+    mimetype: application/javascript
+    export: true
+  -
+    id: precip-breaks
+    location: cache/precip_breaks.rds
+    processor: precip_breaks
+    scripts: scripts/process/process.precip_colors.R
+    reader: rds
+    depends: ["precip-colors"]
+    stepSize: 1.5
   
 visualize:
   -
@@ -272,7 +290,7 @@ visualize:
       storm-islands: storm-islands-mobile
       storm-track: storm-track-mobile
       storm-location: storm-location-mobile
-      nwis-gaes: classified-sites
+      nwis-gages: classified-sites
     scripts: ["scripts/visualize/plotting_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
     reader: svg_map
     mimetype: image/svg+xml
@@ -283,6 +301,8 @@ visualize:
     depends: 
       base-map: base-map-mobile 
       watermark: usgs-watermark
+      precip-colors: precip-colors
+      precip-breaks: precip-breaks
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: portrait
