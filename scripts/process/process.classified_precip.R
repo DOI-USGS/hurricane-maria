@@ -47,8 +47,8 @@ process.classified_precip <- function(viz){
   # we'd be missing coverage if this were true:
   stopifnot(length(sp.out) == nrow(precip.classified))
   
-  sp.data <- sp.out@data %>% 
+  sp.out@data <- sp.out@data %>% 
     left_join(precip.classified)
-  sp.out@data <- sp.data
+
   saveRDS(sp.out, file = viz[['location']])
 }
