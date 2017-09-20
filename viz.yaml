@@ -123,7 +123,7 @@ fetch:
     location: cache/view-limits-mobile.rds
     reader: rds
     fetcher: view_limits
-    bbox: [-67.2, 17, -64.2, 19]
+    bbox: [-67.2, 17, -63.2, 19]
     depends:
       metadata: "mobile-metadata"
     scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/plotting_utils.R]
@@ -205,19 +205,24 @@ process:
       polygons: "islands-mobile"
     mimetype: application/zip
   -
-    id: storm-track
-    location: cache/storm-track.rds
+    id: storm-track-mobile
+    location: cache/storm-track-mobile.rds
     processor: storm_track
     scripts: scripts/process/process.storm_track.R
     reader: rds
-    depends: ["view-limits-mobile", "hurricane-track"]
+    depends: 
+      view-limits: "view-limits-mobile"
+      hurricane-track: "hurricane-track"
   -
-    id: storm-location
-    location: cache/storm-location.rds
+    id: storm-location-mobile
+    location: cache/storm-location-mobile.rds
     processor: storm_location
     scripts: scripts/process/process.storm_location.R
     reader: rds
-    depends: ["view-limits-mobile", "hurricane-track", "timesteps"] 
+    depends: 
+      view-limits: "view-limits-mobile"
+      hurricane-track: "hurricane-track"
+      timesteps: "timesteps"
 visualize:
   -
     id: base-map-mobile
@@ -226,6 +231,8 @@ visualize:
     depends: 
       view-limits: view-limits-mobile
       storm-islands: storm-islands-mobile
+      storm-track: storm-track-mobile
+      storm-location: storm-location-mobile
     scripts: ["scripts/visualize/plotting_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
     reader: svg_map
     mimetype: image/svg+xml
