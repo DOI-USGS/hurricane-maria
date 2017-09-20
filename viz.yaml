@@ -19,9 +19,9 @@ info:
   required-packages:
     vizlab:
       repo: github
-      version: 0.2.0
+      version: 0.2.2
       name: USGS-VIZLAB/vizlab
-      ref: v0.2.0
+      ref: v0.2.2
     rgeos:
       repo: CRAN
       version: 0.3.23
@@ -264,6 +264,7 @@ process:
       sites: "sp-sites"
       gage-height: "storm-gage-height"
       nws-threshold: "nws-data"
+      config: "config"
   -
     id: precip-colors
     location: cache/precip-colors.json

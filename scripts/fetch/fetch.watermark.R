@@ -7,6 +7,8 @@ fetch.usgs_watermark <- function(viz){
   xml2::xml_add_child(g.watermark,'path', d=usgs.d, id = 'usgs-watermark-text', 'class'='watermark')
   xml2::xml_add_child(g.watermark,'path', d=wave.d, id = 'usgs-watermark-wave', 'class'='watermark')
   xml2::write_xml(x = g.watermark, viz[['location']])
+  
+  fetchTimestamp(viz) # update the timestamp to match the newly written file (optional but saves one fetch)
 }
 
-fetchTimestamp.usgs_watermark <- vizlab:::fetchTimestamp.file
+fetchTimestamp.usgs_watermark <- alwaysCurrent

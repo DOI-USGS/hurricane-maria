@@ -15,6 +15,8 @@ fetch.nws_conversion <- function(viz = as.viz("nws-conversion")){
   
   location <- viz[['location']]
   saveRDS(conversion.table.all, file=location)
+  
+  fetchTimestamp(viz) # update the timestamp to match the newly written file (optional but saves one fetch)
 }
 
-fetchTimestamp.nws_conversion <- vizlab:::fetchTimestamp.file
+fetchTimestamp.nws_conversion <- alwaysCurrent
