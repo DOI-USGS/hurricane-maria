@@ -18,6 +18,8 @@ fetch.sites <- function(viz = as.viz("nwis-sites")){
     distinct()
   
   saveRDS(sites, file=viz[["location"]])
+  
+  fetchTimestamp(viz) # update the timestamp to match the newly written file (optional but saves one fetch)
 }
 
-fetchTimestamp.sites <- vizlab:::fetchTimestamp.file
+fetchTimestamp.sites <- alwaysCurrent
