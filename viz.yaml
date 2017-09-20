@@ -264,6 +264,7 @@ process:
       sites: "sp-sites"
       gage-height: "storm-gage-height"
       nws-threshold: "nws-data"
+      config: "config"
   -
     id: precip-colors
     location: cache/precip-colors.json
