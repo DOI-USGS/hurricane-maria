@@ -1,4 +1,4 @@
-process.sp_sites <- function(viz){
+process.sp_sites <- function(viz = as.viz("sp-sites")){
   deps <- readDepends(viz)
   checkRequired(deps, c('sites', 'metadata'))
   sites <- deps[['sites']]
@@ -6,7 +6,7 @@ process.sp_sites <- function(viz){
   
   sites <- sp::SpatialPointsDataFrame(
     cbind(sites$dec_long_va,sites$dec_lat_va), 
-    data = sites[c('site_no')],
+    data = sites[c('site_no', "station_nm")],
     proj4string = sp::CRS("+proj=longlat +datum=WGS84"))
   
   storm.sites <- sp::spTransform(sites, sp::CRS(metadata$proj.string))
