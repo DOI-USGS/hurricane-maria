@@ -78,6 +78,10 @@ visualize_hurricane_map <- function(viz, mode, ...){
     # now add flood spark
   }
   
+  m = xml_add_child(d, 'mask', id="spark-opacity", x="0", y="-1", width="1", height="3", maskContentUnits="objectBoundingBox")
+  xml_add_child(m, 'rect', x="0", y="-1", width="1", height="3", style="fill-opacity: 0.18; fill: white;", id='spark-light-mask')
+  xml_add_child(m, 'rect', x="0", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='spark-full-mask')
+  
   xml_add_child(g.sparkle.blck, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', 
                 y=as.character(ys[i]+50), x = as.character(side.panel/2), 'text-anchor'='middle')
   

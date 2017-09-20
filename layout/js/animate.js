@@ -38,8 +38,8 @@ var animatePrcp = function(timestep, $currentStormDot) {
     }
   });
 
-  $('.nwis-dot').css('fill', '#73877B').css('stroke', "#385F71");
-  $('.f-' + timestep).css('fill', '#ff7000');
+  $('.nwis-dot').css('fill', '#4BA3C3').css('stroke', "white");
+  $('.f-' + timestep).css('fill', '#175676');
   $('#timestamp-text').html(prcpTimes.times[timestep - 1]);
 
   var darkWidth = (timestep+1)/prcpTimes.times.length;
