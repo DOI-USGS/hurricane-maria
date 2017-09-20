@@ -36,12 +36,13 @@ process.classified_precip <- function(viz){
   attr(precip.data$time_stamp, "tzone") <- "America/Puerto_Rico"
   times <- as.POSIXct(strptime(deps[['timesteps']]$times, format='%b %d %I:%M %p', tz="America/Puerto_Rico"))
   precip.breaks <- deps$`precip-breaks`
+  compress <- (is.null(viz[['compress']]) || viz[['compress']])
   
   library(dplyr)
   precip.classified <- precip.data %>% 
     group_by(id) %>% arrange(time_stamp) %>% 
     mutate(cumulative.p = cumsum(precip_inches)) %>% 
-    summarize(class = precip_to_class(cumulative.p, time_stamp, times, precip.breaks))
+    summarize(class = precip_to_class(cumulative.p, time_stamp, times, precip.breaks, compress))
   
   
   sp.out <- deps$`compiled-precip`$precip_cell_points

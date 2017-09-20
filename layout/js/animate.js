@@ -1,47 +1,59 @@
 var prcpColors;
 var prcpTimes;
 var pt;
-var svg
-
+var svg;
 
 var filename;
 
 var fetchPrcpColors = $.ajax({url:'js/precip-colors.json', dataType: 'json'});
 var fetchPrcpTimes = $.ajax({url:'js/times.json', dataType: 'json'});
 
+
+var cache = (function(){
+  var selectorCache = {};
+  return function(selector) {
+    if (!selectorCache.hasOwnProperty(selector)) {
+      selectorCache[selector] = $(selector);
+    }
+    return selectorCache[selector];
+  };
+})();
+
 var animatePrcp = function(timestep) {
   prcpColors.forEach(function(color, index) {
     var bin = index + 1;
-    var $prcpBin = $('.p-' + timestep + '-' + bin);
+    var tSelector = '.p-' + timestep + '-' + bin;
+    
+    var $prcpBin = cache(tSelector);
     $prcpBin.css("fill", color);
-    
-    var $stormDot = $('.storm-dot');
-    $stormDot.css("opacity", "0").css("transform", "scale(0.1");
-    var $currentStormDot = $('#storm-' + timestep);
-    $currentStormDot.css('opacity', '1.0').css('transform', 'scale(1)');
-    
-    var stormX = $currentStormDot.attr('cx');
-    var stormY = $currentStormDot.attr('cy');
-    
-    if ($currentStormDot){
-      $currentStormDot.data('cx', stormX);
-      $currentStormDot.data('cy', stormY);
-    }
   });
 
-  $('.nwis-dot').css('fill', '#4BA3C3').css('stroke', "white");
-  $('.f-' + timestep).css('fill', '#175676');
-  $('#timestamp-text').html(prcpTimes.times[timestep - 1]);
+  var $stormDot = cache('.storm-dot');
+  $stormDot.css("opacity", "0").css("transform", "scale(0.1");
+  var $currentStormDot = cache('#storm-' + timestep);
+  $currentStormDot.css('opacity', '1.0').css('transform', 'scale(1)');
+  
+  var stormX = $currentStormDot.attr('cx');
+  var stormY = $currentStormDot.attr('cy');
+  
+  if ($currentStormDot){
+    $currentStormDot.data('cx', stormX);
+    $currentStormDot.data('cy', stormY);
+  }
+
+  cache('.nwis-dot').css('fill', '#4BA3C3').css('stroke', "white");
+  cache('.f-' + timestep).css('fill', '#175676');
+  cache('#timestamp-text').html(prcpTimes.times[timestep - 1]);
 
   var darkWidth = (timestep+1)/prcpTimes.times.length;
-  $('#spark-light-mask').attr('x', darkWidth).attr('width', 1 - darkWidth);
-  $('#spark-full-mask').attr('width', darkWidth);
-  $('#flood-light-mask').attr('x', darkWidth).attr('width', 1 - darkWidth);
-  $('#flood-full-mask').attr('width', darkWidth);
+  cache('#spark-light-mask').attr('x', darkWidth).attr('width', 1 - darkWidth);
+  cache('#spark-full-mask').attr('width', darkWidth);
+  cache('#flood-light-mask').attr('x', darkWidth).attr('width', 1 - darkWidth);
+  cache('#flood-full-mask').attr('width', darkWidth);
 };
 
 var play = function() {
-  var button = $('#playButton');
+  var button = cache('#playButton');
   ga('send', 'event', 'figure', 'user pressed play');
   button.css('display', 'none');
   window.requestAnimationFrame(runAnimation);
@@ -52,7 +64,8 @@ var pause = function() {
   endAnimation();
 };
 var endAnimation = function() {
-  var button = $('#playButton');
+  animatePrcp(prcpTimes.times.length);
+  var button = cache('#playButton');
   button.css('display', 'block');
 };
 
@@ -66,7 +79,7 @@ var getAnimator = function(duration) {
     elapsed = timestamp - start;
 
     if (elapsed < duration) {
-      var index = Math.floor(elapsed / duration * prcpTimes.times.length);
+      var index = Math.floor(elapsed / duration * prcpTimes.times.length) + 1; // 1-indexed
       if (index !== prevIndex) {
         animatePrcp(index);
         prevIndex = index;
