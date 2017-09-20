@@ -43,7 +43,7 @@ var play = function() {
   var button = $('#playButton');
   ga('send', 'event', 'figure', 'user pressed play');
   button.css('display', 'none');
-  window.requestAnimationFrame();
+  window.requestAnimationFrame(animator);
 }
 var pause = function() {
   ga('send', 'event', 'figure', 'user pressed pause');
