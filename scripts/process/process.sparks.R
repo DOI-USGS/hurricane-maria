@@ -62,7 +62,7 @@ process.flood_sparks <- function(viz = as.viz('flood-sparks')){
   
   site.nos <- sites$site_no[which(sites$site_no %in% names(gage_data))]
 
-  sparks1 <- data.frame(y = sapply(site.nos, function(x) grab_clip_rect(gage_data[[x]]$y, 
+  sparks <- data.frame(y = sapply(site.nos, function(x) grab_clip_rect(gage_data[[x]]$y, 
                                                                             nws_data$flood.stage[nws_data$site_no == x]), 
                                        USE.NAMES = FALSE),
                        site_no = site.nos, stringsAsFactors = FALSE) 
