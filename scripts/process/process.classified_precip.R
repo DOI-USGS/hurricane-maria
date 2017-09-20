@@ -2,15 +2,17 @@
 precip_to_class <- function(precip, p.times, times.out, breaks, compress = TRUE){
   
   
+  # fill out the sparse matrix. If it doesn't have early data, give it zero for that
   if (p.times[1] != times.out[1]){
     p.times <- c(times.out[1], p.times)
     precip <- c(0, precip)
   }
-  
+  # fill out the sparse matrix. If it doesn't have late, extend the last obs
   if (tail(p.times, 1) != tail(times.out, 1)){
     p.times <- c(p.times, tail(times.out, 1))
     precip <- c(precip, tail(precip, 1))
   }
+  # approximate using a step/constant filler. No interpolation.
   precip.full <- approx(x = p.times, y = precip, xout = times.out, method = 'constant')$y
   bins <- cut(precip.full, breaks = breaks, labels = F, right = FALSE)
   if (compress){
