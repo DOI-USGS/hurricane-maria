@@ -423,10 +423,11 @@ publish:
   -
     id: description-section
     publisher: section
-    template: printall
+    template: layout/templates/text-section.mustache
     depends: markdown-text
     context:
       text: markdown-text.description
+      id: textSection
   -
     id: maria-page
     name: index

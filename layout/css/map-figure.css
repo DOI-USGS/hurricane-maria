@@ -19,9 +19,8 @@ a{
   text-decoration:none;
 }
 
-#viz-text,
-#map-figure,
-#dataSources{
+#textSection,
+#map-figure{
   padding:10px;
   font-size:.9em;
   font-family: "Source Sans Pro", sans-serif;
@@ -32,17 +31,17 @@ figurecaption{
   font-size:1.1em;
 }
 
-#dataSources h2{
+#textSection h2{
   font-weight:400;
   margin-bottom:10px;
 }
 
-#dataSources p{
+#textSection p{
   margin-bottom:10px;
   font-size:1.1em;
 }
 
-#dataSources a:hover{
+#textSection a:hover{
   text-decoration:underline;
 }
 
@@ -92,9 +91,8 @@ figurecaption{
 }
 
 @media screen and (min-width:768px){
-  #viz-text,
-  #map-figure,
-  #dataSources{
+  #textSection,
+  #map-figure{
     width:760px;
     margin:10px auto 10px auto;
     font-size:1em;
@@ -102,9 +100,8 @@ figurecaption{
 }
 
 @media screen and (min-width:1200px){
-  #viz-text,
-  #map-figure,
-  #dataSources{
+  #textSection,
+  #map-figure{
     width:960px;
   }
 }
