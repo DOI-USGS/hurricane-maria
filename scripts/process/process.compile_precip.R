@@ -1,4 +1,4 @@
-process.compile_precip <- function(viz = as.viz('compile-precip')) {
+process.compile_precip <- function(viz = as.viz("compiled-precip")) {
   library(dplyr)
   
   ## Grab files from the fetcher and untar along side them.

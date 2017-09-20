@@ -107,7 +107,7 @@ parameter:
   -
     id: dates
     startDate: "2017-09-18"
-    endDate: "2017-09-19"
+    endDate: "2017-09-25"
   -
     id: config
     pCode: "00065"
