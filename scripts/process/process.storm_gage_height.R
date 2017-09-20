@@ -8,14 +8,17 @@ process.storm_gage_height <- function(viz = as.viz("storm-gage-height")) {
   times <- as.POSIXct(strptime(unlist(deps[["timesteps"]]),'%b %d %I:%M %p'), tz = "America/Puerto_Rico")
   
   gage_height <- deps[["gage-height"]]
-  attr(gage_height$dateTime, "tzone") <- "America/Puerto_Rico"
   
   gage_height <- gage_height %>% 
     group_by(site_no)
   
   interp_q <- function(site.no) {
     use.i <- gage_height$site_no == site.no
-    approx(x = gage_height$dateTime[use.i], y = gage_height$p_Inst[use.i], xout = times)
+    gage_obs <- gage_height$p_Inst[use.i]
+    gage_obs[which(gage_obs == -999999.00)] <- 0
+    out <- approx(x = gage_height$dateTime[use.i], y = gage_obs, xout = times)
+    out$y[which(is.na(out$y))] <- 0
+    out
   }
   sites <- unique(gage_height$site_no)
   timestep.q <- lapply(sites, interp_q) %>% setNames(sites)
