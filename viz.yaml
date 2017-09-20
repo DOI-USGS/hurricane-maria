@@ -215,7 +215,7 @@ fetch:
     depends: 
       nws-data: nws-data
       config: config
-      dates: dates
+      timesteps: timesteps
   -
     id: markdown-text
     location: data/caption-text.yaml
