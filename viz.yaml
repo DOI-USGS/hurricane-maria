@@ -299,6 +299,12 @@ process:
     scripts: scripts/process/process.classified_precip.R
     reader: rds
     depends: ["compiled-precip", "timesteps", "precip-breaks"]
+  -
+    id: order-sites
+    reader: rds
+    location: cache/order_sites.rds
+    scripts: scripts/process/process.order_sites.R
+    depends: nwis-sites
   - 
     id: discharge-sparks
     location: cache/discharge-sparks.rds
