@@ -233,6 +233,35 @@ process:
       view-limits: "view-limits-mobile"
       hurricane-track: "hurricane-track"
       timesteps: "timesteps"
+  - 
+    id: storm-gage-height
+    location: cache/storm-gage-height.rds
+    processor: storm_gage_height
+    scripts: scripts/process/process.storm_gage_height.R
+    reader: rds
+    depends: 
+      gage-height: "gage-data"
+      timesteps: "timesteps"
+  -
+    id: sp-sites
+    location: cache/sp-sites.rds
+    processor: sp_sites
+    scripts: scripts/process/process.sp_sites.R
+    reader: rds
+    depends: 
+      metadata: mobile-metadata
+      sites: nwis-sites
+  -
+    id: classified-sites
+    location: cache/classified-sites.rds
+    processor: classified_sites
+    scripts: scripts/process/process.classified_sites.R
+    reader: rds
+    depends: 
+      sites: "sp-sites"
+      gage-height: "storm-gage-height"
+      nws-threshold: "nws-data"
+  
 visualize:
   -
     id: base-map-mobile
@@ -243,6 +272,7 @@ visualize:
       storm-islands: storm-islands-mobile
       storm-track: storm-track-mobile
       storm-location: storm-location-mobile
+      nwis-gaes: classified-sites
     scripts: ["scripts/visualize/plotting_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
     reader: svg_map
     mimetype: image/svg+xml
