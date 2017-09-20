@@ -1,8 +1,11 @@
-process.compile_precip <- function(viz = as.viz('compile-precip')) {
+process.compile_precip <- function(viz = as.viz("compiled-precip")) {
   library(dplyr)
   
   ## Grab files from the fetcher and untar along side them.
-  tar_files <- unlist(readDepends(viz)[["precip-shapefiles"]]) 
+  deps <- readDepends(viz)
+  checkRequired(deps, c("precip-shapefiles","metadata"))
+  tar_files <- unlist(deps[["precip-shapefiles"]]) 
+  metadata <- deps[['metadata']]
   temp_precip_dir <- file.path(dirname(tar_files[1]), "untar")
   for(tFile in tar_files) {
     untar(tarfile = tFile, compressed = "gzip", exdir = temp_precip_dir)
@@ -47,11 +50,13 @@ process.compile_precip <- function(viz = as.viz('compile-precip')) {
                                                  stringsAsFactors = F),
                                proj4string = sp::CRS("+init=EPSG:4326"))
   
+  precip_cells_transformed <- sp::spTransform(precip_data_points, sp::CRS(metadata$proj.string))
+  
   # Select data needed in output.
   precip_data <- precip_data %>% 
     dplyr::select(id, precip_inches, time_stamp)
   
-  saveRDS(list(precip_cell_points = precip_data_points, 
+  saveRDS(list(precip_cell_points = precip_cells_transformed, 
                precip_data = precip_data), 
           viz[["location"]])
 }

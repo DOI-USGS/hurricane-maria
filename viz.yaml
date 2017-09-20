@@ -107,7 +107,7 @@ parameter:
   -
     id: dates
     startDate: "2017-09-18"
-    endDate: "2017-09-19"
+    endDate: "2017-09-25"
   -
     id: config
     pCode: "00065"
@@ -142,7 +142,7 @@ fetch:
     fetcher: timesteps
     scripts: scripts/fetch/fetch.timesteps.R
     reader: json
-    #depends: "precip-cell-data"
+    depends: "compiled-precip"
     export: true
     mimetype: application/javascript
   -
@@ -278,14 +278,23 @@ process:
     scripts: scripts/process/process.precip_colors.R
     reader: rds
     depends: ["precip-colors"]
-    stepSize: 1.5
+    stepSize: 0.5
   -
-    id: compile-precip
+    id: compiled-precip
     location: cache/compiled-precip.rds
     processor: compile_precip
     scripts: scripts/process/process.compile_precip.R
     reader: rds
-    depends: ["precip-shapefiles"]
+    depends: 
+      precip-shapefiles: "precip-shapefiles"
+      metadata: "mobile-metadata"
+  -
+    id: classified-precip
+    location: cache/classified-precip.rds
+    processor: classified_precip
+    scripts: scripts/process/process.classified_precip.R
+    reader: rds
+    depends: ["compiled-precip", "timesteps", "precip-breaks"]
     
 visualize:
   -
@@ -297,6 +306,7 @@ visualize:
       storm-islands: storm-islands-mobile
       storm-track: storm-track-mobile
       storm-location: storm-location-mobile
+      precip-centroids: classified-precip
       nwis-gages: classified-sites
     scripts: ["scripts/visualize/plotting_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
     reader: svg_map
@@ -318,15 +328,25 @@ visualize:
     export: true
     title: "Hurricane Maria's impact on precipitation and river gage height in Puerto Rico"
     alttext: "Map of Hurricane Maria's water footprint"
-publish:
+    
   -
     id: hurricane-map-landscape
-    location: figures/hurricane-map-mobile.svg
-    comment: this should be removed when visualizer is completed
+    location: figures/hurricane-map-desktop.svg
+    visualizer: hurricane_map_portrait
+    depends: 
+      base-map: base-map-mobile 
+      watermark: usgs-watermark
+      precip-colors: precip-colors
+      precip-breaks: precip-breaks
+    scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: landscape
+    height: 720
+    width: 576
+    export: true
     title: "Hurricane Maria's impact on precipitation and river gage height in Puerto Rico"
     alttext: "Map of Hurricane Maria's water footprint"
+publish:
   -
     id: header
     publisher: section
@@ -380,6 +400,8 @@ publish:
       vizlab-favicon: lib-vizlab-favicon
       header-css: lib-header-css
       footer-css: lib-footer-css
+      colors: precip-colors
+      times: timesteps
       sourcesanspro: sourcesanspro
     comment: missing from depends are the thumbnails which should be added back
     context:
