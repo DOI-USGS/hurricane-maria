@@ -36,7 +36,7 @@ process.classified_sites <- function(viz = as.viz("classified-sites")) {
 }
 
 siteCapper <- function(x) {
-  rules <- list(PR = "PR", NR = "near", DE = "de", BLW = "below", AT = "at")
+  rules <- list(PR = "PR", NR = "near", DE = "de", BLW = "below", AT = "at", LA = "la")
   s <- strsplit(x, " ")[[1]]
   s[which(!s %in% names(rules))] <- stringi::stri_trans_general(s[which(!s %in% names(rules))],
                                                                 id = "Title")
