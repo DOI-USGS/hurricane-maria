@@ -193,6 +193,16 @@ fetch:
     depends: 
       sites: nwis-sites
       nws: nws-conversion
+  -
+    id: gage-data
+    location: cache/gage-data.rds
+    fetcher: gage_data
+    scripts: scripts/fetch/fetch.gage_data.R
+    reader: rds
+    depends: 
+      nws-data: nws-data
+      config: config
+      dates: dates
 process:
   -
     id: storm-islands-mobile
