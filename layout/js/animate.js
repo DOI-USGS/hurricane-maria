@@ -3,34 +3,24 @@ var prcpTimes;
 var pt;
 var svg
 
-var running = false;
-var interval = undefined;
-var intervalLength = 160;
-var timestep = 1;
+var animator, pauseAnimation = getAnimator(4000);
 var filename;
-
-if (window.innerWidth > window.innerHeight) {
-  filename = 'images/hurricane-map-landscape.svg';
-}
-else {
-  filename = 'images/hurricane-map-mobile.svg';
-}
-
-var fetchSvg = $.ajax({
-  url: filename,
-  dataType: 'html'
-});
 
 var fetchPrcpColors = $.ajax({url:'js/precip-colors.json', dataType: 'json'});
 var fetchPrcpTimes = $.ajax({url:'js/times.json', dataType: 'json'});
 
-var animatePrcp = function(timestep, $currentStormDot) {
+var animatePrcp = function(timestep) {
   prcpColors.forEach(function(color, index) {
     var bin = index + 1;
     var $prcpBin = $('.p-' + timestep + '-' + bin);
     var stormX = $currentStormDot.attr('cx');
     var stormY = $currentStormDot.attr('cy');
     $prcpBin.css("fill", color);
+    
+    var $stormDot = $('.storm-dot');
+    $stormDot.css("opacity", "0").css("transform", "scale(0.1");
+    var $currentStormDot = $('#storm-' + timestep);
+    $currentStormDot.css('opacity', '1.0').css('transform', 'scale(1)');
     
     if ($currentStormDot){
       $currentStormDot.data('cx', stormX);
@@ -51,53 +41,61 @@ var animatePrcp = function(timestep, $currentStormDot) {
 
 var play = function() {
   var button = $('#playButton');
-  if (!running) {
-    running = true;
-    ga('send', 'event', 'figure', 'user pressed play');
-    button.css('display', 'none');
-    interval = setInterval(function() {
-      
-      var $stormDot = $('.storm-dot');
-      $stormDot.css("opacity", "0").css("transform", "scale(0.1");
-      var $currentStormDot = $('#storm-' + timestep);
-      $currentStormDot.css('opacity', '1.0').css('transform', 'scale(1)');
-      
-      if (timestep < prcpTimes.times.length) {
-        animatePrcp(timestep, $currentStormDot);
-        timestep++;
-      } else {
-        timestep = 1;
-        clearInterval(interval);
-        running = false;
-        button.css('display', 'block');
-      }
-    }, intervalLength);
-  }  
+  ga('send', 'event', 'figure', 'user pressed play');
+  button.css('display', 'none');
+  window.requestAnimationFrame();
 }
 var pause = function() {
-  var button = $('#playButton');
-  if (running) {
-    clearInterval(interval);
-    running = false;
-    button.css('display', 'block');
-    ga('send', 'event', 'figure', 'user pressed pause');
-  }
+  ga('send', 'event', 'figure', 'user pressed pause');
+  pauseAnimation();
+  endAnimation();
 };
-$('document').ready(function() {
-  fetchSvg.done(function(data) {
-    $('#map-figure figure').html(data);
-    $('#map-figure svg').ready(function() {
-        $.when(fetchPrcpColors, fetchPrcpTimes).done(function() {
-          prcpTimes = fetchPrcpTimes.responseJSON;
-          prcpColors = fetchPrcpColors.responseJSON;
-          svg = document.querySelector("svg");
-          pt = svg.createSVGPoint();
-          $('.viz-pause').on('click', function(){
-            pause();
-          });
-          play();
+var endAnimation = function() {
+  var button = $('#playButton');
+  button.css('display', 'block');
+}
+
+var getAnimator = function(duration) {
+  var start = null;
+  var elapsed = 0;
+  var prevIndex = -1;
+  var animateFrame = function(timestamp) {
+    if (!start) start = timestamp - elapsed;
+    elapsed = timestamp - start;
+
+    if (elapsed < duration) {
+      var index = Math.floor(duration / elapsed * prcpTimes.times.length);
+      if (index !== prevIndex) {
+        animatePrcp(index);
+        prevIndex = index;
+      }
+      window.requestAnimationFrame(animateFrame);
+    } else {
+      start = null;
+      elapsed = 0;
+      endAnimation();
+    }
+  };
+  var pauseFrame = function() {
+    start = null;
+    prevIndex = -1;
+  }
+  return [animateFrame, pauseFrame];
+}
+
+$('document').on('vizlab.ready', function() {
+  $('#map-figure figure').html(data);
+  $('#map-figure svg').ready(function() {
+      $.when(fetchPrcpColors, fetchPrcpTimes).done(function() {
+        prcpTimes = fetchPrcpTimes.responseJSON;
+        prcpColors = fetchPrcpColors.responseJSON;
+        svg = document.querySelector("svg");
+        pt = svg.createSVGPoint();
+        $('.viz-pause').on('click', function(){
+          pause();
         });
-    });
+        play();
+      });
   });
 });
 
