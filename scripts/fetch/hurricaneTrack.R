@@ -24,5 +24,12 @@ getHurricaneTrackURLfetcher <- function(viz=as.viz('hurricane-track')) {
   nhc.url <- "http://www.nhc.noaa.gov/gis/best_track/%s%s%s_best_track.zip"
   download.url <- sprintf(nhc.url, viz[['ocean']], viz[['stormnum']], viz[['year']])
   
-  urlFetcher(id = viz[['id']], location = viz[['location']], remoteURL = download.url)
+  fetchviz <- list(
+    id = viz[['id']],
+    location = viz[['location']],
+    remoteURL = download.url,
+    fetcher = "url"
+  ) %>%
+    as.viz() %>%
+    as.fetcher()
 }

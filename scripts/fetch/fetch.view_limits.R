@@ -20,8 +20,6 @@ fetch.view_limits <- function(viz = as.viz('view-limits-mobile')){
                      pointsize = metadata[['pointsize']]))
   
   saveRDS(out, viz[['location']])
-  
-  fetchTimestamp(viz) # update the timestamp to match the newly written file (optional but saves one fetch)
 }
 
-fetchTimestamp.view_limits <- alwaysCurrent
+fetchTimestamp.view_limits <- vizlab:::fetchTimestamp.file
