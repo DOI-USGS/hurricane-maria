@@ -31,7 +31,6 @@ process.sparks <- function(viz = as.viz('sparks')){
   checkRequired(depends, c("gage-data", "sites", "nws-data"))
   sites <- depends[["sites"]]
   gage_data <- depends[["gage-data"]]$timestep_q
-  site_nils <- depends[["gage-data"]]$gage_mask_vals
   nws_data <- depends[["nws-data"]]
   
   sites <- sites[which(sites$site_no %in% names(gage_data)),]
