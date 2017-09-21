@@ -4,10 +4,11 @@ visualize_hurricane_map <- function(viz, mode, ...){
   library(xml2)
   
   depends <- readDepends(viz)
-  checkRequired(depends, c("base-map", "watermark", "precip-colors", "precip-breaks", "gage-sparks", "flood-sparks"))
+  checkRequired(depends, c("base-map", "watermark", "precip-colors", "precip-breaks", "gage-sparks", "flood-sparks", "gage-blocker"))
   svg <- depends[["base-map"]]
   sparks <- depends[["gage-sparks"]]
   fl.sparks <- depends[["flood-sparks"]]
+  blockers <- depends[["gage-blocker"]]
 
   xml_attr(svg, "id") <- viz[['id']]
   vb <- strsplit(xml_attr(svg, 'viewBox'),'[ ]')[[1]]
@@ -73,6 +74,7 @@ visualize_hurricane_map <- function(viz, mode, ...){
     fl.spark$y <- NULL
     fl.spark$points <- sparks[i, ]$points
     do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), fl.spark))
+    xml_add_child(g.single, 'path', d = blockers$d[1L], style='fill: grey; opacity: 0.5') # PLACEHOLDER; not real data
     # now add flood spark
   }
   
