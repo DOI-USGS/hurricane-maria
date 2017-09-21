@@ -100,6 +100,8 @@ process.gage_blocker <- function(viz = as.viz('gage-blocker')){
   # these need to be in the same order (and same length) as the site sparklines, otherwise we need to treat them differently in visualize
   blck.i <- 1
   
+  vert_adjust <- length(names(mask_values)) * 0.1
+  
   for(site in names(mask_values)) {
     
     block_times <- which(gage_data[[site]] == mask_values[site]) # assuming these are contiguous for now!
@@ -110,12 +112,13 @@ process.gage_blocker <- function(viz = as.viz('gage-blocker')){
     
     block_range <- diff(time.locations[c(block_times[1], block_times[length(block_times)])])
     
-    blockers$d[blck.i] = sprintf('M%1.2f,0v0 M%1.2f,0v%1.2f h%1.2f v-%1.2fZ M%1.2f,0v0', 
+    blockers$d[blck.i] = sprintf('M%1.2f,0v0 M%1.2f,%1.2fv%1.2f h%1.2f v-%1.2fZ M%1.2f,0v0', 
                                        r.buffer, 
-                                       time.locations[block_times[1]], 
-                                       height, 
+                                       time.locations[block_times[1]],
+                                       vert_adjust,
+                                       height-vert_adjust, 
                                        block_range, 
-                                       height, 
+                                       height-vert_adjust, 
                                        view_box[3] - r.buffer)
     blockers$id[blck.i] <- paste0('blocker-',site)
     blck.i <- blck.i + 1
