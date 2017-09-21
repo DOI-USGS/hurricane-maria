@@ -42,7 +42,8 @@ var animatePrcp = function(timestep) {
   }
 
   cache('.nwis-dot').css('fill', '#4BA3C3').css('stroke', "white");
-  cache('.f-' + timestep).css('fill', '#175676');
+  cache('.f-' + timestep).css('fill', '#ff7000');
+  cache('.off-' + timestep).css('fill', 'ff69b4');
   cache('#timestamp-text').html(prcpTimes.times[timestep - 1]);
 
   var darkWidth = (timestep+1)/prcpTimes.times.length;
