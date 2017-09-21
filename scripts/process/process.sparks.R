@@ -67,7 +67,7 @@ process.sparks <- function(viz = as.viz('sparks')){
   checkRequired(depends, c("gage-data", "sites", "nws-data", "timesteps"))
   sites <- depends[["sites"]]
   gage_data <- depends[["gage-data"]]$timestep_q
-  mask_values <- depends[["gage_info"]]$gage_mask_vals
+  mask_values <- depends[["gage-data"]]$gage_mask_vals
   nws_data <- depends[["nws-data"]]
   timesteps <- depends[['timesteps']]
   
