@@ -1,5 +1,5 @@
-sparkbox.height <- 0.4
-sparkbox.width <- 2
+sparkbox.height <- 0.35
+sparkbox.width <- 3.5
 grab_spark <- function(vals){
   
   xs <- seq_len(length(vals))
@@ -92,7 +92,13 @@ process.gage_blocker <- function(viz = as.viz('gage-blocker')){
   
   mask_values <- depends[["gage_info"]]$gage_mask_vals
   gage_data <- depends[["gage_info"]]$timestep_q
-  blockers <- data.frame()
+  blockers <- data.frame(d = rep(NA_character_, length(gage_data)), 
+                         id = NA_character_,
+                         style = "mask: url(#flood-opacity);", 
+                         stringsAsFactors = FALSE, class = 'gage-blocker')
+  
+  # these need to be in the same order (and same length) as the site sparklines, otherwise we need to treat them differently in visualize
+  blck.i <- 1
   
   for(site in names(mask_values)) {
     
@@ -104,15 +110,15 @@ process.gage_blocker <- function(viz = as.viz('gage-blocker')){
     
     block_range <- diff(time.locations[c(block_times[1], block_times[length(block_times)])])
     
-    blockers <- data.frame(d = sprintf('M%1.2f,0v0 M%1.2f,0v%1.2f h%1.2f v-%1.2fZ M%1.2f,0v0', 
+    blockers$d[blck.i] = sprintf('M%1.2f,0v0 M%1.2f,0v%1.2f h%1.2f v-%1.2fZ M%1.2f,0v0', 
                                        r.buffer, 
                                        time.locations[block_times[1]], 
                                        height, 
                                        block_range, 
                                        height, 
-                                       view_box[3] - r.buffer),
-                           class= 'gage-blocker', 
-                           stringsAsFactors = FALSE) 
+                                       view_box[3] - r.buffer)
+    blockers$id[blck.i] <- paste0('blocker-',site)
+    blck.i <- blck.i + 1
   }
   
   # to use this, we'd need the data.frame to have a row for each gage and be in the same order as the sparks (or make sure the ids match)
