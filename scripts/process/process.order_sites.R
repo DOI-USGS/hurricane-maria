@@ -7,7 +7,7 @@ process.order_sites <- function(viz = as.viz("order-sites")){
   sites <- as.data.frame(depends[["sp-sites"]])
   
   reordered_sites <- sites %>%
-    arrange(desc(coords.x1)) 
+    arrange(coords.x1) 
     
   saveRDS(reordered_sites, viz[['location']])
 }
