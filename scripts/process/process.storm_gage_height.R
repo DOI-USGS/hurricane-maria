@@ -9,15 +9,24 @@ process.storm_gage_height <- function(viz = as.viz("storm-gage-height")) {
   
   no_value <- -999999
   
+  
+  problem_gages <- data.frame(site_no = c("50106100","50136400"), 
+                              new_nil = c(3.25,1.5), 
+                              stringsAsFactors = FALSE)
+  
   gage_height <- deps[["gage-height"]]
   
   gage_nils <- gage_height %>% 
     filter(p_Inst != no_value) %>%
     group_by(site_no) %>%
-    summarize(nil = (min(p_Inst)-0.1)) # this -0.1 makes these mins unique but not mess with scaling.
+    summarize(nil = (min(p_Inst)-0.1)) %>% # this -0.1 makes these mins unique but not mess with scaling.
+    left_join(problem_gages, by="site_no") %>%
+    mutate(nil = ifelse(!is.na(new_nil), new_nil, nil)) %>%
+    select(-new_nil)
   
   gage_height <- left_join(gage_height, gage_nils, by="site_no") %>%
     mutate(p_Inst = ifelse(p_Inst == no_value, nil, p_Inst)) %>%
+    mutate(p_Inst = ifelse(p_Inst < nil, nil, p_Inst)) %>%
     select(-nil)
   
   sites <- gage_nils$site_no
