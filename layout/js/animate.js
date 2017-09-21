@@ -31,7 +31,7 @@ var animatePrcp = function(timestep) {
     $currentStormDot.data('cy', stormY);
   }
 
-  cache('.nwis-dot').css('fill', '#4BA3C3').css('stroke', "white");
+  cache('.nwis-dot-' + timestep).css('fill', '#4BA3C3').css('stroke', "white");
   cache('.f-' + timestep).css('fill', '#ff7000');
   cache('.off-' + timestep).css('fill', 'ff69b4');
   cache('[id=timestamp-text]').html(prcpTimes.times[timestep - 1]);
