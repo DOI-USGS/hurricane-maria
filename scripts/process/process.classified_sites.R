@@ -10,6 +10,8 @@ process.classified_sites <- function(viz = as.viz("classified-sites")) {
   site_nos <- names(gage_data)
   
   library(sp)
+  library(dplyr)
+  
   sites <- nwis_sites[which(nwis_sites@data$site_no %in% site_nos), ]
   
   class_df <- data.frame(stringsAsFactors = FALSE)
@@ -23,12 +25,17 @@ process.classified_sites <- function(viz = as.viz("classified-sites")) {
     class_df <- dplyr::bind_rows(class_df, class_df_row)
   }
   
-  sites@data <- data.frame(id = paste0('nwis-', sites@data$site_no), 
-                                    class = 'nwis-dot', 
-                                    r = '3.5',
-                                    onmousemove = sprintf("hovertext('%s',evt);", sites@data$station_nm),
-                                    onmouseout = "hovertext(' ');", 
-                                    onclick = sprintf("openNWIS('%s', evt);", sites@data$site_no), 
-                                    stringsAsFactors = FALSE)
+  site_data <- data.frame(site_no = sites@data$site_no,
+                          id = paste0('nwis-', sites@data$site_no), 
+                          r = '3.5',
+                          onmousemove = sprintf("hovertext('%s',evt);", sites@data$station_nm),
+                          onmouseout = "hovertext(' ');", 
+                          onclick = sprintf("openNWIS('%s', evt);", sites@data$site_no), 
+                          stringsAsFactors = FALSE) %>%
+    left_join(class_df, by="site_no") %>%
+    select(-site_no)
+  
+  sites@data <- site_data
+  
   saveRDS(sites, file = viz[['location']])
 }
