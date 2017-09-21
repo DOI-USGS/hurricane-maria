@@ -334,18 +334,9 @@ process:
     depends: sp-sites
     processor: order_sites
   - 
-    id: gage-sparks
-    location: cache/gage-sparks.rds
-    processor: gage_sparks
-    scripts: scripts/process/process.sparks.R
-    reader: rds
-    depends: 
-      gage-data: storm-gage-height
-      sites: order-sites
-  - 
-    id: flood-sparks
-    location: cache/flood-sparks.rds
-    processor: flood_sparks
+    id: sparks
+    location: cache/sparks.rds
+    processor: sparks
     scripts: scripts/process/process.sparks.R
     reader: rds
     depends: 
@@ -377,8 +368,7 @@ visualize:
       watermark: usgs-watermark
       precip-colors: precip-colors
       precip-breaks: precip-breaks
-      flood-sparks: flood-sparks
-      gage-sparks: gage-sparks
+      sparks: sparks
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: portrait
@@ -395,8 +385,7 @@ visualize:
       watermark: usgs-watermark
       precip-colors: precip-colors
       precip-breaks: precip-breaks
-      flood-sparks: flood-sparks
-      gage-sparks: gage-sparks
+      sparks: sparks
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: landscape

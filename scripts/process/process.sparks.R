@@ -10,31 +10,6 @@ grab_spark <- function(vals){
   xml2::xml_attr(xml2::xml_find_first(x, '//*[local-name()="polyline"]'),'points')
 }
 
-process.gage_sparks <- function(viz = as.viz('gage-sparks')){
-  library(dplyr)
-  depends <- readDepends(viz)
-  checkRequired(depends, c("gage-data", "sites"))
-  
-  sites <- depends[["sites"]]
-  gage_data <- depends[["gage-data"]]
-  
-  sites <- sites[which(sites$site_no %in% names(gage_data)),]
-
-  sparks <- data.frame(points = sapply(sites$site_no, function(x) grab_spark(gage_data[[x]]), USE.NAMES = FALSE),
-                       site_no = sites$site_no, station_nm = sites$station_nm, stringsAsFactors = FALSE) %>% 
-    mutate(class = "sparkline", 
-           id = sprintf("sparkline-%s", site_no), 
-           style = "mask: url(#spark-opacity);",
-           onmouseover=sprintf("setBold('nwis-%s');", site_no), 
-           onmouseout=sprintf("setNormal('nwis-%s');hovertext(' ');", site_no),
-           onclick=sprintf("openNWIS('%s', evt);", site_no),
-           onmousemove=sprintf("hovertext('%s',evt);", station_nm)) %>%
-    select(-station_nm)
-          
-
-  saveRDS(sparks, viz[['location']])
-}
-
 grab_clip_rect <- function(vals, flood){
   
   x = svglite::xmlSVG({
@@ -50,24 +25,31 @@ grab_clip_rect <- function(vals, flood){
   }
 }
 
-# Should rename at some point. Not always going to be discharge.
-process.flood_sparks <- function(viz = as.viz('flood-sparks')){
+process.sparks <- function(viz = as.viz('sparks')){
   library(dplyr)
   depends <- readDepends(viz)
   checkRequired(depends, c("gage-data", "sites", "nws-data"))
-  
   sites <- depends[["sites"]]
-  nws_data <- depends[["nws-data"]]
   gage_data <- depends[["gage-data"]]
+  nws_data <- depends[["nws-data"]]
   
   sites <- sites[which(sites$site_no %in% names(gage_data)),]
-
-  sparks <- data.frame(y = sapply(sites$site_no, function(x) grab_clip_rect(gage_data[[x]], 
-                                                                            nws_data$flood.stage[nws_data$site_no == x]), 
-                                       USE.NAMES = FALSE),
-                       site_no = sites$site_no, station_nm = sites$station_nm, stringsAsFactors = FALSE) 
   
-  sparks <- sparks %>% 
+  gage_sparks <- data.frame(points = sapply(sites$site_no, function(x) grab_spark(gage_data[[x]]), USE.NAMES = FALSE),
+                       site_no = sites$site_no, station_nm = sites$station_nm, stringsAsFactors = FALSE) %>% 
+    mutate(class = "sparkline", 
+           id = sprintf("sparkline-%s", site_no), 
+           style = "mask: url(#spark-opacity);",
+           onmouseover=sprintf("setBold('nwis-%s');", site_no), 
+           onmouseout=sprintf("setNormal('nwis-%s');hovertext(' ');", site_no),
+           onclick=sprintf("openNWIS('%s', evt);", site_no),
+           onmousemove=sprintf("hovertext('%s',evt);", station_nm)) %>%
+    select(-station_nm)
+  
+  flood_sparks <- data.frame(y = sapply(sites$site_no, function(x) grab_clip_rect(gage_data[[x]], 
+                                                                            nws_data$flood.stage[nws_data$site_no == x]), 
+                                  USE.NAMES = FALSE),
+                       site_no = sites$site_no, station_nm = sites$station_nm, stringsAsFactors = FALSE) %>% 
     mutate(class = "floodline", 
            id = sprintf("floodline-%s", site_no), 
            style = "mask: url(#flood-opacity);",
@@ -77,6 +59,6 @@ process.flood_sparks <- function(viz = as.viz('flood-sparks')){
            onclick=sprintf("openNWIS('%s', evt);", site_no),
            onmousemove=sprintf("hovertext('%s',evt);", station_nm)) %>%
     select(-station_nm)
-           
-  saveRDS(sparks, viz[['location']])
+          
+  saveRDS(list(gage_sparks = gage_sparks, flood_sparks = flood_sparks), viz[['location']])
 }
