@@ -47,10 +47,6 @@ visualize_hurricane_map <- function(viz, mode, ...){
   g.legend <- xml_add_child(non.geo.top, 'g', id='legend', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-50))
   add_legend(g.legend, colors = depends$`precip-colors`, break.step = getContentInfo('precip-breaks')$stepSize)
   
-  cp <- xml_add_child(d, 'clipPath', id="islands-clip")
-  storm.islands <- xml_attr(xml_children(xml_find_first(svg, "//*[local-name()='g'][@id='storm-islands']") ), 'id')
-  .jnk <- lapply(storm.islands, function(x) xml_add_child(cp, 'use', 'xlink:href'=sprintf("#%s", x)))
-  
   xml_add_child(non.geo.bot, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', 
                 y=as.character(as.numeric(vb[4])-40), x = vb[3], dy = "-0.4em", dx = "-1em", 'text-anchor'='end')
   
@@ -64,6 +60,7 @@ visualize_hurricane_map <- function(viz, mode, ...){
   g.sparkles <- xml_add_child(g.sparkle.blck, 'g', id = sprintf('sparkline-squiggles-%s', mode))
   
   ys <- seq(45, as.numeric(vb[4]) - 120, length.out = nrow(sparks))
+  blocker.ids <- sapply(blockers$id, function(x) strsplit(x, '[-]')[[1]][2], USE.NAMES = FALSE)
   
   for (i in 1:nrow(sparks)){ 
     g.single <- xml_add_child(g.sparkles, 'g', transform=sprintf('translate(0,%s)', ys[i])) 
@@ -73,14 +70,20 @@ visualize_hurricane_map <- function(viz, mode, ...){
     xml_add_child(cp, 'rect', width ='100%', height = fl.spark$y, y = "0")
     fl.spark$y <- NULL
     fl.spark$points <- sparks[i, ]$points
+    # CAN'T assume blockers are in the same order as sparks:
+    spark.id <- strsplit(fl.spark$id, '[-]')[[1]][2]
+    use.i <- which(blocker.ids == spark.id)
     do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), fl.spark))
-    xml_add_child(g.single, 'path', d = blockers$d[1L], style='fill: grey; opacity: 0.5') # PLACEHOLDER; not real data
+    do.call(xml_add_child, append(list(.x = g.single, .value = 'path'), blockers[use.i,]))
     # now add flood spark
   }
   
   m = xml_add_child(d, 'mask', id="spark-opacity", x="0", y="-1", width="1", height="3", maskContentUnits="objectBoundingBox")
   xml_add_child(m, 'rect', x="0", y="-1", width="1", height="3", style="fill-opacity: 0.18; fill: white;", id='spark-light-mask')
   xml_add_child(m, 'rect', x="0", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='spark-full-mask')
+  m = xml_add_child(d, 'mask', id="flood-opacity", x="0", y="-1", width="1", height="3", maskContentUnits="objectBoundingBox")
+  xml_add_child(m, 'rect', x="0", y="-1", width="1", height="3", style="fill-opacity: 0; fill: white;", id='flood-light-mask')
+  xml_add_child(m, 'rect', x="0", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='flood-full-mask')
   
   xml_add_child(g.sparkle.blck, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', 
                 y=as.character(ys[i]+50), x = as.character(side.panel/2), 'text-anchor'='middle')
