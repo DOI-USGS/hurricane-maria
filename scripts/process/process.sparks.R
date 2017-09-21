@@ -70,30 +70,52 @@ process.gage_blocker <- function(viz = as.viz('gage-blocker')){
   library(xml2)
   library(dplyr)
   depends <- readDepends(viz)
-  checkRequired(depends, c("timesteps")) # more to come when we use real data
-  x = svglite::xmlSVG({
+  checkRequired(depends, c("timesteps", "gage_info"))
+  
+  # grab an empty standard size plot to work with.
+  x <- svglite::xmlSVG({
     par(omi=c(0,0,0,0), mai=c(0,0,0,0))
     plot(1, 2, type='l', axes=F, ann=F)
     }, height=sparkbox.height, width=sparkbox.width)
   
-  vbox <- strsplit(xml_attr(x, 'viewBox'), '[ ]')[[1]] %>% as.numeric()
+  view_box <- strsplit(xml_attr(x, 'viewBox'), '[ ]')[[1]] %>% as.numeric()
   
-  r.buffer <- 0.04 * vbox[3] # R does a 4% buffer automatically
-  plotting.width <- vbox[3] - 2 * r.buffer
-  height <- vbox[4]
-  time.locations <- seq(from = r.buffer, to = vbox[3] - r.buffer, length.out = length(depends[['timesteps']]$times))
+  r.buffer <- 0.04 * view_box[3] # R does a 4% buffer automatically need to take it into account it later.
+  plotting.width <- view_box[3] - 2 * r.buffer
+  height <- view_box[4]
+  time.locations <- seq(from = r.buffer, to = view_box[3] - r.buffer, 
+                        length.out = length(depends[['timesteps']]$times))
+  
   # no matter what, we need a zero-length dot at the beginning of this set of times, and at the end, so the width of the 
   # elements are always the same (for the "reveal" animation). The zero length is the `v0`, which is a vertical line of length 0
   # Z "closes" a part of a path by drawing a straight line to the previous
-  # here I will give every gage the same "blocker" path, which will happen for timesteps 62 to 71
-  blockers <- data.frame(stringsAsFactors = FALSE,
-                         d = sprintf('M%1.2f,0v0 M%1.2f,0v%1.2f h%1.2f v-%1.2fZ M%1.2f,0v0', 
-                                     r.buffer, time.locations[62], height, 
-                                     diff(time.locations[c(62,71)]), height, vbox[3] - r.buffer),
-                         class= 'gage-blocker')
+  
+  mask_values <- depends[["gage_info"]]$gage_mask_vals
+  gage_data <- depends[["gage_info"]]$timestep_q
+  blockers <- data.frame()
+  
+  for(site in names(mask_values)) {
+    
+    block_times <- which(gage_data[[site]] == mask_values[site]) # assuming these are contiguous for now!
+    
+    if(length(block_times) == 0) {
+      block_times <- length(gage_data[[site]])
+    }
+    
+    block_range <- diff(time.locations[c(block_times[1], block_times[length(block_times)])])
+    
+    blockers <- data.frame(d = sprintf('M%1.2f,0v0 M%1.2f,0v%1.2f h%1.2f v-%1.2fZ M%1.2f,0v0', 
+                                       r.buffer, 
+                                       time.locations[block_times[1]], 
+                                       height, 
+                                       block_range, 
+                                       height, 
+                                       view_box[3] - r.buffer),
+                           class= 'gage-blocker', 
+                           stringsAsFactors = FALSE) 
+  }
   
   # to use this, we'd need the data.frame to have a row for each gage and be in the same order as the sparks (or make sure the ids match)
   # then we'd need to change a line in the visualize.hurricane_map code to use a do.call instead of just the `d` element here
   saveRDS(blockers, file = viz[['location']])
 }
->>>>>>> 40729fa19c71a118238e06eaff45bbfc82265175

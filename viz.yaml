@@ -351,6 +351,7 @@ process:
     reader: rds
     depends: 
       timesteps: timesteps
+      gage_info: storm-gage-height
 
 visualize:
   -
