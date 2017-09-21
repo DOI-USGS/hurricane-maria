@@ -64,7 +64,6 @@ var pause = function() {
   endAnimation();
 };
 var endAnimation = function() {
-  animatePrcp(prcpTimes.times.length);
   var button = cache('#playButton');
   button.css('display', 'block');
 };
@@ -88,6 +87,7 @@ var getAnimator = function(duration) {
     } else {
       start = null;
       elapsed = 0;
+      animatePrcp(prcpTimes.times.length); // make sure last frame is animated
       endAnimation();
     }
   };
