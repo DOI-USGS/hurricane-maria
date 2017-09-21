@@ -393,14 +393,6 @@ visualize:
     export: true
     title: "Hurricane Maria's impact on precipitation and river gage height in Puerto Rico"
     alttext: "Map of Hurricane Maria's water footprint"
-  -
-    id: monitor_gages
-    location: figures/monitor-gages.png
-    visualizer: monitor_gages
-    depends:
-      gage-data: gage-data
-    scripts: scripts/visualize/visualize.monitor_gages.R
-    mimetype: image/png
 publish:
   -
     id: header
