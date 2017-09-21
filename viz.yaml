@@ -298,7 +298,7 @@ process:
     scripts: scripts/process/process.precip_colors.R
     reader: rds
     depends: ["precip-colors"]
-    stepSize: 0.5
+    stepSize: 1
   -
     id: compiled-precip
     location: cache/compiled-precip.rds
@@ -343,6 +343,14 @@ process:
       gage-data: storm-gage-height
       sites: order-sites
       nws-data: nws-data
+  - 
+    id: gage-blocker
+    location: cache/gage-blocker.rds
+    processor: gage_blocker
+    scripts: scripts/process/process.sparks.R
+    reader: rds
+    depends: 
+      timesteps: timesteps
 
 visualize:
   -
@@ -369,6 +377,7 @@ visualize:
       precip-colors: precip-colors
       precip-breaks: precip-breaks
       sparks: sparks
+      gage-blocker: gage-blocker
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: portrait
@@ -386,6 +395,7 @@ visualize:
       precip-colors: precip-colors
       precip-breaks: precip-breaks
       sparks: sparks
+      gage-blocker: gage-blocker
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: landscape
