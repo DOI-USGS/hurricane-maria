@@ -4,20 +4,10 @@ var pt;
 var svg;
 
 var filename;
+var cache;
 
 var fetchPrcpColors = $.ajax({url:'js/precip-colors.json', dataType: 'json'});
 var fetchPrcpTimes = $.ajax({url:'js/times.json', dataType: 'json'});
-
-
-var cache = (function(){
-  var selectorCache = {};
-  return function(selector) {
-    if (!selectorCache.hasOwnProperty(selector)) {
-      selectorCache[selector] = $(selector);
-    }
-    return selectorCache[selector];
-  };
-})();
 
 var animatePrcp = function(timestep) {
   prcpColors.forEach(function(color, index) {
@@ -30,7 +20,7 @@ var animatePrcp = function(timestep) {
 
   var $stormDot = cache('.storm-dot');
   $stormDot.css("opacity", "0").css("transform", "scale(0.1");
-  var $currentStormDot = cache('#storm-' + timestep);
+  var $currentStormDot = cache('[id=storm-' + timestep + ']');
   $currentStormDot.css('opacity', '1.0').css('transform', 'scale(1)');
   
   var stormX = $currentStormDot.attr('cx');
@@ -43,13 +33,13 @@ var animatePrcp = function(timestep) {
 
   cache('.nwis-dot').css('fill', '#4BA3C3').css('stroke', "white");
   cache('.f-' + timestep).css('fill', '#175676');
-  cache('#timestamp-text').html(prcpTimes.times[timestep - 1]);
+  cache('[id=timestamp-text]').html(prcpTimes.times[timestep - 1]);
 
   var darkWidth = (timestep+1)/prcpTimes.times.length;
-  cache('#spark-light-mask').attr('x', darkWidth).attr('width', 1 - darkWidth);
-  cache('#spark-full-mask').attr('width', darkWidth);
-  cache('#flood-light-mask').attr('x', darkWidth).attr('width', 1 - darkWidth);
-  cache('#flood-full-mask').attr('width', darkWidth);
+  cache('[id=spark-light-mask]').attr('x', darkWidth).attr('width', 1 - darkWidth);
+  cache('[id=spark-full-mask]').attr('width', darkWidth);
+  cache('[id=flood-light-mask]').attr('x', darkWidth).attr('width', 1 - darkWidth);
+  cache('[id=flood-full-mask]').attr('width', darkWidth);
 };
 
 var play = function() {
@@ -99,11 +89,22 @@ var getAnimator = function(duration) {
   return [animateFrame, pauseFrame];
 };
 
+var createCache = function(){
+  var selectorCache = {};
+  return function(selector) {
+    if (!selectorCache.hasOwnProperty(selector)) {
+      selectorCache[selector] = $(selector);
+    }
+    return selectorCache[selector];
+  };
+};
+
 var animator = getAnimator(8000);
 var runAnimation = animator[0];
 var pauseAnimation = animator[1];
 
 vizlab.ready(function() {
+  cache = createCache();
   $.when(fetchPrcpColors, fetchPrcpTimes).done(function() {
     prcpTimes = fetchPrcpTimes.responseJSON;
     prcpColors = fetchPrcpColors.responseJSON;
