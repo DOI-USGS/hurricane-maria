@@ -1,5 +1,5 @@
-sparkbox.height <- 0.23
-sparkbox.width <- 2
+sparkbox.height <- 0.35
+sparkbox.width <- 3.5
 grab_spark <- function(vals){
   
   xs <- seq_len(length(vals))
