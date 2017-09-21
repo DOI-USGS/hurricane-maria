@@ -28,7 +28,7 @@ precip_to_class <- function(precip, p.times, times.out, breaks, compress = TRUE)
 
 #' take the compiled-precip object and turn it into 
 #' a single sp.points.d.f w/ proper classes per timestep
-process.classified_precip <- function(viz){
+process.classified_precip <- function(viz = as.viz("classified-precip")){
   deps <- readDepends(viz)
   checkRequired(deps, c("compiled-precip", "timesteps", "precip-breaks"))
   
