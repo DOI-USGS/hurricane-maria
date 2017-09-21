@@ -6,10 +6,13 @@ process.classified_sites <- function(viz = as.viz("classified-sites")) {
   nws_data <- deps[["nws-threshold"]]
   config_data <- deps[["config"]]
   stopifnot(config_data$pCode == "00065")
+  nils <- deps[["gage-height"]]$gage_mask_vals
   
   site_nos <- names(gage_data)
   
   library(sp)
+  library(dplyr)
+  
   sites <- nwis_sites[which(nwis_sites@data$site_no %in% site_nos), ]
   
   class_df <- data.frame(stringsAsFactors = FALSE)
@@ -17,18 +20,33 @@ process.classified_sites <- function(viz = as.viz("classified-sites")) {
   for(site in site_nos) {
     flood_stage <- nws_data$flood.stage[which(nws_data$site_no == site)]
     which_floods <- which(gage_data[[site]] > flood_stage)
-    site_class <- paste(paste("f", which_floods, sep = "-"), collapse = " ")
+    
+    offline <- nils[site]
+    which_offline <- which(gage_data[[site]] == offline)
+    
+    flood_online <- which_floods[!(which_floods %in% which_offline)]
+    
+    site_class_flood <- paste(paste("f", flood_online, sep = "-"), collapse = " ")
+    site_class_offline <- paste(paste("off", which_offline, sep = "-"), collapse = " ")
+    
+    site_class <- paste(site_class_flood, site_class_offline)
+    
     class_df_row <- data.frame(site_no = site, class = site_class, 
                                stringsAsFactors = FALSE)
     class_df <- dplyr::bind_rows(class_df, class_df_row)
   }
   
-  sites@data <- data.frame(id = paste0('nwis-', sites@data$site_no), 
-                                    class = 'nwis-dot', 
-                                    r = '3.5',
-                                    onmousemove = sprintf("hovertext('%s',evt);", sites@data$station_nm),
-                                    onmouseout = "hovertext(' ');", 
-                                    onclick = sprintf("openNWIS('%s', evt);", sites@data$site_no), 
-                                    stringsAsFactors = FALSE)
+  site_data <- data.frame(site_no = sites@data$site_no,
+                          id = paste0('nwis-', sites@data$site_no), 
+                          r = '3.5',
+                          onmousemove = sprintf("hovertext('%s',evt);", sites@data$station_nm),
+                          onmouseout = "hovertext(' ');", 
+                          onclick = sprintf("openNWIS('%s', evt);", sites@data$site_no), 
+                          stringsAsFactors = FALSE) %>%
+    left_join(class_df, by="site_no") %>%
+    select(-site_no)
+  
+  sites@data <- site_data
+  
   saveRDS(sites, file = viz[['location']])
 }
