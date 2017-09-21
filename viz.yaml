@@ -314,6 +314,7 @@ process:
     processor: classified_precip
     scripts: scripts/process/process.classified_precip.R
     reader: rds
+    compress: false
     depends: ["compiled-precip", "timesteps", "precip-breaks"]
   -
     id: cell-precip
@@ -330,7 +331,7 @@ process:
     reader: rds
     location: cache/order_sites.rds
     scripts: scripts/process/process.order_sites.R
-    depends: nwis-sites
+    depends: sp-sites
     processor: order_sites
   - 
     id: gage-sparks
