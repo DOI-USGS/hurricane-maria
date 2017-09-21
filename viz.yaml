@@ -352,6 +352,14 @@ process:
       gage-data: storm-gage-height
       sites: order-sites
       nws-data: nws-data
+  - 
+    id: gage-blocker
+    location: cache/gage-blocker.rds
+    processor: gage_blocker
+    scripts: scripts/process/process.sparks.R
+    reader: rds
+    depends: 
+      timesteps: timesteps
 
 visualize:
   -
@@ -379,6 +387,7 @@ visualize:
       precip-breaks: precip-breaks
       flood-sparks: flood-sparks
       gage-sparks: gage-sparks
+      gage-blocker: gage-blocker
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: portrait
@@ -397,6 +406,7 @@ visualize:
       precip-breaks: precip-breaks
       flood-sparks: flood-sparks
       gage-sparks: gage-sparks
+      gage-blocker: gage-blocker
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: landscape
