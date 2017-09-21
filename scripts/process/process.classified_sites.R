@@ -2,7 +2,7 @@ process.classified_sites <- function(viz = as.viz("classified-sites")) {
   deps <- readDepends(viz)
   checkRequired(deps, c('sites','gage-height','nws-threshold', 'config'))
   nwis_sites <- deps[['sites']]
-  gage_data <- deps[["gage-height"]]
+  gage_data <- deps[["gage-height"]]$timestep_q
   nws_data <- deps[["nws-threshold"]]
   config_data <- deps[["config"]]
   stopifnot(config_data$pCode == "00065")

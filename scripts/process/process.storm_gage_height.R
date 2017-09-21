@@ -9,19 +9,27 @@ process.storm_gage_height <- function(viz = as.viz("storm-gage-height")) {
   
   no_value <- -999999
   
+  
+  problem_gages <- data.frame(site_no = c("50106100","50136400"), 
+                              new_nil = c(3.25,1.5), 
+                              stringsAsFactors = FALSE)
+  
   gage_height <- deps[["gage-height"]]
   
-  
-  gage_mins <- gage_height %>% 
+  gage_nils <- gage_height %>% 
     filter(p_Inst != no_value) %>%
     group_by(site_no) %>%
-    summarize(min = min(p_Inst))
+    summarize(nil = (min(p_Inst)-0.1)) %>% # this -0.1 makes these mins unique but not mess with scaling.
+    left_join(problem_gages, by="site_no") %>%
+    mutate(nil = ifelse(!is.na(new_nil), new_nil, nil)) %>%
+    select(-new_nil)
   
-  gage_height <- left_join(gage_height, gage_mins, by="site_no") %>%
-    mutate(p_Inst = ifelse(p_Inst == no_value, min, p_Inst)) %>%
-    select(-min)
+  gage_height <- left_join(gage_height, gage_nils, by="site_no") %>%
+    mutate(p_Inst = ifelse(p_Inst == no_value, nil, p_Inst)) %>%
+    mutate(p_Inst = ifelse(p_Inst < nil, nil, p_Inst)) %>%
+    select(-nil)
   
-  sites <- gage_mins$site_no
+  sites <- gage_nils$site_no
   
   timestep.q <- list()
   
@@ -31,9 +39,11 @@ process.storm_gage_height <- function(viz = as.viz("storm-gage-height")) {
     
     out <- approx(x = gage_tvp$dateTime, y = gage_tvp$p_Inst, 
                   xout = times)
-    out$y[is.na(out$y)] <- gage_mins$min[gage_mins$site_no == site]
+    out$y[is.na(out$y)] <- gage_nils$nil[gage_nils$site_no == site]
     timestep.q[[site]] <- out$y
   }
-
-  saveRDS(timestep.q, file = viz[['location']])
+  
+  gage_nils <- setNames(gage_nils$nil, gage_nils$site_no)
+  
+  saveRDS(list(gage_mask_vals = gage_nils, timestep_q = timestep.q), file = viz[['location']])
 }
