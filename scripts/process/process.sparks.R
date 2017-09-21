@@ -41,7 +41,7 @@ process.sparks <- function(viz = as.viz('sparks')){
                        site_no = sites$site_no, station_nm = sites$station_nm, stringsAsFactors = FALSE) %>% 
     mutate(class = "sparkline", 
            id = sprintf("sparkline-%s", site_no), 
-           style = "mask: url(#spark-opacity);",
+           "mask" = "url(#spark-opacity);",
            onmouseover=sprintf("setBold('nwis-%s');", site_no), 
            onmouseout=sprintf("setNormal('nwis-%s');hovertext(' ');", site_no),
            onclick=sprintf("openNWIS('%s', evt);", site_no),
@@ -54,7 +54,7 @@ process.sparks <- function(viz = as.viz('sparks')){
                        site_no = sites$site_no, station_nm = sites$station_nm, stringsAsFactors = FALSE) %>% 
     mutate(class = "floodline", 
            id = sprintf("floodline-%s", site_no), 
-           style = "mask: url(#flood-opacity);",
+           "mask" = "url(#flood-opacity);",
            "clip-path"=sprintf("url(#flood-clip-%s)", site_no), 
            onmouseover=sprintf("setBold('nwis-%s');setBold('sparkline-%s');", site_no, site_no),
            onmouseout=sprintf("setNormal('nwis-%s');setNormal('sparkline-%s');hovertext(' ');", site_no, site_no),
@@ -94,7 +94,7 @@ process.gage_blocker <- function(viz = as.viz('gage-blocker')){
   gage_data <- depends[["gage_info"]]$timestep_q
   blockers <- data.frame(d = rep(NA_character_, length(gage_data)), 
                          id = NA_character_,
-                         style = "mask: url(#flood-opacity);", 
+                         "mask" = "url(#flood-opacity);", 
                          stringsAsFactors = FALSE, class = 'gage-blocker')
   
   # these need to be in the same order (and same length) as the site sparklines, otherwise we need to treat them differently in visualize
