@@ -4,11 +4,11 @@ visualize_hurricane_map <- function(viz, mode, ...){
   library(xml2)
   
   depends <- readDepends(viz)
-  checkRequired(depends, c("base-map", "watermark", "precip-colors", "precip-breaks", "sparks", "gage-blocker"))
+  checkRequired(depends, c("base-map", "watermark", "precip-colors", "precip-breaks", "sparks"))
   svg <- depends[["base-map"]]
   sparks <- depends[["sparks"]]$gage_sparks
   fl.sparks <- depends[["sparks"]]$flood_sparks
-  blockers <- depends[["gage-blocker"]]
+  blockers <- depends[["sparks"]]$gage_blockers
 
   xml_attr(svg, "id") <- viz[['id']]
   vb <- strsplit(xml_attr(svg, 'viewBox'),'[ ]')[[1]]
