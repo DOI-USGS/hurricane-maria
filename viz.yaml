@@ -104,7 +104,7 @@ parameter:
   -
     id: mobile-metadata
     height: 8
-    width: 8
+    width: 12
     pointsize: 12
     proj.string: '+init=epsg:3991'
   -
@@ -288,7 +288,7 @@ process:
     processor: precip_colors
     scripts: scripts/process/process.precip_colors.R
     reader: json
-    cols: ["#A9D09C","#83BF7C","#5EA059","#3B6A3B", "#F5CF63","#E68F4F","#DF5936","#CA4034", "#A0302E"]
+    cols: ["#fef5a7", "#FDE725", "#9FDA3A", "#4AC16D", "#1FA187", "#277F8E", "#365C8D", "#46337E", "#440154"]
     mimetype: application/javascript
     export: true
   -
@@ -298,7 +298,7 @@ process:
     scripts: scripts/process/process.precip_colors.R
     reader: rds
     depends: ["precip-colors"]
-    stepSize: 0.5
+    stepSize: 1
   -
     id: compiled-precip
     location: cache/compiled-precip.rds
@@ -331,27 +331,27 @@ process:
     reader: rds
     location: cache/order_sites.rds
     scripts: scripts/process/process.order_sites.R
-    depends: nwis-sites
+    depends: sp-sites
     processor: order_sites
   - 
-    id: gage-sparks
-    location: cache/gage-sparks.rds
-    processor: gage_sparks
-    scripts: scripts/process/process.sparks.R
-    reader: rds
-    depends: 
-      gage-data: storm-gage-height
-      sites: order-sites
-  - 
-    id: flood-sparks
-    location: cache/flood-sparks.rds
-    processor: flood_sparks
+    id: sparks
+    location: cache/sparks.rds
+    processor: sparks
     scripts: scripts/process/process.sparks.R
     reader: rds
     depends: 
       gage-data: storm-gage-height
       sites: order-sites
       nws-data: nws-data
+  - 
+    id: gage-blocker
+    location: cache/gage-blocker.rds
+    processor: gage_blocker
+    scripts: scripts/process/process.sparks.R
+    reader: rds
+    depends: 
+      timesteps: timesteps
+      gage_info: storm-gage-height
 
 visualize:
   -
@@ -377,8 +377,8 @@ visualize:
       watermark: usgs-watermark
       precip-colors: precip-colors
       precip-breaks: precip-breaks
-      flood-sparks: flood-sparks
-      gage-sparks: gage-sparks
+      sparks: sparks
+      gage-blocker: gage-blocker
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: portrait
@@ -395,8 +395,8 @@ visualize:
       watermark: usgs-watermark
       precip-colors: precip-colors
       precip-breaks: precip-breaks
-      flood-sparks: flood-sparks
-      gage-sparks: gage-sparks
+      sparks: sparks
+      gage-blocker: gage-blocker
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: landscape

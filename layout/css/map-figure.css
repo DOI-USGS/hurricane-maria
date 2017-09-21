@@ -8,6 +8,7 @@
     }
 }
 
+html,
 body {
     font-family: "Source Sans Pro", sans-serif;
 }
@@ -23,7 +24,6 @@ a{
 #map-figure{
   padding:10px;
   font-size:.9em;
-  font-family: "Source Sans Pro", sans-serif;
 }
 
 figurecaption{
@@ -71,19 +71,6 @@ figurecaption{
 
 #map-figure figure {
   text-align: center;
-}
-#map-figure figure img {
-  -webkit-animation: rotation 2s infinite linear;
-  -moz-animation: rotation 2s infinite linear;
-  animation: rotation 2s infinite linear;
-}
-@-webkit-keyframes rotation {
-    from {-webkit-transform: rotate(0deg);}
-    to   {-webkit-transform: rotate(359deg);}
-}
-@keyframes rotation { 
-  from {transform:rotate(0deg);} 
-  to {transform:rotate(360deg);} 
 }
 
 

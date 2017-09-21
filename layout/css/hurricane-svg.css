@@ -91,6 +91,11 @@ line, polyline, path{
   fill-opacity:0.8;
 }
 
+.gage-blocker {
+  fill: grey;
+  stroke: none;
+}
+
 .nwis-flooding-legend{
   stroke: white;
   sroke-width: 0.5;

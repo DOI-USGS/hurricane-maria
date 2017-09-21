@@ -2,7 +2,7 @@ process.classified_sites <- function(viz = as.viz("classified-sites")) {
   deps <- readDepends(viz)
   checkRequired(deps, c('sites','gage-height','nws-threshold', 'config'))
   nwis_sites <- deps[['sites']]
-  gage_data <- deps[["gage-height"]]
+  gage_data <- deps[["gage-height"]]$timestep_q
   nws_data <- deps[["nws-threshold"]]
   config_data <- deps[["config"]]
   stopifnot(config_data$pCode == "00065")
@@ -23,26 +23,12 @@ process.classified_sites <- function(viz = as.viz("classified-sites")) {
     class_df <- dplyr::bind_rows(class_df, class_df_row)
   }
   
-  site_names <- as.character(sapply(sites@data$station_nm, siteCapper))
-  
   sites@data <- data.frame(id = paste0('nwis-', sites@data$site_no), 
                                     class = 'nwis-dot', 
                                     r = '3.5',
-                                    onmousemove = sprintf("hovertext('%s',evt);", site_names),
+                                    onmousemove = sprintf("hovertext('%s',evt);", sites@data$station_nm),
                                     onmouseout = "hovertext(' ');", 
                                     onclick = sprintf("openNWIS('%s', evt);", sites@data$site_no), 
                                     stringsAsFactors = FALSE)
   saveRDS(sites, file = viz[['location']])
-}
-
-siteCapper <- function(x) {
-  rules <- list(PR = "PR", NR = "near", DE = "de", 
-                BLW = "below", AT = "at", LA = "la", 
-                ABV = "above")
-  
-  s <- strsplit(x, " ")[[1]]
-  s[which(!s %in% names(rules))] <- stringi::stri_trans_general(s[which(!s %in% names(rules))],
-                                                                id = "Title")
-  s[which(s %in% names(rules))] <- unlist(rules[s[which(s %in% names(rules))]])
-  s <- paste(s, collapse=" ")
 }
