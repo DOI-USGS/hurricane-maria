@@ -75,7 +75,7 @@ visualize_hurricane_map <- function(viz=as.viz('hurricane-map-mobile'), mode, ..
   # sparklines within container:
   g.sparkle.blck <- xml_add_child(g.spark, 'g', id = sprintf('sparkline-squiggle-block-%s', mode))
   xml_add_child(g.sparkle.blck, 'text', x=as.character(side.panel/2), 'Featured USGS gages', dy="1.5em", 'text-anchor'='middle', class='svg-text legend-text')
-  xml_add_child(g.sparkle.blck, 'text', x=as.character(side.panel/2), '(normalized stage)', dy='4em', 'text-anchor'='middle', class='svg-text smallprint-text legend-text')
+  xml_add_child(g.sparkle.blck, 'text', x=as.character(side.panel/2), '(normalized stage)', dy='3em', 'text-anchor'='middle', class='svg-text smallprint-text legend-text')
   g.sparkles <- xml_add_child(g.sparkle.blck, 'g', id = sprintf('sparkline-squiggles-%s', mode))
   if (mode == 'portrait'){
     xml_attr(g.sparkles, 'transform') <- "translate(30,0)scale(2,1)"
