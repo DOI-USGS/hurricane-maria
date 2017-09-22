@@ -24,9 +24,9 @@ line, polyline, path{
 }
 
 .floodline {
-  stroke: #FF6347;
+  stroke: #175676;
   stroke-width: 2;
-  fill: #ff7000;
+  fill: #175676;
   fill-opacity: 0.6;
   stroke-opacity: 0.9;
 }
@@ -88,15 +88,19 @@ line, polyline, path{
   stroke:white;
   sroke-width: 0.5;
   fill: #4BA3C3;
-  fill-opacity:0.8;
 }
 
 .gage-blocker {
-  fill: grey;
-  opacity: 0.7;
-  stroke: none;
+  fill: white;
+  opacity: 1.0;
+  stroke: white;
+  stroke-width: 3;
 }
 
+.treasure-mark {
+  stroke: white;
+  stroke-width: 3.5; 
+}
 .nwis-flooding-legend{
   stroke: white;
   sroke-width: 0.5;
@@ -155,7 +159,7 @@ line, polyline, path{
 }
 
 .smallprint-text {
-  font-size: 0.8em;
+  font-size: 0.7em;
 }
 
 .hidden {
@@ -195,5 +199,4 @@ line, polyline, path{
   fill: #DCDCDC;
   stroke: #c6c6c6;
   stroke-width:0.5;
-  opacity: 0.8;
 }
