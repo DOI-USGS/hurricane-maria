@@ -11,11 +11,22 @@ info:
   keywords: >-
     water, hurricane, maria, USGS, NOAA, VIZLAB, NWIS, flood, Puerto Rico
   audience: 
-  thumbnail:
-    url:
-    width: 250
-    height: 250
-    alttext:
+  thumbnail-facebook:
+    url: images/thumb-facebook.png
+    width: 1560
+    height: 820
+    alttext: "Hurricane Maria"
+    type: image/png
+  thumbnail-twitter:
+    url: images/thumb-twitter.png
+    width: 560
+    height: 300
+    alttext: "Hurricane Maria"
+  thumbnail-landing:
+    url: images/thumb-landing.png
+    width: 400
+    height: 400
+    alttext: "Hurricane Maria"
   required-packages:
     vizlab:
       repo: github
@@ -497,6 +508,9 @@ publish:
       times: timesteps
       sourcesanspro: sourcesanspro
       social-media-css: social-media-css
+      thumb-facebook: thumb-facebook
+      thumb-twitter: thumb-twitter
+      thumb-landing: thumb-landing
     comment: missing from depends are the thumbnails which should be added back
     context:
       sections: [ map-section, social-section, description-section ]
@@ -554,6 +568,24 @@ publish:
     inline: true
     title: "Facebook"
     alttext: "Facebook Logo"
+  -
+    id: thumb-facebook
+    location: images/thumb-facebook.png
+    mimetype: image/png
+    title: "Facebook Thumbnail"
+    alttext: "Facebook Thumbnail"
+  -
+    id: thumb-twitter
+    location: images/thumb-twitter.png
+    mimetype: image/png
+    title: "Twitter Thumbnail"
+    alttext: "Twitter Thumbnail"
+  -
+    id: thumb-landing
+    location: images/thumb-landing.png
+    mimetype: image/png
+    title: "Landing Page Thumbnail"
+    alttext: "Landing Page Thumbnail"
   -
     id: sourcesanspro
     publisher: googlefont
