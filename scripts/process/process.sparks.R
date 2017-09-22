@@ -89,6 +89,7 @@ process.sparks <- function(viz = as.viz('sparks')){
     mutate(class = "sparkline", 
            id = sprintf("sparkline-%s", site_no), 
            "mask" = "url(#spark-opacity);",
+           "clip-path"=sprintf("url(#stage-clip-%s)", site_no), 
            onmouseover=sprintf("setBold('nwis-%s');", site_no), 
            onmouseout=sprintf("setNormal('nwis-%s');hovertext(' ');", site_no),
            onclick=sprintf("openNWIS('%s', evt);", site_no),
