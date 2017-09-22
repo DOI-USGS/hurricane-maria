@@ -11,11 +11,22 @@ info:
   keywords: >-
     water, hurricane, maria, USGS, NOAA, VIZLAB, NWIS, flood, Puerto Rico
   audience: 
-  thumbnail:
-    url:
-    width: 250
-    height: 250
-    alttext:
+  thumbnail-facebook:
+    url: images/thumb-facebook.png
+    width: 1560
+    height: 820
+    alttext: "Hurricane Maria"
+    type: image/png
+  thumbnail-twitter:
+    url: images/thumb-twitter.png
+    width: 560
+    height: 300
+    alttext: "Hurricane Maria"
+  thumbnail-landing:
+    url: images/thumb-landing.png
+    width: 400
+    height: 400
+    alttext: "Hurricane Maria"
   required-packages:
     vizlab:
       repo: github
@@ -548,6 +559,9 @@ publish:
         url: https://owi.usgs.gov/vizlab/hurricane-irma/
         name: Hurricane Irma
         thumbLoc: https://owi.usgs.gov/vizlab/hurricane-irma/images/thumb-twitter.png
+      - name: Hurricane Harvey
+        org: USGS-VIZLAB
+        repo: hurricane-harvey
   -
     id: map-section
     publisher: section
@@ -571,12 +585,28 @@ publish:
       text: markdown-text.description
       id: textSection
   -
+    id: social-section
+    publisher: section
+    template: layout/templates/socialMedia.mustache
+    depends:
+      githubLogo: githubLogo
+      twitterLogo: twitterLogo 
+      facebookLogo: facebookLogo
+    context:
+      githubLink: "https://github.com/USGS-VIZLAB/hurricane-maria"
+      twitterLink: "https://twitter.com/share?url=https%3A%2F%2Fowi.usgs.gov%2Fvizlab%2Fhurricane-maria%2F%3Fviz-twitter&text=Impact%20of%20Hurricane%20Maria%20on%20precipitation%20and%20rivers&hashtags=HurricaneMaria,hurricane,flood,dataviz"
+      facebookLink: "http://www.facebook.com/sharer.php?u=https%3A%2F%2Fowi.usgs.gov%2Fvizlab%2Fhurricane-maria%2F%3Fviz-fb"
+      githubLogo: githubLogo
+      twitterLogo: twitterLogo 
+      facebookLogo: facebookLogo
+  -
     id: maria-page
     name: index
     publisher: page
     template: fullpage
     depends:
       map-section: map-section
+      social-section: social-section
       description-section: description-section
       header: header
       footer: footer
@@ -592,11 +622,15 @@ publish:
       colors: precip-colors
       times: timesteps
       sourcesanspro: sourcesanspro
+      social-media-css: social-media-css
+      thumb-facebook: thumb-facebook
+      thumb-twitter: thumb-twitter
+      thumb-landing: thumb-landing
     comment: missing from depends are the thumbnails which should be added back
     context:
-      sections: [ map-section, description-section ]
+      sections: [ map-section, social-section, description-section ]
       resources: [ figure-css, jquery-js, vizlab-js, svg-injector-js, animate-js, svg-css,
-        header-css, footer-css, vizlab-favicon, sourcesanspro]
+        header-css, footer-css, social-media-css, vizlab-favicon, sourcesanspro]
   -
     id: animate-js
     location: layout/js/animate.js
@@ -613,6 +647,10 @@ publish:
     mimetype: text/css
     publisher: resource
   -
+    id: social-media-css
+    location: layout/css/social-media.css
+    mimetype: text/css
+  -
     id: play-icon
     location: images/arrow.png
     mimetype: image/png
@@ -624,6 +662,45 @@ publish:
     mimetype: image/png
     title: "loading icon"
     alttext: "loading icon"
+  -
+    id: githubLogo
+    location: images/github.svg
+    mimetype: image/svg
+    inline: true
+    title: "Github"
+    alttext: "Github Logo"
+  -
+    id: twitterLogo
+    location: images/twitter.svg
+    mimetype: image/svg
+    inline: true
+    title: "Twitter"
+    alttext: "Twitter Logo"
+  -
+    id: facebookLogo
+    location: images/facebook.svg
+    mimetype: image/svg
+    inline: true
+    title: "Facebook"
+    alttext: "Facebook Logo"
+  -
+    id: thumb-facebook
+    location: images/thumb-facebook.png
+    mimetype: image/png
+    title: "Facebook Thumbnail"
+    alttext: "Facebook Thumbnail"
+  -
+    id: thumb-twitter
+    location: images/thumb-twitter.png
+    mimetype: image/png
+    title: "Twitter Thumbnail"
+    alttext: "Twitter Thumbnail"
+  -
+    id: thumb-landing
+    location: images/thumb-landing.png
+    mimetype: image/png
+    title: "Landing Page Thumbnail"
+    alttext: "Landing Page Thumbnail"
   -
     id: sourcesanspro
     publisher: googlefont
