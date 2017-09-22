@@ -28,6 +28,11 @@ info:
     width: 400
     height: 400
     alttext: "Hurricane Maria"
+  thumbnail-main:
+    url: images/thumb-main.png
+    width: 250
+    height: 25
+    alttext: "Hurricane Maria"
   required-packages:
     vizlab:
       repo: github
@@ -755,6 +760,12 @@ publish:
     mimetype: image/png
     title: "Landing Page Thumbnail"
     alttext: "Landing Page Thumbnail"
+  -
+    id: thumb-main
+    location: images/thumb-main.png
+    mimetype: image/png
+    title: "Default Thumbnail"
+    alttext: "Default Thumbnail"
   -
     id: sourcesanspro
     publisher: googlefont
