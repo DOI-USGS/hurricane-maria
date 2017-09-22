@@ -459,6 +459,16 @@ publish:
       text: markdown-text.description
       id: textSection
   -
+    id: image-section
+    publisher: section
+    template: layout/templates/image-section.mustache
+    depends:
+      before-image: before-image
+      after-image: after-image
+    context:
+      before-image: before-image
+      after-image: after-image
+  -
     id: maria-page
     name: index
     publisher: page
@@ -468,6 +478,7 @@ publish:
       description-section: description-section
       header: header
       footer: footer
+      image-section: image-section
       figure-css: map-figure-css
       jquery-js: lib-jquery-js
       animate-js: animate-js
@@ -482,7 +493,7 @@ publish:
       sourcesanspro: sourcesanspro
     comment: missing from depends are the thumbnails which should be added back
     context:
-      sections: [ map-section, description-section ]
+      sections: [ map-section, description-section, image-section ]
       resources: [ figure-css, jquery-js, vizlab-js, svg-injector-js, animate-js, svg-css,
         header-css, footer-css, vizlab-favicon, sourcesanspro]
   -
@@ -506,6 +517,18 @@ publish:
     mimetype: image/png
     title: "play icon"
     alttext: "play icon"
+  -
+    id: before-image
+    location: images/before.jpg
+    mimetype: image/jpg
+    title: "Before image"
+    alttext: "Before Image"
+  -
+    id: after-image
+    location: images/after.jpg
+    mimetype: image/jpg
+    title: "After image"
+    alttext: "After Image"
   -
     id: loading-icon
     location: images/loader-01.png
