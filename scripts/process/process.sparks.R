@@ -171,7 +171,10 @@ process.sparks <- function(viz = as.viz('sparks')){
       onmouseover=sprintf("setBold('nwis-%s');setBold('sparkline-%s');", site_no, site_no),
       onmouseout=sprintf("setNormal('nwis-%s');setNormal('sparkline-%s');hovertext(' ');", site_no, site_no),
       onclick=sprintf("openNWIS('%s', evt);", site_no),
-      onmousemove="hovertext('No Data Available',evt);")
+      onmousemove="hovertext('No Data Available',evt);") %>%
+    filter(circle != "0,0")
+  
+  
   
   saveRDS(list(gage_sparks = gage_sparks, 
                flood_sparks = flood_sparks, 
