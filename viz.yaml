@@ -288,7 +288,7 @@ process:
     processor: precip_colors
     scripts: scripts/process/process.precip_colors.R
     reader: json
-    cols: ["#fef5a7", "#FDE725", "#9FDA3A", "#4AC16D", "#1FA187", "#277F8E", "#365C8D", "#46337E", "#440154"]
+    cols: ["#fffbd9", "#FDE725", "#CBE11E", "#97D83F", "#67CC5C", "#40BC72", "#25AC82", "#1F998A", "#24878E", "#2B748E", "#34618D", "#3D4D8A", "#453581", "#481D6F", "#440154"]
     mimetype: application/javascript
     export: true
   -
@@ -298,7 +298,7 @@ process:
     scripts: scripts/process/process.precip_colors.R
     reader: rds
     depends: ["precip-colors"]
-    stepSize: 6
+    stepSize: 3
   -
     id: compiled-precip
     location: cache/compiled-precip.rds

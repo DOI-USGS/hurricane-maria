@@ -98,7 +98,7 @@ line, polyline, path{
 }
 
 .treasure-mark {
-  stroke: black;
+  stroke: white;
   stroke-width: 3.5; 
 }
 .nwis-flooding-legend{
@@ -199,5 +199,4 @@ line, polyline, path{
   fill: #DCDCDC;
   stroke: #c6c6c6;
   stroke-width:0.5;
-  opacity: 0.8;
 }
