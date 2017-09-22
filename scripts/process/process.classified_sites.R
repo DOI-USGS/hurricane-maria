@@ -44,7 +44,7 @@ process.classified_sites <- function(viz = as.viz("classified-sites")) {
   
   site_data <- data.frame(site_no = sites@data$site_no,
                           id = paste0('nwis-', sites@data$site_no), 
-                          r = '3.5',
+                          r = '5',
                           onmousemove = sprintf("hovertext('%s',evt);", sites@data$station_nm),
                           onmouseout = "hovertext(' ');", 
                           onclick = sprintf("openNWIS('%s', evt);", sites@data$site_no), 

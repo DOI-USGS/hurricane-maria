@@ -31,9 +31,9 @@ var animatePrcp = function(timestep) {
     $currentStormDot.data('cy', stormY);
   }
 
-  cache('.nwis-dot-' + timestep).css('fill', '#4BA3C3').css('stroke', "white");
-  cache('.f-' + timestep).css('fill', '#ff7000');
-  cache('.off-' + timestep).css('fill', 'ff69b4');
+  cache('.nwis-dot-' + timestep).css('fill', '#4BA3C3').css('stroke', "white").css('opacity', '1.0');
+  cache('.f-' + timestep).css('fill', '#175676').css('stroke', "white").css('opacity', '1.0');
+  cache('.off-' + timestep).css('opacity', '0.0');
   cache('[id=timestamp-text]').html(prcpTimes.times[timestep - 1]);
 
   var darkWidth = (timestep+1)/prcpTimes.times.length;
