@@ -28,7 +28,7 @@ info:
     width: 400
     height: 400
     alttext: "Hurricane Maria"
-  thumbnail-main:
+  thumbnail:
     url: images/thumb-main.png
     width: 250
     height: 25
