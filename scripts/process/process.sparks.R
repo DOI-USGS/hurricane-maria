@@ -89,8 +89,8 @@ process.sparks <- function(viz = as.viz('sparks')){
     mutate(class = "sparkline", 
            id = sprintf("sparkline-%s", site_no), 
            "mask" = "url(#spark-opacity);",
-           onmouseover=sprintf("setBold('nwis-%s');", site_no), 
-           onmouseout=sprintf("setNormal('nwis-%s');hovertext(' ');", site_no),
+           onmouseover=sprintf("setEmphasis('%s');", site_no), 
+           onmouseout=sprintf("clearEmphasis('%s');", site_no),
            onclick=sprintf("openNWIS('%s', evt);", site_no),
            onmousemove=sprintf("hovertext('%s',evt);", station_nm)) %>%
     select(-station_nm)
@@ -103,8 +103,8 @@ process.sparks <- function(viz = as.viz('sparks')){
            id = sprintf("floodline-%s", site_no), 
            "mask" = "url(#flood-opacity);",
            "clip-path"=sprintf("url(#flood-clip-%s)", site_no), 
-           onmouseover=sprintf("setBold('nwis-%s');setBold('sparkline-%s');", site_no, site_no),
-           onmouseout=sprintf("setNormal('nwis-%s');setNormal('sparkline-%s');hovertext(' ');", site_no, site_no),
+           onmouseover=sprintf("setEmphasis('%s');", site_no),
+           onmouseout=sprintf("clearEmphasis('%s');", site_no),
            onclick=sprintf("openNWIS('%s', evt);", site_no),
            onmousemove=sprintf("hovertext('%s',evt);", station_nm)) %>%
     select(-station_nm)
@@ -122,8 +122,8 @@ process.sparks <- function(viz = as.viz('sparks')){
       id = paste0('blocker-',site_no),
       "mask" = "url(#flood-opacity);",
       "clip-path"=sprintf("url(#blocker-clip-%s)", site_no), 
-      onmouseover=sprintf("setBold('nwis-%s');setBold('sparkline-%s');", site_no, site_no),
-      onmouseout=sprintf("setNormal('nwis-%s');setNormal('sparkline-%s');hovertext(' ');", site_no, site_no),
+      onmouseover=sprintf("setEmphasis('%s');", site_no),
+      onmouseout=sprintf("clearEmphasis('%s');", site_no),
       onclick=sprintf("openNWIS('%s', evt);", site_no),
       onmousemove="hovertext('No Data Available',evt);")
   
