@@ -62,10 +62,8 @@ process.cell_precip <- function(viz=as.viz("cell-precip")){
   # Could make this more automatic someday:
   PR <- deps[["cell-precip-PR"]]
   VI <- deps[["cell-precip-VI"]]
-  
-  library(raster)
-  
-  combo <- union(PR, VI)
+
+  combo <- rbind(PR, VI)
   
   saveRDS(combo, file = viz[['location']])
   
