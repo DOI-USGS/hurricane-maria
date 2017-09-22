@@ -1,12 +1,13 @@
 #' take the compiled-precip object and turn it into 
 #' a single sp.points.d.f w/ proper classes per timestep
-process.cell_precip <- function(viz){
+process.cell_precip_sub <- function(viz){
   library(sp)
   deps <- readDepends(viz)
   checkRequired(deps, c("classified-precip", "clip"))
   clip <- deps$clip
   offset <- viz[["cell.offset"]]
   pts <- deps$`classified-precip`
+  place <- viz[["place"]]
   
   # build a set of square polygons for each centroid
   pols.out <- list()
@@ -25,14 +26,15 @@ process.cell_precip <- function(viz){
   # if we do more than one island, this code doesn't work, so using PR only
   # We will take those square cells and remove those that aren't within PR
   # those that hit PR's border will be clipped to it
-  g.i <- rgeos::gIntersects(sp, clip[clip$id == "Puerto_Rico",], byid = T) 
+  g.i <- rgeos::gIntersects(sp, clip[clip$id == place,], byid = T) 
   
   out <- lapply(which(g.i), function(i) {
-    g.out <- rgeos::gIntersection(sp[i,], clip)
+    sub_sp <- sp[i,]
+    g.out <- rgeos::gIntersection(sub_sp, clip)
     if (!is.null(g.out) & length(g.out) == 1){
       row.names(g.out) <- row.names(sp)[i]  
       return(g.out)
-    }
+    }        
   })
   
   clipped.sp <- do.call("rbind", out)
@@ -50,4 +52,21 @@ getPoly <- function(x,y, offset, id){
   Sr1 = Polygon(cbind(c(x,x+offset,x,x-offset,x),c(y+offset,y, y-offset, y, y+offset)))
   Srs1 = Polygons(list(Sr1), id)
   return(Srs1)
+}
+
+process.cell_precip <- function(viz=as.viz("cell-precip")){
+  deps <- readDepends(viz)
+  
+  checkRequired(deps, c("cell-precip-VI", "cell-precip-PR"))
+  
+  # Could make this more automatic someday:
+  PR <- deps[["cell-precip-PR"]]
+  VI <- deps[["cell-precip-VI"]]
+  
+  library(raster)
+  
+  combo <- union(PR, VI)
+  
+  saveRDS(combo, file = viz[['location']])
+  
 }
