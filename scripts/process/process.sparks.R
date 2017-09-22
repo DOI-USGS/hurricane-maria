@@ -48,7 +48,12 @@ grab_blocker <- function(mask_values, gage_data, timesteps, vert_adjust, site_no
   if(length(block_times) > 1 && length(unique(diff(block_times))) != 1) {
     stop(paste("expected block_times to be contiguous for", site_no))
   }
-  if(length(block_times) == 0) block_times <- length(gage_data)
+  if(length(block_times) == 0) {
+    block_times <- length(gage_data)
+  } else {
+    # append one additional timestep to the left to cover the transition
+    block_times <- c(block_times[1]-1, block_times)
+  }
   block_bounds <- range(time.locations[block_times])
   block_range <- diff(block_bounds)
   
@@ -74,8 +79,8 @@ grab_blocker <- function(mask_values, gage_data, timesteps, vert_adjust, site_no
     x1=block_bounds[1],
     width=diff(block_bounds),
     x3=view_width - r.buffer,
-    y0=0,
-    height=view_height) %>%
+    y0=vert_adjust,
+    height=view_height - vert_adjust) %>%
     # make every column a character string with just 2 decimal places
     lapply(function(col) sprintf('%1.2f', col)) %>%
     as_data_frame()
