@@ -91,7 +91,7 @@ line, polyline, path{
 }
 
 .gage-blocker {
-  fill: white;
+  fill: none;
   opacity: 1.0;
   stroke: white;
   stroke-width: 3;
@@ -100,6 +100,10 @@ line, polyline, path{
 .treasure-mark {
   stroke: white;
   stroke-width: 3.5; 
+}
+.treasure-spark {
+  stroke: white;
+  stroke-width: 2.5; 
 }
 .nwis-flooding-legend{
   stroke: white;
@@ -112,12 +116,19 @@ line, polyline, path{
   stroke-opacity: 0;
 }
 
-.nwis-bold, .mouser-bold, .nwis-dot:hover, .nwis:hover, .mouser-nwis:hover {
-  fill-opacity: 0.8;
+circle.emphasis {
   stroke-width:2;
   fill: #80b2b2;
   stroke:#80b2b2;
   stroke-opacity: 1;
+}
+line.emphasis, polyline.emphasis {
+  cursor: pointer;
+  filter: brightness(50%);
+  stroke-width: 3;
+  opacity: 1.0;
+  fill-opacity: 0.9;
+  stroke-opacity: 0.9;
 }
   
 .inactive-dot {
@@ -179,13 +190,6 @@ line, polyline, path{
 	stroke: #057083;
 	fill: #69a9b4;
 	stroke-width: 2;
-}
-.sparkline-bold,.sparkline:hover, .sparklines-overlay:hover  {
-  cursor: pointer;
-  stroke: #80b2b2;
-  stroke-width: 3;
-  fill: #9bc5cd;
-  opacity: 1.0;
 }
 
 .legend-box {
