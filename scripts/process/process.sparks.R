@@ -57,20 +57,6 @@ grab_blocker <- function(mask_values, gage_data, timesteps, vert_adjust, site_no
   block_bounds <- range(time.locations[block_times])
   block_range <- diff(block_bounds)
   
-  # # create a blocker path shape for a rectangle. no matter what, we need a
-  # # zero-length dot at the beginning of this set of times, and at the end, so
-  # # the width of the elements are always the same (for the "reveal" animation).
-  # # The zero length is the `v0`, which is a vertical line of length 0 Z "closes"
-  # # a part of a path by drawing a straight line to the previous
-  # sprintf('M%1.2f,0v0 M%1.2f,%1.2fv%1.2f h%1.2f v-%1.2fZ M%1.2f,0v0',
-  #         r.buffer, 
-  #         time.locations[block_times[1]],
-  #         vert_adjust,
-  #         view_height-vert_adjust, 
-  #         block_range, 
-  #         view_height-vert_adjust, 
-  #         view_width - r.buffer)
-  
   # prepare a rectangle clip path definition. we'll be using the time series of
   # stage points for the blocker line, so here we're just defining a rectanglar
   # area to clip to
@@ -123,13 +109,6 @@ process.sparks <- function(viz = as.viz('sparks')){
            onmousemove=sprintf("hovertext('%s',evt);", station_nm)) %>%
     select(-station_nm)
   
-  # vert_adjust <- nrow(sites) * 0.1, # fudge factor to get windows to not be too tall
-  # blockers <- data.frame(d = sapply(sites$site_no, 
-  #                                   function(x) grab_blocker(mask_values[x], 
-  #                                                            gage_data[[x]],
-  #                                                            timesteps,
-  #                                                            vert_adjust)),
-  #                        site_no = sites$site_no, stringsAsFactors = FALSE) %>%
   blockers <- bind_rows(lapply(sites$site_no, function(s) {
     grab_blocker(mask_values=mask_values[s], 
                  gage_data=gage_data[[s]],

@@ -82,13 +82,9 @@ visualize_hurricane_map <- function(viz, mode, ...){
     # match blockers to sparks based on spark.id
     spark.id <- strsplit(fl.spark$id, '[-]')[[1]][2]
     blocker <- blockers[which(blocker.ids == spark.id),]
-    # offline clip path: only show points between x=x1 and x=x2. also need
-    # uber-thin rectangles at the leftmost and rightmost bounds of the sparkline
-    # to get opacity to travel at the right speed
+    # offline clip path: only show points between x=x1 and x=x2
     cp <- xml_add_child(d, "clipPath", id=sprintf("blocker-clip-%s", strsplit(blocker$id, '[-]')[[1]][2]))
     xml_add_child(cp, 'rect', x=blocker$x1, y=blocker$y0, width=blocker$width, height=blocker$height) # main rectangle
-    # xml_add_child(cp, 'rect', x=blocker[['x0']], y=blocker[['y0']], width=0.01, height=0.01) # left bound
-    # xml_add_child(cp, 'rect', x=blocker[['x3']], y=blocker[['y0']], width=0.01, height=0.01) # right bound
     # data is polyline for stage for all time points
     blocker$points <- sparks[i, ]$points # add the stage points
     blocker <- dplyr::select(blocker, -x0, -x1, -width, -x3, -y0, -height) # remove columns used for clippaths
