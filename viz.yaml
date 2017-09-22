@@ -459,12 +459,28 @@ publish:
       text: markdown-text.description
       id: textSection
   -
+    id: social-section
+    publisher: section
+    template: layout/templates/socialMedia.mustache
+    depends:
+      githubLogo: githubLogo
+      twitterLogo: twitterLogo 
+      facebookLogo: facebookLogo
+    context:
+      githubLink: "https://github.com/USGS-VIZLAB/hurricane-maria"
+      twitterLink: "https://twitter.com/share?url=https%3A%2F%2Fowi.usgs.gov%2Fvizlab%2Fhurricane-maria%2F%3Fviz-twitter&text=Impact%20of%20Hurricane%20Maria%20on%20precipitation%20and%20rivers&hashtags=HurricaneMaria,hurricane,flood,dataviz"
+      facebookLink: "http://www.facebook.com/sharer.php?u=https%3A%2F%2Fowi.usgs.gov%2Fvizlab%2Fhurricane-maria%2F%3Fviz-fb"
+      githubLogo: githubLogo
+      twitterLogo: twitterLogo 
+      facebookLogo: facebookLogo
+  -
     id: maria-page
     name: index
     publisher: page
     template: fullpage
     depends:
       map-section: map-section
+      social-section: social-section
       description-section: description-section
       header: header
       footer: footer
@@ -480,11 +496,12 @@ publish:
       colors: precip-colors
       times: timesteps
       sourcesanspro: sourcesanspro
+      social-media-css: social-media-css
     comment: missing from depends are the thumbnails which should be added back
     context:
-      sections: [ map-section, description-section ]
+      sections: [ map-section, social-section, description-section ]
       resources: [ figure-css, jquery-js, vizlab-js, svg-injector-js, animate-js, svg-css,
-        header-css, footer-css, vizlab-favicon, sourcesanspro]
+        header-css, footer-css, social-media-css, vizlab-favicon, sourcesanspro]
   -
     id: animate-js
     location: layout/js/animate.js
@@ -501,6 +518,10 @@ publish:
     mimetype: text/css
     publisher: resource
   -
+    id: social-media-css
+    location: layout/css/social-media.css
+    mimetype: text/css
+  -
     id: play-icon
     location: images/arrow.png
     mimetype: image/png
@@ -512,6 +533,27 @@ publish:
     mimetype: image/png
     title: "loading icon"
     alttext: "loading icon"
+  -
+    id: githubLogo
+    location: images/github.svg
+    mimetype: image/svg
+    inline: true
+    title: "Github"
+    alttext: "Github Logo"
+  -
+    id: twitterLogo
+    location: images/twitter.svg
+    mimetype: image/svg
+    inline: true
+    title: "Twitter"
+    alttext: "Twitter Logo"
+  -
+    id: facebookLogo
+    location: images/facebook.svg
+    mimetype: image/svg
+    inline: true
+    title: "Facebook"
+    alttext: "Facebook Logo"
   -
     id: sourcesanspro
     publisher: googlefont
