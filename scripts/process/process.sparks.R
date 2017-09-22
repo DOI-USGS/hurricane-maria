@@ -88,7 +88,6 @@ offline_mark <- function(mask_values, gage_data, timesteps, vert_adjust, site_no
     x0=r.buffer,
     x1=block_bounds[1]-5,
     width=11,
-    x3=block_bounds[1]+5,
     y0=-5,
     height=view_height + 10) %>%
     # make every column a character string with just 2 decimal places
@@ -163,7 +162,7 @@ process.sparks <- function(viz = as.viz('sparks')){
            id = sprintf("sparkline-%s", site_no), 
            "mask" = "url(#spark-opacity);",
            onmouseover=sprintf("setEmphasis('%s');", site_no), 
-           onmouseout=sprintf("clearEmphasis('%s');", site_no),
+           onmouseout=sprintf("clearEmphasis();"),
            "clip-path"=sprintf("url(#stage-clip-%s)", site_no), 
            onclick=sprintf("openNWIS('%s', evt);", site_no),
            onmousemove=sprintf("hovertext('%s',evt);", station_nm)) %>%
@@ -178,7 +177,7 @@ process.sparks <- function(viz = as.viz('sparks')){
            "mask" = "url(#flood-opacity);",
            "clip-path"=sprintf("url(#flood-clip-%s)", site_no), 
            onmouseover=sprintf("setEmphasis('%s');", site_no),
-           onmouseout=sprintf("clearEmphasis('%s');", site_no),
+           onmouseout=sprintf("clearEmphasis();"),
            onclick=sprintf("openNWIS('%s', evt);", site_no),
            onmousemove=sprintf("hovertext('%s',evt);", station_nm)) %>%
     select(-station_nm)
@@ -197,7 +196,7 @@ process.sparks <- function(viz = as.viz('sparks')){
       "mask" = "url(#flood-opacity);",
       "clip-path"=sprintf("url(#blocker-clip-%s)", site_no), 
       onmouseover=sprintf("setEmphasis('%s');", site_no),
-      onmouseout=sprintf("clearEmphasis('%s');", site_no),
+      onmouseout=sprintf("clearEmphasis();"),
       onclick=sprintf("openNWIS('%s', evt);", site_no),
       onmousemove="hovertext('No Data Available',evt);") %>% 
     select(-site_no)
@@ -223,8 +222,8 @@ process.sparks <- function(viz = as.viz('sparks')){
       id = paste0('offline-',site_no),
       "mask" = "url(#flood-opacity);",
       "clip-path"=sprintf("url(#offline-clip-%s)", site_no), 
-      onmouseover=sprintf("setBold('nwis-%s');setBold('sparkline-%s');", site_no, site_no),
-      onmouseout=sprintf("setNormal('nwis-%s');setNormal('sparkline-%s');hovertext(' ');", site_no, site_no),
+      onmouseover=sprintf("setEmphasis('%s');", site_no),
+      onmouseout=sprintf("clearEmphasis()"),
       onclick=sprintf("openNWIS('%s', evt);", site_no),
       onmousemove="hovertext('No Data Available',evt);") %>% 
     filter(circle != "0,0", circle != "NA,NA") %>% 

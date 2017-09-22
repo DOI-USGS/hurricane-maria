@@ -10,7 +10,7 @@ description: |+
   New data are added every six hours. Hydrographs in the right panel show normalized
   gage height at the 24 U.S. Geological Survey (USGS) gaging stations that are used by
   the [National Weather Service](http://www.weather.gov) to forecast flood conditions. 
-  
+
   The USGS's robust streamgaging network, which held strong against the pummeling of
   [Hurricane Harvey](https://owi.usgs.gov/vizlab/hurricane-harvey) and 
   [Hurricane Irma](https://owi.usgs.gov/vizlab/hurricane-irma/), was not immune
