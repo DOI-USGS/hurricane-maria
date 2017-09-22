@@ -91,7 +91,7 @@ line, polyline, path{
 }
 
 .gage-blocker {
-  fill: white;
+  fill: none;
   opacity: 1.0;
   stroke: white;
   stroke-width: 3;
@@ -100,6 +100,10 @@ line, polyline, path{
 .treasure-mark {
   stroke: white;
   stroke-width: 3.5; 
+}
+.treasure-spark {
+  stroke: white;
+  stroke-width: 2.5; 
 }
 .nwis-flooding-legend{
   stroke: white;
