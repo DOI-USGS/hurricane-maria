@@ -63,6 +63,7 @@ grab_blocker <- function(mask_values, gage_data, timesteps, vert_adjust, site_no
   clip_params <- data_frame(
     x0=r.buffer,
     x1=block_bounds[1],
+    datawidth=x1-x0,
     width=diff(block_bounds),
     x3=view_width - r.buffer,
     y0=vert_adjust,
