@@ -102,9 +102,15 @@ info:
       
 parameter:
   -
-    id: mobile-metadata
+    id: desktop-metadata
     height: 8
     width: 12
+    pointsize: 12
+    proj.string: '+init=epsg:3991'
+  -
+    id: mobile-metadata
+    height: 12
+    width: 8
     pointsize: 12
     proj.string: '+init=epsg:3991'
   -
@@ -131,6 +137,15 @@ fetch:
       metadata: "mobile-metadata"
     scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/plotting_utils.R]
   -
+    id: view-limits-desktop
+    location: cache/view-limits-desktop.rds
+    reader: rds
+    fetcher: view_limits
+    bbox: [-67.8, 17, -63.2, 19]
+    depends:
+      metadata: "desktop-metadata"
+    scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/plotting_utils.R]
+  -
     id: islands-mobile
     location: cache/islands.rds
     reader: rds
@@ -138,6 +153,15 @@ fetch:
     scripts: [scripts/fetch/fetch.islands.R, scripts/visualize/plotting_utils.R, scripts/fetch/utils.R]
     depends: 
       view-limits: "view-limits-mobile"
+    mimetype: application/zip
+  -
+    id: islands-desktop
+    location: cache/islands_desktop.rds
+    reader: rds
+    fetcher: islands
+    scripts: [scripts/fetch/fetch.islands.R, scripts/visualize/plotting_utils.R, scripts/fetch/utils.R]
+    depends: 
+      view-limits: "view-limits-desktop"
     mimetype: application/zip
 #  - 
 #    id: san-juan
@@ -235,6 +259,16 @@ process:
       polygons: "islands-mobile"
     mimetype: application/zip
   -
+    id: storm-islands-desktop
+    location: cache/storm-islands-desktop.rds
+    reader: rds
+    processor: geopolygons
+    classname: island-polygon
+    scripts: scripts/process/process.geopolygons.R
+    depends: 
+      polygons: "islands-desktop"
+    mimetype: application/zip
+  -
     id: storm-track-mobile
     location: cache/storm-track-mobile.rds
     processor: storm_track
@@ -244,6 +278,15 @@ process:
       view-limits: "view-limits-mobile"
       hurricane-track: "hurricane-track"
   -
+    id: storm-track-desktop
+    location: cache/storm-track-desktop.rds
+    processor: storm_track
+    scripts: scripts/process/process.storm_track.R
+    reader: rds
+    depends: 
+      view-limits: "view-limits-desktop"
+      hurricane-track: "hurricane-track"
+  -
     id: storm-location-mobile
     location: cache/storm-location-mobile.rds
     processor: storm_location
@@ -251,6 +294,16 @@ process:
     reader: rds
     depends: 
       view-limits: "view-limits-mobile"
+      hurricane-track: "hurricane-track"
+      timesteps: "timesteps"
+  -
+    id: storm-location-desktop
+    location: cache/storm-location-desktop.rds
+    processor: storm_location
+    scripts: scripts/process/process.storm_location.R
+    reader: rds
+    depends: 
+      view-limits: "view-limits-desktop"
       hurricane-track: "hurricane-track"
       timesteps: "timesteps"
   - 
@@ -263,8 +316,8 @@ process:
       gage-height: "gage-data"
       timesteps: "timesteps"
   -
-    id: sp-sites
-    location: cache/sp-sites.rds
+    id: sp-sites-mobile
+    location: cache/sp-sites-mobile.rds
     processor: sp_sites
     scripts: scripts/process/process.sp_sites.R
     reader: rds
@@ -272,13 +325,33 @@ process:
       metadata: mobile-metadata
       sites: nwis-sites
   -
-    id: classified-sites
-    location: cache/classified-sites.rds
+    id: sp-sites-desktop
+    location: cache/sp-sites-desktop.rds
+    processor: sp_sites
+    scripts: scripts/process/process.sp_sites.R
+    reader: rds
+    depends: 
+      metadata: desktop-metadata
+      sites: nwis-sites
+  -
+    id: classified-sites-mobile
+    location: cache/classified-sites-mobile.rds
     processor: classified_sites
     scripts: scripts/process/process.classified_sites.R
     reader: rds
     depends: 
-      sites: "sp-sites"
+      sites: "sp-sites-mobile"
+      gage-height: "storm-gage-height"
+      nws-threshold: "nws-data"
+      config: "config"
+  -
+    id: classified-sites-desktop
+    location: cache/classified-sites-desktop.rds
+    processor: classified_sites
+    scripts: scripts/process/process.classified_sites.R
+    reader: rds
+    depends: 
+      sites: "sp-sites-desktop"
       gage-height: "storm-gage-height"
       nws-threshold: "nws-data"
       config: "config"
@@ -348,24 +421,43 @@ process:
       cell-precip-VI: cell-precip-VI
       cell-precip-PR: cell-precip-PR
   -
-    id: order-sites
+    id: order-sites-mobile
     reader: rds
-    location: cache/order_sites.rds
+    location: cache/order_sites-mobile.rds
     scripts: scripts/process/process.order_sites.R
-    depends: sp-sites
+    depends: 
+      sp-sites: sp-sites-mobile
+    processor: order_sites
+  -
+    id: order-sites-desktop
+    reader: rds
+    location: cache/order_sites-desktop.rds
+    scripts: scripts/process/process.order_sites.R
+    depends: 
+      sp-sites: sp-sites-desktop
     processor: order_sites
   - 
-    id: sparks
-    location: cache/sparks.rds
+    id: sparks-mobile
+    location: cache/sparks-mobile.rds
     processor: sparks
     scripts: scripts/process/process.sparks.R
     reader: rds
     depends: 
       gage-data: storm-gage-height
       timesteps: timesteps
-      sites: order-sites
+      sites: order-sites-mobile
       nws-data: nws-data
-
+  - 
+    id: sparks-desktop
+    location: cache/sparks-desktop.rds
+    processor: sparks
+    scripts: scripts/process/process.sparks.R
+    reader: rds
+    depends: 
+      gage-data: storm-gage-height
+      timesteps: timesteps
+      sites: order-sites-desktop
+      nws-data: nws-data
 visualize:
   -
     id: base-map-mobile
@@ -376,8 +468,22 @@ visualize:
       storm-islands: storm-islands-mobile
       cell-precip: cell-precip
       storm-track: storm-track-mobile
-      nwis-gages: classified-sites
+      nwis-gages: classified-sites-mobile
       storm-location: storm-location-mobile
+    scripts: ["scripts/visualize/plotting_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
+    reader: svg_map
+    mimetype: image/svg+xml
+  -
+    id: base-map-desktop
+    location: cache/base-map-desktop.svg
+    visualizer: svg_base_map
+    depends: 
+      view-limits: view-limits-desktop
+      storm-islands: storm-islands-desktop
+      cell-precip: cell-precip
+      storm-track: storm-track-desktop
+      nwis-gages: classified-sites-desktop
+      storm-location: storm-location-desktop
     scripts: ["scripts/visualize/plotting_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
     reader: svg_map
     mimetype: image/svg+xml
@@ -390,7 +496,8 @@ visualize:
       watermark: usgs-watermark
       precip-colors: precip-colors
       precip-breaks: precip-breaks
-      sparks: sparks
+      sparks: sparks-mobile
+      parameters: mobile-metadata
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: portrait
@@ -403,11 +510,12 @@ visualize:
     location: figures/hurricane-map-desktop.svg
     visualizer: hurricane_map_portrait
     depends: 
-      base-map: base-map-mobile 
+      base-map: base-map-desktop
       watermark: usgs-watermark
       precip-colors: precip-colors
       precip-breaks: precip-breaks
-      sparks: sparks
+      sparks: sparks-desktop
+      parameters: desktop-metadata
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: landscape
