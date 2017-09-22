@@ -44,7 +44,7 @@ visualize_hurricane_map <- function(viz, mode, ...){
                                                 as.character(as.numeric(vb[1])+10), 
                                                 as.character(as.numeric(vb[1])+10))
   
-  g.legend <- xml_add_child(non.geo.top, 'g', id='legend', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-65))
+  g.legend <- xml_add_child(non.geo.top, 'g', id='legend', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-50))
   add_legend(g.legend, colors = depends$`precip-colors`, break.step = getContentInfo('precip-breaks')$stepSize)
   
   
@@ -177,15 +177,15 @@ add_legend <- function(parent.ele, colors, break.step){
   xml_add_child(parent.ele, 'text', "Total rainfall amount (inches)", class='svg-text legend-text', dy="-1em",
                 transform="translate(0,35)")
   g.rains <- xml_add_child(parent.ele, 'g', id = 'rain-legend')
-  g.irma <- xml_add_child(parent.ele, 'g', id = 'irma-legend', transform="translate(15,-80)")
+  g.hurr <- xml_add_child(parent.ele, 'g', id = 'hurr-legend', transform="translate(15,-80)")
   g.gage_isFlood <- xml_add_child(parent.ele, 'g', id = 'gage-legend', transform="translate(15,-25)")
   g.gage_predFlood <- xml_add_child(parent.ele, 'g', id = 'gage-legend', transform="translate(15,-40)")
   g.gage_out <- xml_add_child(parent.ele, 'g', id = 'gage-legend', transform="translate(15,-10)")
   g.rains.bn <- xml_add_child(g.rains, 'g', id = 'rain-legend-bin', transform="translate(0,35)")
   g.rains.tx <- xml_add_child(g.rains, 'g', id = 'rain-legend-text', transform="translate(0,35)")
-  xml_add_child(g.irma, 'circle', r="8", class="storm-dot-legend")
+  xml_add_child(g.hurr, 'circle', r="8", class="storm-dot-legend")
   xml_add_child(g.gage_isFlood, 'circle', r="4", class="nwis-flooding-legend")
-  xml_add_child(g.irma, 'text', "Hurricane Maria", class='svg-text legend-text', dx='20', dy="0.33em")
+  xml_add_child(g.hurr, 'text', "Hurricane Maria", class='svg-text legend-text', dx='20', dy="0.33em")
   xml_add_child(g.gage_isFlood, 'text', "Above flood stage", class='svg-text legend-text', dx='20', dy="0.33em")
   xml_add_child(g.gage_predFlood, 'circle', r="4", class="nwis-dot-legend")
   xml_add_child(g.gage_predFlood, 'text', "Below flood stage", class='svg-text legend-text', dx='20', dy="0.33em")
@@ -200,7 +200,7 @@ add_legend <- function(parent.ele, colors, break.step){
                                     transform="translate(135,-38)")
   
   
-  rain.w <- 28 # width of a rain legend bin
+  rain.w <- 32 # width of a rain legend bin
   rain.h <- 14
   x0 <- 0
   n.bins <- length(colors)
@@ -213,11 +213,9 @@ add_legend <- function(parent.ele, colors, break.step){
     xml_add_child(g.rains.bn, 'rect', x=as.character(x0), y="-10", 
                   height = as.character(rain.h), width = as.character(rain.w), 
                   class='rain-box', style=sprintf("fill:%s;",colors[i]))
-    if (i == 1 | i == n.bins){
-      # only do the extreme values
-      text.class <- ifelse(any(col2rgb(colors[i]) < 100), 'svg-text light-rain-legend', 'svg-text dark-rain-legend')
-      xml_add_child(g.rains.tx, 'text', col.txt[i], class = text.class, x= as.character(x0+rain.w/2), 'text-anchor'='middle')  
-    }
+    text.class <- ifelse(any(col2rgb(colors[i]) < 100), 'svg-text light-rain-legend', 'svg-text dark-rain-legend')
+    xml_add_child(g.rains.tx, 'text', col.txt[i], class = text.class, x= as.character(x0+rain.w/2), 'text-anchor'='middle')  
+    
     x0 <- x0+rain.w
   }
   
