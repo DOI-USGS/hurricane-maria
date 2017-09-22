@@ -194,10 +194,8 @@ add_legend <- function(parent.ele, colors, break.step){
                 transform = "scale(0.6)")
   xml_add_child(g.gage_out, 'text', "No data", class='svg-text legend-text', dx='20', dy="0.33em")
   
-  g.main_gage_text <- xml_add_child(parent.ele, 'text', "USGS Stream Gages", class='svg-text legend-text', dy="-1em",
+  g.main_gage_text <- xml_add_child(parent.ele, 'text', "USGS Stream Gages (< 1% of US total)", class='svg-text legend-text', dy="-1em",
                                     transform="translate(0,-38)")
-  g.main_gage_text <- xml_add_child(parent.ele, 'text', "(< 1% of US total)", class='svg-text smallprint-text legend-text', dy="-1.33em",
-                                    transform="translate(135,-38)")
   
   
   rain.w <- 32 # width of a rain legend bin
