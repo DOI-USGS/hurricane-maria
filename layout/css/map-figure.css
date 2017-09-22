@@ -14,6 +14,10 @@ body {
     height:100%;
 }
 
+caption{
+  display: table-caption;
+}
+
 #overcast{
   background: rgba(0,0,0,.2);
   height:100%;
@@ -86,26 +90,32 @@ figurecaption{
   position: relative;
 }
 
-.imageContent{
+.imageContent,
+.imagesDescription{
   display:flex;
   flex-direction:row;
   flex-wrap: wrap;
   margin-bottom:10px;
 }
 
-.image{
+#imageContainer .imagesDescription p{
+  font-size:.7em;
+}
+
+.image,
+.imagesDescription p{
   flex:1;
   margin-right:10px;
 }
 
-.image:last-child{
+.image:last-child,
+.imagesDescription p:last-child{
   margin-right:0;
 }
 
 .image img{
   width:100%;
 }
-
 
 @media screen and (min-width:768px){
   #textSection,
