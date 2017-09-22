@@ -62,19 +62,29 @@ visualize_hurricane_map <- function(viz, mode, ...){
   blocker.ids <- sapply(blockers$id, function(x) strsplit(x, '[-]')[[1]][2], USE.NAMES = FALSE)
   
   for (i in 1:nrow(sparks)){ 
+    # create the container for a spark line, flood spark line, and blocker
     g.single <- xml_add_child(g.sparkles, 'g', transform=sprintf('translate(0,%s)', ys[i])) 
+    
+    # add the main stage spark line
     do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), sparks[i, ]))
+    
+    # add the flood-stage spark line: stage points clipped to the height
     fl.spark <- fl.sparks[i,]
+    # flood clip path: only show points between 0 and fl.spark$y
     cp <- xml_add_child(d, "clipPath", id=sprintf("flood-clip-%s", strsplit(fl.spark$id, '[-]')[[1]][2]))
     xml_add_child(cp, 'rect', width ='100%', height = fl.spark$y, y = "0")
-    fl.spark$y <- NULL
-    fl.spark$points <- sparks[i, ]$points
-    # CAN'T assume blockers are in the same order as sparks:
+    # data is polyline for all time points
+    fl.spark$y <- NULL # don't want this column in the polyline
+    fl.spark$points <- sparks[i, ]$points # do want the regular points
+    do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), fl.spark))
+    
+    # add the offline-gage spark graphic. CAN'T assume blockers are in the same
+    # order as sparks, so match based on spark.id
     spark.id <- strsplit(fl.spark$id, '[-]')[[1]][2]
     use.i <- which(blocker.ids == spark.id)
-    do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), fl.spark))
-    do.call(xml_add_child, append(list(.x = g.single, .value = 'path'), blockers[use.i,]))
-    # now add flood spark
+    blocker <- blockers[use.id,]
+    # blocker rectangle
+    do.call(xml_add_child, append(list(.x = g.single, .value = 'path'), blocker))
   }
   xml_add_child(non.geo.bot, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', 
                 y = vb[4], x = vb[3], dy = "-0.5em", dx = "-0.5em", 'text-anchor'='end')
