@@ -116,7 +116,7 @@ grab_blocker <- function(mask_values, gage_data, timesteps, vert_adjust, site_no
   # compute the x range of 
   block_times <- which(gage_data == mask_values)
   if(length(block_times) > 1 && length(unique(diff(block_times))) != 1) {
-    stop(paste("expected block_times to be contiguous for", site_no))
+    warning(paste("expected block_times to be contiguous for", site_no))
   }
   if(length(block_times) == 0) {
     block_times <- length(gage_data)
