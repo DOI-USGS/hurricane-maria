@@ -10,6 +10,7 @@ info:
     Hurricane Maria's impact on precipitation and river gage height
   keywords: >-
     water, hurricane, maria, USGS, NOAA, VIZLAB, NWIS, flood, Puerto Rico
+  mimetypeDictionary: "data/mimetypes.yaml"
   audience: 
   thumbnail:
     url:
@@ -517,3 +518,10 @@ publish:
     publisher: googlefont
     family: Source Sans Pro
     weight: [300, 400, 600]
+  -
+    id: social-gif
+    location: images/gif.gif
+    mimetype: image/gif
+    export: true
+    title: "Hurricane Maria Animation"
+    alttext: "Hurricane Maria Animation"
