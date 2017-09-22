@@ -643,6 +643,7 @@ publish:
       figure-css: map-figure-css
       jquery-js: lib-jquery-js
       animate-js: animate-js
+      lightbox-js: lightbox-js
       vizlab-js: lib-vizlab-javascript
       svg-injector-js: lib-svg-injector-js
       svg-css: svg-css
@@ -653,17 +654,23 @@ publish:
       times: timesteps
       sourcesanspro: sourcesanspro
       social-media-css: social-media-css
+      lightbox-css: lightbox-css
       thumb-facebook: thumb-facebook
       thumb-twitter: thumb-twitter
       thumb-landing: thumb-landing
     comment: missing from depends are the thumbnails which should be added back
     context:
       sections: [ map-section, social-section, description-section, image-section, footnote-section ]
-      resources: [ figure-css, jquery-js, vizlab-js, svg-injector-js, animate-js, svg-css,
-        header-css, footer-css, social-media-css, vizlab-favicon, sourcesanspro]
+      resources: [ figure-css, jquery-js, vizlab-js, svg-injector-js, animate-js, lightbox-js, svg-css,
+        header-css, footer-css, social-media-css, lightbox-css, vizlab-favicon, sourcesanspro]
   -
     id: animate-js
     location: layout/js/animate.js
+    mimetype: text/javascript
+    publisher: resource
+  -
+    id: lightbox-js
+    location: layout/js/lightbox.js
     mimetype: text/javascript
     publisher: resource
   -
@@ -679,6 +686,10 @@ publish:
   -
     id: social-media-css
     location: layout/css/social-media.css
+    mimetype: text/css
+  -
+    id: lightbox-css
+    location: layout/css/lightbox.css
     mimetype: text/css
   -
     id: play-icon
