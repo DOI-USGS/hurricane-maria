@@ -23,11 +23,11 @@ visualize_hurricane_map <- function(viz, mode, ...){
   
   non.geo.top <- xml_add_sibling(map.elements, 'g', 'id' = 'non-geo-top')
   g.tool <- xml_add_sibling(non.geo.top,'g',id='tooltip-group')
-  d <- xml_add_child(svg, 'defs', .where='before') 
+  d <- xml_add_child(svg, 'defs', .where='before')
   
   xml_add_child(non.geo.bot, 'rect', width="100%", height="100%", class='ocean-water viz-pause', id='ocean-background')
   
-  
+  dot_to_treasure(svg, 'nwis-gages')
   
   # map-elements-{mode}-top is where all of the mouseovers, tips, and click events go
   map.elements.top <- xml_add_child(svg, 'g', id = "map-elements-mouser")
@@ -104,13 +104,35 @@ visualize_hurricane_map <- function(viz, mode, ...){
   xml_add_child(m, 'rect', x="0", y="-1", width="1", height="3", style="fill-opacity: 0; fill: white;", id='flood-light-mask')
   xml_add_child(m, 'rect', x="0", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='flood-full-mask')
   
-  xml_add_child(g.sparkle.blck, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', 
-                y=as.character(ys[i]+50), x = as.character(side.panel/2), 'text-anchor'='middle')
-  
-  
   return(svg)
 }
 
+# put an "x" below each gage. when its opacity is zero, you will see the x
+dot_to_treasure <- function(svg, group.id){
+  
+  parent.group <- xml_find_first(
+    svg, sprintf("//*[local-name()='g'][@id='%s']", group.id)
+  )
+  
+  
+  treasure.g <- xml_add_sibling(parent.group, 'g', .where = 'before', id = 'nwis-treasure')
+  
+  clip.ids <- xml_attr(xml_children(parent.group), 'id')
+  xs <- as.numeric(
+    xml_attr(xml_children(parent.group), 'cx')
+  )
+  ys <- as.numeric(
+    xml_attr(xml_children(parent.group), 'cy')
+  )
+  
+  for (i in seq_len(length(clip.ids))){
+    # make an x, translate it into the right place and scale it so it is hidden below the overlying dot
+    xml_add_child(treasure.g, 'path', class='treasure-mark',
+                  d = "M-5,-5 l10,10 m0,-10 l-10,10", 
+                  transform = sprintf("translate(%1.2f, %1.2f)scale(0.6)", xs[i], ys[i])
+                  )
+  }  
+}
 #' remove mouser events from style geometries, and add them to a new invisible mouser group overlay
 as.mouse_topper <- function(svg, style.group.id, mouser.parent.id){
   
