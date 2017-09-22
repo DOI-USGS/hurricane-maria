@@ -147,7 +147,7 @@ fetch:
     location: cache/view-limits-mobile.rds
     reader: rds
     fetcher: view_limits
-    bbox: [-67.8, 17, -63.2, 19]
+    bbox: [-67.2, 16.0, -65.2, 18.1]
     depends:
       metadata: "mobile-metadata"
     scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/plotting_utils.R]
@@ -414,7 +414,7 @@ process:
     reader: rds
     depends: 
       classified-precip: classified-precip
-      clip: storm-islands-mobile
+      clip: storm-islands-desktop
   -
     id: cell-precip-VI
     location: cache/cell-precip-VI.rds
@@ -425,15 +425,23 @@ process:
     reader: rds
     depends: 
       classified-precip: classified-precip
-      clip: storm-islands-mobile
+      clip: storm-islands-desktop
   -
-    id: cell-precip
-    location: cache/cell-precip.rds
+    id: cell-precip-desktop
+    location: cache/cell-precip-desktop.rds
     processor: cell_precip
     scripts: [scripts/process/process.cell_precip.R]
     reader: rds
     depends: 
       cell-precip-VI: cell-precip-VI
+      cell-precip-PR: cell-precip-PR
+  -
+    id: cell-precip-mobile
+    location: cache/cell-precip-mobile.rds
+    processor: cell_precip
+    scripts: [scripts/process/process.cell_precip.R]
+    reader: rds
+    depends: 
       cell-precip-PR: cell-precip-PR
   -
     id: order-sites-mobile
@@ -481,7 +489,7 @@ visualize:
     depends: 
       view-limits: view-limits-mobile
       storm-islands: storm-islands-mobile
-      cell-precip: cell-precip
+      cell-precip: cell-precip-mobile
       storm-track: storm-track-mobile
       nwis-gages: classified-sites-mobile
       storm-location: storm-location-mobile
@@ -495,7 +503,7 @@ visualize:
     depends: 
       view-limits: view-limits-desktop
       storm-islands: storm-islands-desktop
-      cell-precip: cell-precip
+      cell-precip: cell-precip-desktop
       storm-track: storm-track-desktop
       nwis-gages: classified-sites-desktop
       storm-location: storm-location-desktop
@@ -523,7 +531,7 @@ visualize:
   -
     id: hurricane-map-landscape
     location: figures/hurricane-map-desktop.svg
-    visualizer: hurricane_map_portrait
+    visualizer: hurricane_map_landscape
     depends: 
       base-map: base-map-desktop
       watermark: usgs-watermark
