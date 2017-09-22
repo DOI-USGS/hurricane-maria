@@ -9,6 +9,7 @@ visualize_hurricane_map <- function(viz, mode, ...){
   sparks <- depends[["sparks"]]$gage_sparks
   fl.sparks <- depends[["sparks"]]$flood_sparks
   blockers <- depends[["sparks"]]$gage_blockers
+  x.offline <- depends[["sparks"]]$offline_points
 
   xml_attr(svg, "id") <- viz[['id']]
   vb <- strsplit(xml_attr(svg, 'viewBox'),'[ ]')[[1]]
@@ -60,6 +61,7 @@ visualize_hurricane_map <- function(viz, mode, ...){
   
   ys <- seq(45, as.numeric(vb[4]) - 50, length.out = nrow(sparks))
   blocker.ids <- sapply(blockers$id, function(x) strsplit(x, '[-]')[[1]][2], USE.NAMES = FALSE)
+  offline.ids <- sapply(x.offline$id, function(x) strsplit(x, '[-]')[[1]][2], USE.NAMES = FALSE)
   
   for (i in 1:nrow(sparks)){ 
     # create the container for a spark line, flood spark line, and blocker
@@ -85,10 +87,11 @@ visualize_hurricane_map <- function(viz, mode, ...){
     # offline clip path: only show points between x=x1 and x=x2
     cp <- xml_add_child(d, "clipPath", id=sprintf("blocker-clip-%s", strsplit(blocker$id, '[-]')[[1]][2]))
     xml_add_child(cp, 'rect', x=blocker$x1, y=blocker$y0, width=blocker$width, height=blocker$height) # main rectangle
-    # data is polyline for stage for all time points
-    blocker$points <- sparks[i, ]$points # add the stage points
-    blocker <- dplyr::select(blocker, -x0, -x1, -width, -x3, -y0, -height) # remove columns used for clippaths
-    do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), blocker))
+    
+    offline <- x.offline[which(offline.ids == spark.id),]
+    if (nrow(offline) == 1){
+      do.call(xml_add_child, append(list(.x = g.single, .value = 'path'), offline))
+    }
   }
   xml_add_child(non.geo.bot, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', 
                 y = vb[4], x = vb[3], dy = "-0.5em", dx = "-0.5em", 'text-anchor'='end')
