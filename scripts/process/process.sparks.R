@@ -35,7 +35,7 @@ offline_mark <- function(mask_values, gage_data, timesteps, vert_adjust, site_no
   if(length(offline_index) == 0){
     circle = "0,0"
   } else {
-    offline_index <- offline_index[2]
+    offline_index <- offline_index[1L]-1
     offline_height <- gage_data[offline_index]
     
     x = svglite::xmlSVG({
@@ -51,7 +51,51 @@ offline_mark <- function(mask_values, gage_data, timesteps, vert_adjust, site_no
     circle = paste(circle_x, circle_y, sep=",")
   }
   
-  return(data.frame(circle = circle, stringsAsFactors = FALSE))
+  x <- svglite::xmlSVG({
+    par(omi=c(0,0,0,0), mai=c(0,0,0,0))
+    plot(1, 2, type='l', axes=F, ann=F)
+  }, height=sparkbox.height, width=sparkbox.width)
+  
+  view_box <- strsplit(xml2::xml_attr(x, 'viewBox'), '[ ]')[[1]] %>% as.numeric()
+  
+  view_height <- view_box[4]
+  view_width <- view_box[3]
+  r.buffer <- 0.04 * view_width # R does a 4% buffer automatically need to take it into account it later.
+  plotting.width <- view_width - 2 * r.buffer
+  time.locations <- seq(from = r.buffer, to = view_width - r.buffer, 
+                        length.out = length(timesteps))
+  
+  # compute the x range of 
+  block_times <- which(gage_data == mask_values)
+  if(length(block_times) > 1 && length(unique(diff(block_times))) != 1) {
+    stop(paste("expected block_times to be contiguous for", site_no))
+  }
+  if(length(block_times) == 0) {
+    block_times <- length(gage_data)
+  } else {
+    # append one additional timestep to the left to cover the transition
+    block_times <- c(block_times[1]-1, block_times)
+  }
+  block_bounds <- range(time.locations[block_times])
+  block_range <- diff(block_bounds)
+  
+  # prepare a rectangle clip path definition. we'll be using the time series of
+  # stage points for the blocker line, so here we're just defining a rectanglar
+  # area to clip to
+  # x's are 8px long
+  clip_params <- data_frame(
+    circle = circle,
+    x0=r.buffer,
+    x1=block_bounds[1]-5,
+    width=11,
+    x3=block_bounds[1]+5,
+    y0=-5,
+    height=view_height + 10) %>%
+    # make every column a character string with just 2 decimal places
+    lapply(function(col) sprintf('%s', col)) %>%
+    as_data_frame()
+  
+  return(clip_params)
 }
 
 grab_blocker <- function(mask_values, gage_data, timesteps, vert_adjust, site_no) {
@@ -93,8 +137,8 @@ grab_blocker <- function(mask_values, gage_data, timesteps, vert_adjust, site_no
     datawidth=x1-x0,
     width=diff(block_bounds),
     x3=view_width - r.buffer,
-    y0=vert_adjust,
-    height=view_height - vert_adjust) %>%
+    y0=-5,
+    height=view_height + 10) %>%
     # make every column a character string with just 2 decimal places
     lapply(function(col) sprintf('%1.2f', col)) %>%
     as_data_frame()
@@ -155,7 +199,15 @@ process.sparks <- function(viz = as.viz('sparks')){
       onmouseover=sprintf("setEmphasis('%s');", site_no),
       onmouseout=sprintf("clearEmphasis('%s');", site_no),
       onclick=sprintf("openNWIS('%s', evt);", site_no),
-      onmousemove="hovertext('No Data Available',evt);")
+      onmousemove="hovertext('No Data Available',evt);") %>% 
+    select(-site_no)
+  
+  
+  view_width <- sparkbox.width * 72 # px per inch
+  x.0 <- 0.04 * view_width
+  x.1 <- view_width - 0.04 * view_width
+  
+  r.buffer <- 0.04 * view_width # R does a 4% buffer automatically need to take it into account it later.
   
   offline <- bind_rows(lapply(sites$site_no, function(s) {
     offline_mark(mask_values=mask_values[s], 
@@ -164,23 +216,30 @@ process.sparks <- function(viz = as.viz('sparks')){
                  vert_adjust=0, 
                  site_no=s)
   })) %>%
+    
     mutate(
       site_no = sites$site_no,
-      class = 'gage-blocker',
-      id = paste0('blocker-',site_no),
+      class = 'treasure-spark',
+      id = paste0('offline-',site_no),
       "mask" = "url(#flood-opacity);",
-      "clip-path"=sprintf("url(#blocker-clip-%s)", site_no), 
+      "clip-path"=sprintf("url(#offline-clip-%s)", site_no), 
       onmouseover=sprintf("setBold('nwis-%s');setBold('sparkline-%s');", site_no, site_no),
       onmouseout=sprintf("setNormal('nwis-%s');setNormal('sparkline-%s');hovertext(' ');", site_no, site_no),
       onclick=sprintf("openNWIS('%s', evt);", site_no),
-      onmousemove="hovertext('No Data Available',evt);") %>%
-    filter(circle != "0,0")
+      onmousemove="hovertext('No Data Available',evt);") %>% 
+    filter(circle != "0,0", circle != "NA,NA") %>% 
+    mutate(cx = sapply(circle, function(x) strsplit(x,'[,]')[[1]][1])) %>% 
+    mutate(cy = sapply(circle, function(x) strsplit(x,'[,]')[[1]][2])) %>% 
+    mutate(d = sprintf('M%1.1f,0v0 M%1.2f,%1.2f l6,6 m0,-6 l-6,6 M%1.1f,0v0', x.0, as.numeric(cx)-3, as.numeric(cy)-3, x.1)) %>% 
+    select(-site_no, -cx, -cy, -circle)
+    
   
   
   
   saveRDS(list(gage_sparks = gage_sparks, 
                flood_sparks = flood_sparks, 
                gage_blockers = blockers,
+               #spark_blockers = spark_blockers,
                offline_points = offline), viz[['location']])
 }
 
