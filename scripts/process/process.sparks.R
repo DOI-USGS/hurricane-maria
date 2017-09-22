@@ -88,7 +88,6 @@ offline_mark <- function(mask_values, gage_data, timesteps, vert_adjust, site_no
     x0=r.buffer,
     x1=block_bounds[1]-5,
     width=11,
-    x3=block_bounds[1]+5,
     y0=-5,
     height=view_height + 10) %>%
     # make every column a character string with just 2 decimal places

@@ -13,7 +13,7 @@ visualize_hurricane_map <- function(viz=as.viz('hurricane-map-mobile'), mode, ..
 
   xml_attr(svg, "id") <- viz[['id']]
   vb <- strsplit(xml_attr(svg, 'viewBox'),'[ ]')[[1]]
-  side.panel <- 250
+  side.panel <- ifelse(mode == 'portrait', as.numeric(vb[3]), 250)
   
   # get the big dog that has all the stuff that is geo:
   map.elements <- xml2::xml_find_first(svg, "//*[local-name()='g'][@id='map-elements']") 
@@ -41,31 +41,53 @@ visualize_hurricane_map <- function(viz=as.viz('hurricane-map-mobile'), mode, ..
   xml_add_child(g.tool, 'text', id="tooltip-text", dy="-1.1em", 'text-anchor'="middle", class="tooltip-text-label svg-text", " ")
   
   g.watermark <- xml_add_child(non.geo.top, depends[["watermark"]])
-  xml_attr(g.watermark, "transform") <- sprintf('translate(%s,%s)scale(0.3)', 
-                                                as.character(as.numeric(vb[1])+10), 
-                                                as.character(as.numeric(vb[1])+10))
+  if (mode == 'portrait'){
+    xml_attr(g.watermark, "transform") <- sprintf('translate(%s,%s)scale(0.2)', 
+                                                  as.character(as.numeric(vb[3])-115), 
+                                                  as.character(as.numeric(vb[1])+10))
+  } else {
+    xml_attr(g.watermark, "transform") <- sprintf('translate(%s,%s)scale(0.3)', 
+                                                  as.character(as.numeric(vb[1])+10), 
+                                                  as.character(as.numeric(vb[1])+10))
+  }
   
-  g.legend <- xml_add_child(non.geo.top, 'g', id='legend', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-50))
-  add_legend(g.legend, colors = depends$`precip-colors`, break.step = getContentInfo('precip-breaks')$stepSize)
   
   
   
   
-  g.spark <- xml_add_child(non.geo.top, 'g', id = 'sparkline-container', transform=sprintf('translate(%s,0)', as.numeric(vb[3])-side.panel))
-  xml_add_child(g.spark, 'rect', width = as.character(side.panel), height='100%', class='legend-box')
+  if (mode == "portrait"){
+    bmp <- 340
+    g.spark <- xml_add_child(non.geo.top, 'g', id = 'sparkline-container', transform=sprintf('translate(%s,%s)', as.numeric(vb[3])-side.panel, bmp))
+    xml_add_child(g.spark, 'rect', width = as.character(side.panel), height=as.character(as.numeric(vb[4])-bmp), class='legend-box')
+  } else {
+    bmp <- 0
+    g.spark <- xml_add_child(non.geo.top, 'g', id = 'sparkline-container', transform=sprintf('translate(%s,0)', as.numeric(vb[3])-side.panel))
+    xml_add_child(g.spark, 'rect', width = as.character(side.panel), height='100%', class='legend-box')
+  }
+  
+  if (mode == "portrait"){
+    g.legend <- xml_add_child(non.geo.top, 'g', id='legend', transform=sprintf("translate(10,%s)", bmp-50))
+  } else {
+    g.legend <- xml_add_child(non.geo.top, 'g', id='legend', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-50))  
+  }
+  add_legend(g.legend, colors = depends$`precip-colors`, break.step = getContentInfo('precip-breaks')$stepSize, mode = mode)
+  
   # sparklines within container:
   g.sparkle.blck <- xml_add_child(g.spark, 'g', id = sprintf('sparkline-squiggle-block-%s', mode))
   xml_add_child(g.sparkle.blck, 'text', x=as.character(side.panel/2), 'Featured USGS gages', dy="1.5em", 'text-anchor'='middle', class='svg-text legend-text')
-  xml_add_child(g.sparkle.blck, 'text', x=as.character(side.panel/2), '(normalized stage)', dy='3em', 'text-anchor'='middle', class='svg-text smallprint-text legend-text')
+  xml_add_child(g.sparkle.blck, 'text', x=as.character(side.panel/2), '(normalized stage)', dy='3.3em', 'text-anchor'='middle', class='svg-text smallprint-text legend-text')
   g.sparkles <- xml_add_child(g.sparkle.blck, 'g', id = sprintf('sparkline-squiggles-%s', mode))
-  
-  ys <- seq(45, as.numeric(vb[4]) - 50, length.out = nrow(sparks))
+  if (mode == 'portrait'){
+    xml_attr(g.sparkles, 'transform') <- "translate(30,0)scale(2,1)"
+  }
+  ys <- seq(38, as.numeric(vb[4]) - 50 - bmp, length.out = nrow(sparks))
   blocker.ids <- sapply(blockers$id, function(x) strsplit(x, '[-]')[[1]][2], USE.NAMES = FALSE)
   offline.ids <- sapply(x.offline$id, function(x) strsplit(x, '[-]')[[1]][2], USE.NAMES = FALSE)
   
   for (i in 1:nrow(sparks)){ 
     # create the container for a spark line, flood spark line, and blocker
-    g.single <- xml_add_child(g.sparkles, 'g', transform=sprintf('translate(0,%s)', ys[i])) 
+    translate <- ifelse(mode == 'portrait', 'translate(0,%s)scale(1,1.4)', 'translate(0,%s)')
+    g.single <- xml_add_child(g.sparkles, 'g', transform=sprintf(translate, ys[i])) 
     
     # match up the spark, flood-spark, and blocker data for this one site. match
     # blockers to sparks based on spark.id
@@ -100,17 +122,16 @@ visualize_hurricane_map <- function(viz=as.viz('hurricane-map-mobile'), mode, ..
       offline[c("x0","x1","width","x3","y0","height" )] <- NULL
       do.call(xml_add_child, append(list(.x = g.single, .value = 'path'), offline))
     }
-#=======
-    # cp <- xml_add_child(d, "clipPath", id=sprintf("blocker-clip-%s", strsplit(blocker$id, '[-]')[[1]][2]))
-    # xml_add_child(cp, 'rect', x=blocker$x1, y=blocker$y0, width=blocker$width, height=blocker$height) # main rectangle
-    # # data is polyline for stage for all time points
-    # blocker$points <- sparks[i, ]$points # add the stage points
-    # blocker <- dplyr::select(blocker, -x0, -x1, -width, -x3, -y0, -height) # remove columns used for clippaths
-    # do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), blocker))
-#>>>>>>> b3efa15d43cc9af5143252ab86755847a717d969
   }
-  xml_add_child(non.geo.bot, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', 
-                y = vb[4], x = vb[3], dy = "-0.5em", dx = "-0.5em", 'text-anchor'='end')
+  
+  if (mode == 'portrait'){
+    xml_add_child(non.geo.bot, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', 
+                  y = as.character(bmp), x = vb[3], dy = "1.5em", dx = "-0.5em", 'text-anchor'='end')
+  } else {
+    xml_add_child(non.geo.bot, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', 
+                  y = vb[4], x = vb[3], dy = "-0.5em", dx = "-0.5em", 'text-anchor'='end')
+  }
+  
   
   m = xml_add_child(d, 'mask', id="spark-opacity", x="0", y="-1", width="1", height="3", maskContentUnits="objectBoundingBox")
   xml_add_child(m, 'rect', x="0", y="-1", width="1", height="3", style="fill-opacity: 0.18; fill: white;", id='spark-light-mask')
@@ -190,7 +211,7 @@ visualize.hurricane_map_landscape <- function(viz = as.viz('hurricane-map-landsc
   write_xml(svg, file = viz[['location']])
 }
 
-add_legend <- function(parent.ele, colors, break.step){
+add_legend <- function(parent.ele, colors, break.step, mode){
   
   # lower left legend:
   xml_add_child(parent.ele, 'text', "NOAA total rainfall amount (inches)", class='svg-text legend-text', dy="-1em",
@@ -217,7 +238,7 @@ add_legend <- function(parent.ele, colors, break.step){
                                     transform="translate(0,-38)")
   
   
-  rain.w <- 32 # width of a rain legend bin
+  rain.w <- ifelse(mode == 'portrait', 30, 32) # width of a rain legend bin
   rain.h <- 14
   x0 <- 0
   n.bins <- length(colors)

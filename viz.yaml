@@ -12,11 +12,22 @@ info:
     water, hurricane, maria, USGS, NOAA, VIZLAB, NWIS, flood, Puerto Rico
   mimetypeDictionary: "data/mimetypes.yaml"
   audience: 
-  thumbnail:
-    url:
-    width: 250
-    height: 250
-    alttext:
+  thumbnail-facebook:
+    url: https://owi.usgs.gov/vizlab/images/thumb-facebook.png
+    width: 1560
+    height: 820
+    alttext: "Hurricane Maria"
+    type: image/png
+  thumbnail-twitter:
+    url: https://owi.usgs.gov/vizlab/images/thumb-twitter.png
+    width: 560
+    height: 300
+    alttext: "Hurricane Maria"
+  thumbnail-landing:
+    url: images/thumb-landing.png
+    width: 400
+    height: 400
+    alttext: "Hurricane Maria"
   required-packages:
     vizlab:
       repo: github
@@ -93,6 +104,10 @@ info:
       email: dblodgett@usgs.gov
       affiliation: U.S. Geological Survey
     -
+      name: Lindsay Carr
+      email: lcarr@usgs.gov
+      affiliation: U.S. Geological Survey
+    -
       name: Alison Appling
       email: aappling@usgs.gov
       affiliation: U.S. Geological Survey
@@ -103,9 +118,15 @@ info:
       
 parameter:
   -
-    id: mobile-metadata
+    id: desktop-metadata
     height: 8
     width: 12
+    pointsize: 12
+    proj.string: '+init=epsg:3991'
+  -
+    id: mobile-metadata
+    height: 12
+    width: 8
     pointsize: 12
     proj.string: '+init=epsg:3991'
   -
@@ -127,9 +148,18 @@ fetch:
     location: cache/view-limits-mobile.rds
     reader: rds
     fetcher: view_limits
-    bbox: [-67.8, 17, -63.2, 19]
+    bbox: [-67.2, 16.0, -65.2, 18.1]
     depends:
       metadata: "mobile-metadata"
+    scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/plotting_utils.R]
+  -
+    id: view-limits-desktop
+    location: cache/view-limits-desktop.rds
+    reader: rds
+    fetcher: view_limits
+    bbox: [-67.8, 17, -63.2, 19]
+    depends:
+      metadata: "desktop-metadata"
     scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/plotting_utils.R]
   -
     id: islands-mobile
@@ -139,6 +169,15 @@ fetch:
     scripts: [scripts/fetch/fetch.islands.R, scripts/visualize/plotting_utils.R, scripts/fetch/utils.R]
     depends: 
       view-limits: "view-limits-mobile"
+    mimetype: application/zip
+  -
+    id: islands-desktop
+    location: cache/islands_desktop.rds
+    reader: rds
+    fetcher: islands
+    scripts: [scripts/fetch/fetch.islands.R, scripts/visualize/plotting_utils.R, scripts/fetch/utils.R]
+    depends: 
+      view-limits: "view-limits-desktop"
     mimetype: application/zip
 #  - 
 #    id: san-juan
@@ -236,6 +275,16 @@ process:
       polygons: "islands-mobile"
     mimetype: application/zip
   -
+    id: storm-islands-desktop
+    location: cache/storm-islands-desktop.rds
+    reader: rds
+    processor: geopolygons
+    classname: island-polygon
+    scripts: scripts/process/process.geopolygons.R
+    depends: 
+      polygons: "islands-desktop"
+    mimetype: application/zip
+  -
     id: storm-track-mobile
     location: cache/storm-track-mobile.rds
     processor: storm_track
@@ -245,6 +294,15 @@ process:
       view-limits: "view-limits-mobile"
       hurricane-track: "hurricane-track"
   -
+    id: storm-track-desktop
+    location: cache/storm-track-desktop.rds
+    processor: storm_track
+    scripts: scripts/process/process.storm_track.R
+    reader: rds
+    depends: 
+      view-limits: "view-limits-desktop"
+      hurricane-track: "hurricane-track"
+  -
     id: storm-location-mobile
     location: cache/storm-location-mobile.rds
     processor: storm_location
@@ -252,6 +310,16 @@ process:
     reader: rds
     depends: 
       view-limits: "view-limits-mobile"
+      hurricane-track: "hurricane-track"
+      timesteps: "timesteps"
+  -
+    id: storm-location-desktop
+    location: cache/storm-location-desktop.rds
+    processor: storm_location
+    scripts: scripts/process/process.storm_location.R
+    reader: rds
+    depends: 
+      view-limits: "view-limits-desktop"
       hurricane-track: "hurricane-track"
       timesteps: "timesteps"
   - 
@@ -264,8 +332,8 @@ process:
       gage-height: "gage-data"
       timesteps: "timesteps"
   -
-    id: sp-sites
-    location: cache/sp-sites.rds
+    id: sp-sites-mobile
+    location: cache/sp-sites-mobile.rds
     processor: sp_sites
     scripts: scripts/process/process.sp_sites.R
     reader: rds
@@ -273,13 +341,33 @@ process:
       metadata: mobile-metadata
       sites: nwis-sites
   -
-    id: classified-sites
-    location: cache/classified-sites.rds
+    id: sp-sites-desktop
+    location: cache/sp-sites-desktop.rds
+    processor: sp_sites
+    scripts: scripts/process/process.sp_sites.R
+    reader: rds
+    depends: 
+      metadata: desktop-metadata
+      sites: nwis-sites
+  -
+    id: classified-sites-mobile
+    location: cache/classified-sites-mobile.rds
     processor: classified_sites
     scripts: scripts/process/process.classified_sites.R
     reader: rds
     depends: 
-      sites: "sp-sites"
+      sites: "sp-sites-mobile"
+      gage-height: "storm-gage-height"
+      nws-threshold: "nws-data"
+      config: "config"
+  -
+    id: classified-sites-desktop
+    location: cache/classified-sites-desktop.rds
+    processor: classified_sites
+    scripts: scripts/process/process.classified_sites.R
+    reader: rds
+    depends: 
+      sites: "sp-sites-desktop"
       gage-height: "storm-gage-height"
       nws-threshold: "nws-data"
       config: "config"
@@ -327,7 +415,7 @@ process:
     reader: rds
     depends: 
       classified-precip: classified-precip
-      clip: storm-islands-mobile
+      clip: storm-islands-desktop
   -
     id: cell-precip-VI
     location: cache/cell-precip-VI.rds
@@ -338,10 +426,10 @@ process:
     reader: rds
     depends: 
       classified-precip: classified-precip
-      clip: storm-islands-mobile
+      clip: storm-islands-desktop
   -
-    id: cell-precip
-    location: cache/cell-precip.rds
+    id: cell-precip-desktop
+    location: cache/cell-precip-desktop.rds
     processor: cell_precip
     scripts: [scripts/process/process.cell_precip.R]
     reader: rds
@@ -349,24 +437,51 @@ process:
       cell-precip-VI: cell-precip-VI
       cell-precip-PR: cell-precip-PR
   -
-    id: order-sites
+    id: cell-precip-mobile
+    location: cache/cell-precip-mobile.rds
+    processor: cell_precip
+    scripts: [scripts/process/process.cell_precip.R]
     reader: rds
-    location: cache/order_sites.rds
+    depends: 
+      cell-precip-PR: cell-precip-PR
+  -
+    id: order-sites-mobile
+    reader: rds
+    location: cache/order_sites-mobile.rds
     scripts: scripts/process/process.order_sites.R
-    depends: sp-sites
+    depends: 
+      sp-sites: sp-sites-mobile
+    processor: order_sites
+  -
+    id: order-sites-desktop
+    reader: rds
+    location: cache/order_sites-desktop.rds
+    scripts: scripts/process/process.order_sites.R
+    depends: 
+      sp-sites: sp-sites-desktop
     processor: order_sites
   - 
-    id: sparks
-    location: cache/sparks.rds
+    id: sparks-mobile
+    location: cache/sparks-mobile.rds
     processor: sparks
     scripts: scripts/process/process.sparks.R
     reader: rds
     depends: 
       gage-data: storm-gage-height
       timesteps: timesteps
-      sites: order-sites
+      sites: order-sites-mobile
       nws-data: nws-data
-
+  - 
+    id: sparks-desktop
+    location: cache/sparks-desktop.rds
+    processor: sparks
+    scripts: scripts/process/process.sparks.R
+    reader: rds
+    depends: 
+      gage-data: storm-gage-height
+      timesteps: timesteps
+      sites: order-sites-desktop
+      nws-data: nws-data
 visualize:
   -
     id: base-map-mobile
@@ -375,10 +490,24 @@ visualize:
     depends: 
       view-limits: view-limits-mobile
       storm-islands: storm-islands-mobile
-      cell-precip: cell-precip
+      cell-precip: cell-precip-mobile
       storm-track: storm-track-mobile
-      nwis-gages: classified-sites
+      nwis-gages: classified-sites-mobile
       storm-location: storm-location-mobile
+    scripts: ["scripts/visualize/plotting_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
+    reader: svg_map
+    mimetype: image/svg+xml
+  -
+    id: base-map-desktop
+    location: cache/base-map-desktop.svg
+    visualizer: svg_base_map
+    depends: 
+      view-limits: view-limits-desktop
+      storm-islands: storm-islands-desktop
+      cell-precip: cell-precip-desktop
+      storm-track: storm-track-desktop
+      nwis-gages: classified-sites-desktop
+      storm-location: storm-location-desktop
     scripts: ["scripts/visualize/plotting_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
     reader: svg_map
     mimetype: image/svg+xml
@@ -391,7 +520,8 @@ visualize:
       watermark: usgs-watermark
       precip-colors: precip-colors
       precip-breaks: precip-breaks
-      sparks: sparks
+      sparks: sparks-mobile
+      parameters: mobile-metadata
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: portrait
@@ -402,13 +532,14 @@ visualize:
   -
     id: hurricane-map-landscape
     location: figures/hurricane-map-desktop.svg
-    visualizer: hurricane_map_portrait
+    visualizer: hurricane_map_landscape
     depends: 
-      base-map: base-map-mobile 
+      base-map: base-map-desktop
       watermark: usgs-watermark
       precip-colors: precip-colors
       precip-breaks: precip-breaks
-      sparks: sparks
+      sparks: sparks-desktop
+      parameters: desktop-metadata
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     orientation: landscape
@@ -437,6 +568,9 @@ publish:
         url: https://owi.usgs.gov/vizlab/hurricane-irma/
         name: Hurricane Irma
         thumbLoc: https://owi.usgs.gov/vizlab/hurricane-irma/images/thumb-twitter.png
+      - name: Hurricane Harvey
+        org: USGS-VIZLAB
+        repo: hurricane-harvey
   -
     id: map-section
     publisher: section
@@ -460,13 +594,51 @@ publish:
       text: markdown-text.description
       id: textSection
   -
+    id: image-section
+    publisher: section
+    template: layout/templates/image-section.mustache
+    depends:
+      gage-image: gage-image
+      hydrograph-image: hydrograph-image
+      markdown-text: markdown-text
+    context:
+      gage-image: gage-image
+      hydrograph-image: hydrograph-image
+      image-caption: markdown-text.texas-caption
+  -
+    id: footnote-section
+    publisher: section
+    template: layout/templates/text-section.mustache
+    depends: markdown-text
+    context:
+      text: markdown-text.footnote
+      id: textSection 
+  -
+    id: social-section
+    publisher: section
+    template: layout/templates/socialMedia.mustache
+    depends:
+      githubLogo: githubLogo
+      twitterLogo: twitterLogo 
+      facebookLogo: facebookLogo
+    context:
+      githubLink: "https://github.com/USGS-VIZLAB/hurricane-maria"
+      twitterLink: "https://twitter.com/share?url=https%3A%2F%2Fowi.usgs.gov%2Fvizlab%2Fhurricane-maria%2F%3Fviz-twitter&text=Impact%20of%20Hurricane%20Maria%20on%20precipitation%20and%20rivers&hashtags=HurricaneMaria,hurricane,flood,dataviz"
+      facebookLink: "http://www.facebook.com/sharer.php?u=https%3A%2F%2Fowi.usgs.gov%2Fvizlab%2Fhurricane-maria%2F%3Fviz-fb"
+      githubLogo: githubLogo
+      twitterLogo: twitterLogo 
+      facebookLogo: facebookLogo
+  -
     id: maria-page
     name: index
     publisher: page
     template: fullpage
     depends:
       map-section: map-section
+      social-section: social-section
       description-section: description-section
+      image-section: image-section
+      footnote-section: footnote-section
       header: header
       footer: footer
       figure-css: map-figure-css
@@ -481,11 +653,15 @@ publish:
       colors: precip-colors
       times: timesteps
       sourcesanspro: sourcesanspro
+      social-media-css: social-media-css
+      thumb-facebook: thumb-facebook
+      thumb-twitter: thumb-twitter
+      thumb-landing: thumb-landing
     comment: missing from depends are the thumbnails which should be added back
     context:
-      sections: [ map-section, description-section ]
+      sections: [ map-section, social-section, description-section, image-section, footnote-section ]
       resources: [ figure-css, jquery-js, vizlab-js, svg-injector-js, animate-js, svg-css,
-        header-css, footer-css, vizlab-favicon, sourcesanspro]
+        header-css, footer-css, social-media-css, vizlab-favicon, sourcesanspro]
   -
     id: animate-js
     location: layout/js/animate.js
@@ -502,17 +678,72 @@ publish:
     mimetype: text/css
     publisher: resource
   -
+    id: social-media-css
+    location: layout/css/social-media.css
+    mimetype: text/css
+  -
     id: play-icon
     location: images/arrow.png
     mimetype: image/png
     title: "play icon"
     alttext: "play icon"
   -
+    id: gage-image
+    location: images/gage-image.jpg
+    mimetype: image/jpg
+    title: "Before image"
+    alttext: "Before Image"
+  -
+    id: hydrograph-image
+    location: images/WC_hydrograph.jpg
+    mimetype: image/jpg
+    title: "After image"
+    alttext: "After Image"
+  -
     id: loading-icon
     location: images/loader-01.png
     mimetype: image/png
     title: "loading icon"
     alttext: "loading icon"
+  -
+    id: githubLogo
+    location: images/github.svg
+    mimetype: image/svg
+    inline: true
+    title: "Github"
+    alttext: "Github Logo"
+  -
+    id: twitterLogo
+    location: images/twitter.svg
+    mimetype: image/svg
+    inline: true
+    title: "Twitter"
+    alttext: "Twitter Logo"
+  -
+    id: facebookLogo
+    location: images/facebook.svg
+    mimetype: image/svg
+    inline: true
+    title: "Facebook"
+    alttext: "Facebook Logo"
+  -
+    id: thumb-facebook
+    location: images/thumb-facebook.png
+    mimetype: image/png
+    title: "Facebook Thumbnail"
+    alttext: "Facebook Thumbnail"
+  -
+    id: thumb-twitter
+    location: images/thumb-twitter.png
+    mimetype: image/png
+    title: "Twitter Thumbnail"
+    alttext: "Twitter Thumbnail"
+  -
+    id: thumb-landing
+    location: images/thumb-landing.png
+    mimetype: image/png
+    title: "Landing Page Thumbnail"
+    alttext: "Landing Page Thumbnail"
   -
     id: sourcesanspro
     publisher: googlefont

@@ -57,13 +57,16 @@ getPoly <- function(x,y, offset, id){
 process.cell_precip <- function(viz=as.viz("cell-precip")){
   deps <- readDepends(viz)
   
-  checkRequired(deps, c("cell-precip-VI", "cell-precip-PR"))
-  
   # Could make this more automatic someday:
   PR <- deps[["cell-precip-PR"]]
   VI <- deps[["cell-precip-VI"]]
 
-  combo <- rbind(PR, VI)
+  if (!is.null(VI)){
+    combo <- rbind(PR, VI)
+  } else {
+    combo <- PR
+  }
+  
   
   saveRDS(combo, file = viz[['location']])
   
