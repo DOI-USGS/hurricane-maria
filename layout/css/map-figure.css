@@ -11,6 +11,12 @@
 html,
 body {
     font-family: "Source Sans Pro", sans-serif;
+    height:100%;
+}
+
+#overcast{
+  background: rgba(0,0,0,.2);
+  height:100%;
 }
 
 a{
@@ -21,8 +27,9 @@ a{
 }
 
 #textSection,
-#map-figure{
-  padding:10px;
+#map-figure,
+#imageContainer{
+  padding:10px 10px 0 10px;
   font-size:.9em;
 }
 
@@ -37,7 +44,8 @@ figurecaption{
   margin-bottom:10px;
 }
 
-#textSection p{
+#textSection p,
+#imageContainer p{
   margin-bottom:10px;
   font-size:1.1em;
 }
@@ -78,9 +86,31 @@ figurecaption{
   position: relative;
 }
 
+.imageContent{
+  display:flex;
+  flex-direction:row;
+  flex-wrap: wrap;
+  margin-bottom:10px;
+}
+
+.image{
+  flex:1;
+  margin-right:10px;
+}
+
+.image:last-child{
+  margin-right:0;
+}
+
+.image img{
+  width:100%;
+}
+
+
 @media screen and (min-width:768px){
   #textSection,
-  #map-figure{
+  #map-figure,
+  #imageContainer{
     width:760px;
     margin:10px auto 10px auto;
     font-size:1em;
@@ -89,7 +119,8 @@ figurecaption{
 
 @media screen and (min-width:1200px){
   #textSection,
-  #map-figure{
+  #map-figure,
+  #imageContainer{
     width:960px;
   }
 }

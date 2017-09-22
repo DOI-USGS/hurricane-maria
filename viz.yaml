@@ -593,6 +593,16 @@ publish:
       text: markdown-text.description
       id: textSection
   -
+    id: image-section
+    publisher: section
+    template: layout/templates/image-section.mustache
+    depends:
+      gage-image: gage-image
+      hydrograph-image: hydrograph-image
+    context:
+      gage-image: gage-image
+      hydrograph-image: hydrograph-image
+  -
     id: social-section
     publisher: section
     template: layout/templates/socialMedia.mustache
@@ -618,6 +628,7 @@ publish:
       description-section: description-section
       header: header
       footer: footer
+      image-section: image-section
       figure-css: map-figure-css
       jquery-js: lib-jquery-js
       animate-js: animate-js
@@ -636,7 +647,7 @@ publish:
       thumb-landing: thumb-landing
     comment: missing from depends are the thumbnails which should be added back
     context:
-      sections: [ map-section, social-section, description-section ]
+      sections: [ map-section, social-section, description-section, image-section ]
       resources: [ figure-css, jquery-js, vizlab-js, svg-injector-js, animate-js, svg-css,
         header-css, footer-css, social-media-css, vizlab-favicon, sourcesanspro]
   -
@@ -664,6 +675,18 @@ publish:
     mimetype: image/png
     title: "play icon"
     alttext: "play icon"
+  -
+    id: gage-image
+    location: images/gage-image.jpg
+    mimetype: image/jpg
+    title: "Before image"
+    alttext: "Before Image"
+  -
+    id: hydrograph-image
+    location: images/WC_hydrograph.jpg
+    mimetype: image/jpg
+    title: "After image"
+    alttext: "After Image"
   -
     id: loading-icon
     location: images/loader-01.png
