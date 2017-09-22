@@ -90,6 +90,7 @@ grab_blocker <- function(mask_values, gage_data, timesteps, vert_adjust, site_no
   clip_params <- data_frame(
     x0=r.buffer,
     x1=block_bounds[1],
+    datawidth=x1-x0,
     width=diff(block_bounds),
     x3=view_width - r.buffer,
     y0=vert_adjust,
@@ -117,6 +118,7 @@ process.sparks <- function(viz = as.viz('sparks')){
     mutate(class = "sparkline", 
            id = sprintf("sparkline-%s", site_no), 
            "mask" = "url(#spark-opacity);",
+           "clip-path"=sprintf("url(#stage-clip-%s)", site_no), 
            onmouseover=sprintf("setBold('nwis-%s');", site_no), 
            onmouseout=sprintf("setNormal('nwis-%s');hovertext(' ');", site_no),
            onclick=sprintf("openNWIS('%s', evt);", site_no),
