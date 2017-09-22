@@ -1,28 +1,40 @@
 ---
 description: |+
-  Hurricane Maria collided with Puerto Rico on September 20th, 2017 bringing with it
-  an mix of high winds and extreme rainfall. Much of the island experienced flooding 
-  and structural damage. 
+  Hurricane Maria made landfall in Puerto Rico on September 20, 2017, bringing with it a
+  mix of high winds and extreme rainfall. Much of the island experienced flooding and
+  structural damage along with a loss of electricity and water.
   
   ### Details
-  Watch as the map above animates Hurricane Maria’s path, cumulative precipitation, and its 
-  impact on river gage height. Every six hours, the data are refreshed to show the 
-  most up-to-date information. Hydrographs in the right panel show normalized gage 
-  height at the 24 U.S. Geological Survey (USGS) gaging stations that are used by the 
-  [National Weather Service](http://www.weather.gov/) to forecast flood conditions. 
-  The U.S. Geological Survey's robust streamgaging network, which held strong against the pummeling of 
-  [Hurricane Harvey](https://owi.usgs.gov/vizlab/hurricane-harvey/) 
-  and [Hurricane Irma](https://owi.usgs.gov/vizlab/hurricane-irma/), was not immune to Maria's
-  extreme conditions; see "x" markers appear when data were lost, conditions were beyond gage operating limits, 
-  or instruments were damaged. Variation in the shape of the hydrographs is due to a number of factors that impact the effect of precipitation 
-  on flow, including: stream size, storm-surge, reservoir operations, and other local 
-  conditions. The USGS has many more permanent 
-  [gaging stations](https://maps.waterdata.usgs.gov/) across the country; 
-  less than 1% are represented in this visualization. The USGS also collects additional 
-  information with [Short-Term Network gages](https://stn.wim.usgs.gov/FEV/#MariaSeptember2017). 
-  More information about water science in Puerto Rico can be found at the [Caribbean 
-  Water Science Center.](https://pr.water.usgs.gov/)
+  Watch as the map above animates Hurricane Maria’s path, the cumulative precipitation
+  the storm dropped on the island, and the impact of rainfall on river gage height.
+  New data are added every six hours. Hydrographs in the right panel show normalized
+  gage height at the 24 U.S. Geological Survey (USGS) gaging stations that are used by
+  the [National Weather Service](http://www.weather.gov) to forecast flood conditions. 
   
+  The USGS's robust streamgaging network, which held strong against the pummeling of
+  [Hurricane Harvey](https://owi.usgs.gov/vizlab/hurricane-harvey) and 
+  [Hurricane Irma](https://owi.usgs.gov/vizlab/hurricane-irma/), was not immune
+  to Maria's extreme conditions —
+  see “x” markers appear when data were lost, conditions were beyond gage operating
+  limits, or instruments were damaged. The hydrographs vary in shape due to differences
+  in stream size, storm surge, reservoir operations, and other local conditions.
+
+  The USGS has more than 8,200 permanent [gaging stations](https://maps.waterdata.usgs.gov)
+  across the country; 24 are represented in this visualization. The USGS collects
+  additional information with [Short-Term Network](https://stn.wim.usgs.gov/FEV/#MariaSeptember2017)
+  sensor deployments.
+  
+  When gages are damaged in a storm or when gages are needed in particularly vulnerable areas,
+  the USGS can build robust structures to protect equipment and ensure data integrity. A
+  recent example of where that practice was particularly important was along the coast of
+  Texas. For example, the Brazos River near West Columbia, Texas was built up on a stand
+  to help prevent the instruments from getting wet. Hurricane Harvey flooded the area with
+  over 25 feet of water that remained for over five days but the instrument continued
+  transmitting situational awareness data for the flood conditions. 
+  
+  More information about water science in Puerto Rico can be found at the 
+  [Caribbean-Florida Water Science Center](https://pr.water.usgs.gov).
+
   ### Data Sources
   *Gage Height*: U.S. Geological Survey [National Water Information 
   System](https://waterdata.usgs.gov/nwis). Time series 
@@ -35,4 +47,4 @@ description: |+
   shapefiles aggregated to a complete grid for the hurricane.
   
   *Storm Track*: National Oceanic and Atmospheric Administration National Hurricane Center 
-  [Preliminary Best Track](http://www.nhc.noaa.gov/gis/) for Hurricane Irma.
+  [Preliminary Best Track](http://www.nhc.noaa.gov/gis/) for Hurricane Marie.
