@@ -74,8 +74,8 @@ grab_blocker <- function(mask_values, gage_data, timesteps, vert_adjust, site_no
     x1=block_bounds[1],
     width=diff(block_bounds),
     x3=view_width - r.buffer,
-    y0=vert_adjust,
-    height=view_height - vert_adjust) %>%
+    y0=0,
+    height=view_height) %>%
     # make every column a character string with just 2 decimal places
     lapply(function(col) sprintf('%1.2f', col)) %>%
     as_data_frame()
