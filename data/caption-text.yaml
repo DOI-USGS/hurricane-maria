@@ -5,7 +5,7 @@ description: |+
   structural damage along with a loss of electricity and water.
   
   ### Details
-  Watch as the map above animates Hurricane Maria’s path, the cumulative precipitation
+  Watch as the map above animates Hurricane Maria's path, the cumulative precipitation
   the storm dropped on the island, and the impact of rainfall on river gage height.
   New data are added every six hours. Hydrographs in the right panel show normalized
   gage height at the 24 U.S. Geological Survey (USGS) gaging stations that are used by
@@ -14,8 +14,8 @@ description: |+
   The USGS's robust streamgaging network, which held strong against the pummeling of
   [Hurricane Harvey](https://owi.usgs.gov/vizlab/hurricane-harvey) and 
   [Hurricane Irma](https://owi.usgs.gov/vizlab/hurricane-irma/), was not immune
-  to Maria's extreme conditions —
-  see “x” markers appear when data were lost, conditions were beyond gage operating
+  to Maria's extreme conditions - see "x" markers appear when data were lost, conditions
+  were beyond gage operating
   limits, or instruments were damaged. The hydrographs vary in shape due to differences
   in stream size, storm surge, reservoir operations, and other local conditions.
 
