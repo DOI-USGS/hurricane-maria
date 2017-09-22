@@ -353,10 +353,10 @@ visualize:
     depends: 
       view-limits: view-limits-mobile
       storm-islands: storm-islands-mobile
-      storm-track: storm-track-mobile
-      storm-location: storm-location-mobile
       cell-precip: cell-precip
+      storm-track: storm-track-mobile
       nwis-gages: classified-sites
+      storm-location: storm-location-mobile
     scripts: ["scripts/visualize/plotting_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
     reader: svg_map
     mimetype: image/svg+xml
