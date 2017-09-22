@@ -12,13 +12,13 @@ info:
     water, hurricane, maria, USGS, NOAA, VIZLAB, NWIS, flood, Puerto Rico
   audience: 
   thumbnail-facebook:
-    url: images/thumb-facebook.png
+    url: https://owi.usgs.gov/vizlab/images/thumb-facebook.png
     width: 1560
     height: 820
     alttext: "Hurricane Maria"
     type: image/png
   thumbnail-twitter:
-    url: images/thumb-twitter.png
+    url: https://owi.usgs.gov/vizlab/images/thumb-twitter.png
     width: 560
     height: 300
     alttext: "Hurricane Maria"
@@ -599,9 +599,19 @@ publish:
     depends:
       gage-image: gage-image
       hydrograph-image: hydrograph-image
+      markdown-text: markdown-text
     context:
       gage-image: gage-image
       hydrograph-image: hydrograph-image
+      image-caption: markdown-text.texas-caption
+  -
+    id: footnote-section
+    publisher: section
+    template: layout/templates/text-section.mustache
+    depends: markdown-text
+    context:
+      text: markdown-text.footnote
+      id: textSection 
   -
     id: social-section
     publisher: section
@@ -626,9 +636,10 @@ publish:
       map-section: map-section
       social-section: social-section
       description-section: description-section
+      image-section: image-section
+      footnote-section: footnote-section
       header: header
       footer: footer
-      image-section: image-section
       figure-css: map-figure-css
       jquery-js: lib-jquery-js
       animate-js: animate-js
@@ -647,7 +658,7 @@ publish:
       thumb-landing: thumb-landing
     comment: missing from depends are the thumbnails which should be added back
     context:
-      sections: [ map-section, social-section, description-section, image-section ]
+      sections: [ map-section, social-section, description-section, image-section, footnote-section ]
       resources: [ figure-css, jquery-js, vizlab-js, svg-injector-js, animate-js, svg-css,
         header-css, footer-css, social-media-css, vizlab-favicon, sourcesanspro]
   -
