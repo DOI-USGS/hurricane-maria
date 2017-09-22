@@ -288,7 +288,7 @@ process:
     processor: precip_colors
     scripts: scripts/process/process.precip_colors.R
     reader: json
-    cols: ["#fffbd9", "#FDE725", "#CBE11E", "#97D83F", "#67CC5C", "#40BC72", "#25AC82", "#1F998A", "#24878E", "#2B748E", "#34618D", "#3D4D8A", "#453581", "#481D6F", "#440154"]
+    cols: ["#ebf08c","#D8E219","#B0DD2F","#89D548","#65CB5E","#46C06F","#2EB37C","#21A585","#1F978B","#23898E","#297B8E","#2E6D8E","#355E8D","#3D4E8A","#433D84","#472A7A","#481769","#440154"]
     mimetype: application/javascript
     export: true
   -
