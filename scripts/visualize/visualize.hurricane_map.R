@@ -129,7 +129,7 @@ dot_to_treasure <- function(svg, group.id){
   
   for (i in seq_len(length(clip.ids))){
     # make an x, translate it into the right place and scale it so it is hidden below the overlying dot
-    xml_add_child(treasure.g, 'path', class='treasure-mark',
+    xml_add_child(treasure.g, 'path', class='treasure-mark', id = gsub(pattern = 'nwis',replacement = 'treasure', clip.ids[i]),
                   d = "M-5,-5 l10,10 m0,-10 l-10,10", 
                   transform = sprintf("translate(%1.2f, %1.2f)scale(0.6)", xs[i], ys[i])
                   )
