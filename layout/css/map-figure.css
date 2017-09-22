@@ -128,13 +128,13 @@ figurecaption{
 /* following two rules could be moved to vizlab css
  if it existed and was consistantly used */
 @media screen and (orientation:portrait){
-  .vizlab-landscape{
+  .vizlab-landscape:not(.vizlab-portrait){
     display: none;
   }
 }
 
 @media screen and (orientation:landscape){
-  .vizlab-portrait{
+  .vizlab-portrait:not(.vizlab-landscape){
     display: none;
   }
 }
