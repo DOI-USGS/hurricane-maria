@@ -68,7 +68,7 @@ offline_mark <- function(mask_values, gage_data, timesteps, vert_adjust, site_no
   # compute the x range of 
   block_times <- which(gage_data == mask_values)
   if(length(block_times) > 1 && length(unique(diff(block_times))) != 1) {
-    stop(paste("expected block_times to be contiguous for", site_no))
+    warning(paste("expected block_times to be contiguous for", site_no))
   }
   if(length(block_times) == 0) {
     block_times <- length(gage_data)
@@ -88,7 +88,6 @@ offline_mark <- function(mask_values, gage_data, timesteps, vert_adjust, site_no
     x0=r.buffer,
     x1=block_bounds[1]-5,
     width=11,
-    x3=block_bounds[1]+5,
     y0=-5,
     height=view_height + 10) %>%
     # make every column a character string with just 2 decimal places
