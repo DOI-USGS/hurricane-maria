@@ -1,6 +1,6 @@
 #' function for placing add-ons to the svg base map
 #' 
-visualize_hurricane_map <- function(viz, mode, ...){
+visualize_hurricane_map <- function(viz=as.viz('hurricane-map-mobile'), mode, ...){
   library(xml2)
   
   depends <- readDepends(viz)
@@ -65,30 +65,36 @@ visualize_hurricane_map <- function(viz, mode, ...){
     # create the container for a spark line, flood spark line, and blocker
     g.single <- xml_add_child(g.sparkles, 'g', transform=sprintf('translate(0,%s)', ys[i])) 
     
-    # add the main stage spark line
-    do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), sparks[i, ]))
+    # match up the spark, flood-spark, and blocker data for this one site. match
+    # blockers to sparks based on spark.id
+    spark <- sparks[i, ]
+    fl.spark <- fl.sparks[i, ]
+    spark.id <- strsplit(fl.spark$id, '[-]')[[1]][2]
+    blocker <- blockers[which(blocker.ids == spark.id),]
     
-    # add the flood-stage spark line: stage points clipped to the height
-    fl.spark <- fl.sparks[i,]
+    # main stage clip path: only show points between x0 and x1
+    cp <- xml_add_child(d, "clipPath", id=sprintf("stage-clip-%s", strsplit(spark$id, '[-]')[[1]][2]))
+    xml_add_child(cp, 'rect', x = blocker$x0, width=blocker$datawidth, height = blocker$height, y = "0") # hack to be using blocker data when would rather use spark data, but time is short
+    # add the main stage spark line
+    do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), spark))
+    
+    # add the flood-stage spark line: stage points clipped to the height and the blocker start
     # flood clip path: only show points between 0 and fl.spark$y
     cp <- xml_add_child(d, "clipPath", id=sprintf("flood-clip-%s", strsplit(fl.spark$id, '[-]')[[1]][2]))
-    xml_add_child(cp, 'rect', width ='100%', height = fl.spark$y, y = "0")
+    xml_add_child(cp, 'rect', x = blocker$x0, width=blocker$datawidth, height = fl.spark$y, y = "0") # hack to be using blocker data when would rather use spark data, but time is short
     # data is polyline for stage for all time points
     fl.spark$y <- NULL # don't want this column in the polyline
     fl.spark$points <- sparks[i, ]$points # do want the regular points
     do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), fl.spark))
     
     # add the offline-gage spark line: stage points clipped to an x range.
-    # match blockers to sparks based on spark.id
-    spark.id <- strsplit(fl.spark$id, '[-]')[[1]][2]
-    blocker <- blockers[which(blocker.ids == spark.id),]
     # offline clip path: only show points between x=x1 and x=x2
-    cp <- xml_add_child(d, "clipPath", id=sprintf("blocker-clip-%s", strsplit(blocker$id, '[-]')[[1]][2]))
-    xml_add_child(cp, 'rect', x=blocker$x1, y=blocker$y0, width=blocker$width, height=blocker$height) # main rectangle
-    # data is polyline for stage for all time points
-    blocker$points <- sparks[i, ]$points # add the stage points
-    blocker <- dplyr::select(blocker, -x0, -x1, -width, -x3, -y0, -height) # remove columns used for clippaths
-    do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), blocker))
+    # cp <- xml_add_child(d, "clipPath", id=sprintf("blocker-clip-%s", strsplit(blocker$id, '[-]')[[1]][2]))
+    # xml_add_child(cp, 'rect', x=blocker$x1, y=blocker$y0, width=blocker$width, height=blocker$height) # main rectangle
+    # # data is polyline for stage for all time points
+    # blocker$points <- sparks[i, ]$points # add the stage points
+    # blocker <- dplyr::select(blocker, -x0, -x1, -width, -x3, -y0, -height) # remove columns used for clippaths
+    # do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), blocker))
   }
   xml_add_child(non.geo.bot, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', 
                 y = vb[4], x = vb[3], dy = "-0.5em", dx = "-0.5em", 'text-anchor'='end')
@@ -174,7 +180,7 @@ visualize.hurricane_map_landscape <- function(viz = as.viz('hurricane-map-landsc
 add_legend <- function(parent.ele, colors, break.step){
   
   # lower left legend:
-  xml_add_child(parent.ele, 'text', "Total rainfall amount (inches; NOAA)", class='svg-text legend-text', dy="-1em",
+  xml_add_child(parent.ele, 'text', "NOAA total rainfall amount (inches)", class='svg-text legend-text', dy="-1em",
                 transform="translate(0,35)")
   g.rains <- xml_add_child(parent.ele, 'g', id = 'rain-legend')
   g.hurr <- xml_add_child(parent.ele, 'g', id = 'hurr-legend', transform="translate(15,-80)")
