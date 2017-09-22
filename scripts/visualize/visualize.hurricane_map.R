@@ -62,19 +62,33 @@ visualize_hurricane_map <- function(viz, mode, ...){
   blocker.ids <- sapply(blockers$id, function(x) strsplit(x, '[-]')[[1]][2], USE.NAMES = FALSE)
   
   for (i in 1:nrow(sparks)){ 
+    # create the container for a spark line, flood spark line, and blocker
     g.single <- xml_add_child(g.sparkles, 'g', transform=sprintf('translate(0,%s)', ys[i])) 
+    
+    # add the main stage spark line
     do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), sparks[i, ]))
+    
+    # add the flood-stage spark line: stage points clipped to the height
     fl.spark <- fl.sparks[i,]
+    # flood clip path: only show points between 0 and fl.spark$y
     cp <- xml_add_child(d, "clipPath", id=sprintf("flood-clip-%s", strsplit(fl.spark$id, '[-]')[[1]][2]))
     xml_add_child(cp, 'rect', width ='100%', height = fl.spark$y, y = "0")
-    fl.spark$y <- NULL
-    fl.spark$points <- sparks[i, ]$points
-    # CAN'T assume blockers are in the same order as sparks:
-    spark.id <- strsplit(fl.spark$id, '[-]')[[1]][2]
-    use.i <- which(blocker.ids == spark.id)
+    # data is polyline for stage for all time points
+    fl.spark$y <- NULL # don't want this column in the polyline
+    fl.spark$points <- sparks[i, ]$points # do want the regular points
     do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), fl.spark))
-    do.call(xml_add_child, append(list(.x = g.single, .value = 'path'), blockers[use.i,]))
-    # now add flood spark
+    
+    # add the offline-gage spark line: stage points clipped to an x range.
+    # match blockers to sparks based on spark.id
+    spark.id <- strsplit(fl.spark$id, '[-]')[[1]][2]
+    blocker <- blockers[which(blocker.ids == spark.id),]
+    # offline clip path: only show points between x=x1 and x=x2
+    cp <- xml_add_child(d, "clipPath", id=sprintf("blocker-clip-%s", strsplit(blocker$id, '[-]')[[1]][2]))
+    xml_add_child(cp, 'rect', x=blocker$x1, y=blocker$y0, width=blocker$width, height=blocker$height) # main rectangle
+    # data is polyline for stage for all time points
+    blocker$points <- sparks[i, ]$points # add the stage points
+    blocker <- dplyr::select(blocker, -x0, -x1, -width, -x3, -y0, -height) # remove columns used for clippaths
+    do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), blocker))
   }
   xml_add_child(non.geo.bot, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', 
                 y = vb[4], x = vb[3], dy = "-0.5em", dx = "-0.5em", 'text-anchor'='end')

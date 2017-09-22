@@ -27,7 +27,7 @@ grab_clip_rect <- function(vals, flood){
   }
 }
 
-grab_blocker <- function(mask_values, gage_data, timesteps, vert_adjust) {
+grab_blocker <- function(mask_values, gage_data, timesteps, vert_adjust, site_no) {
   # grab an empty standard size plot to work with.
   x <- svglite::xmlSVG({
     par(omi=c(0,0,0,0), mai=c(0,0,0,0))
@@ -36,29 +36,40 @@ grab_blocker <- function(mask_values, gage_data, timesteps, vert_adjust) {
   
   view_box <- strsplit(xml2::xml_attr(x, 'viewBox'), '[ ]')[[1]] %>% as.numeric()
   
-  r.buffer <- 0.04 * view_box[3] # R does a 4% buffer automatically need to take it into account it later.
-  plotting.width <- view_box[3] - 2 * r.buffer
-  height <- view_box[4]
-  time.locations <- seq(from = r.buffer, to = view_box[3] - r.buffer, 
+  view_height <- view_box[4]
+  view_width <- view_box[3]
+  r.buffer <- 0.04 * view_width # R does a 4% buffer automatically need to take it into account it later.
+  plotting.width <- view_width - 2 * r.buffer
+  time.locations <- seq(from = r.buffer, to = view_width - r.buffer, 
                         length.out = length(timesteps$times))
   
-  block_times <- which(gage_data == mask_values) # assuming these are contiguous for now!
+  # compute the x range of 
+  block_times <- which(gage_data == mask_values)
+  if(length(block_times) > 1 && length(unique(diff(block_times))) != 1) {
+    stop(paste("expected block_times to be contiguous for", site_no))
+  }
+  if(length(block_times) == 0) {
+    block_times <- length(gage_data)
+  } else {
+    # append one additional timestep to the left to cover the transition
+    block_times <- c(block_times[1]-1, block_times)
+  }
+  block_bounds <- range(time.locations[block_times])
+  block_range <- diff(block_bounds)
   
-  if(length(block_times) == 0) block_times <- length(gage_data)
-  
-  block_range <- diff(time.locations[c(block_times[1], block_times[length(block_times)])])
-  
-  # no matter what, we need a zero-length dot at the beginning of this set of times, and at the end, so the width of the 
-  # elements are always the same (for the "reveal" animation). The zero length is the `v0`, which is a vertical line of length 0
-  # Z "closes" a part of a path by drawing a straight line to the previous
-  sprintf('M%1.2f,0v0 M%1.2f,%1.2fv%1.2f h%1.2f v-%1.2fZ M%1.2f,0v0',
-          r.buffer, 
-          time.locations[block_times[1]],
-          vert_adjust,
-          height-vert_adjust, 
-          block_range, 
-          height-vert_adjust, 
-          view_box[3] - r.buffer)
+  # prepare a rectangle clip path definition. we'll be using the time series of
+  # stage points for the blocker line, so here we're just defining a rectanglar
+  # area to clip to
+  clip_params <- data_frame(
+    x0=r.buffer,
+    x1=block_bounds[1],
+    width=diff(block_bounds),
+    x3=view_width - r.buffer,
+    y0=vert_adjust,
+    height=view_height - vert_adjust) %>%
+    # make every column a character string with just 2 decimal places
+    lapply(function(col) sprintf('%1.2f', col)) %>%
+    as_data_frame()
 }
 
 process.sparks <- function(viz = as.viz('sparks')){
@@ -98,22 +109,23 @@ process.sparks <- function(viz = as.viz('sparks')){
            onmousemove=sprintf("hovertext('%s',evt);", station_nm)) %>%
     select(-station_nm)
   
-  vert_adjust <- length(sites) * 0.1
-  
-  blockers <- data.frame(d = sapply(sites$site_no, 
-                                    function(x) grab_blocker(mask_values[x], 
-                                                             gage_data[[x]],
-                                                             timesteps,
-                                                             vert_adjust)),
-                         site_no = sites$site_no, stringsAsFactors = FALSE) %>%
-  
-  mutate(class = 'gage-blocker',
-         id = paste0('blocker-',site_no),
-         "mask" = "url(#flood-opacity);",
-         onmouseover=sprintf("setBold('nwis-%s');setBold('sparkline-%s');", site_no, site_no),
-         onmouseout=sprintf("setNormal('nwis-%s');setNormal('sparkline-%s');hovertext(' ');", site_no, site_no),
-         onclick=sprintf("openNWIS('%s', evt);", site_no),
-         onmousemove="hovertext('No Data Available',evt);")
+  blockers <- bind_rows(lapply(sites$site_no, function(s) {
+    grab_blocker(mask_values=mask_values[s], 
+                 gage_data=gage_data[[s]],
+                 timesteps,
+                 vert_adjust=0, 
+                 site_no=s)
+  })) %>%
+    mutate(
+      site_no = sites$site_no,
+      class = 'gage-blocker',
+      id = paste0('blocker-',site_no),
+      "mask" = "url(#flood-opacity);",
+      "clip-path"=sprintf("url(#blocker-clip-%s)", site_no), 
+      onmouseover=sprintf("setBold('nwis-%s');setBold('sparkline-%s');", site_no, site_no),
+      onmouseout=sprintf("setNormal('nwis-%s');setNormal('sparkline-%s');hovertext(' ');", site_no, site_no),
+      onclick=sprintf("openNWIS('%s', evt);", site_no),
+      onmousemove="hovertext('No Data Available',evt);")
   
   saveRDS(list(gage_sparks = gage_sparks, flood_sparks = flood_sparks, gage_blockers = blockers), viz[['location']])
 }
