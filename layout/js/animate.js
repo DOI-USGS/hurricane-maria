@@ -176,12 +176,11 @@ function openNWIS(id, event){
   }
 }
 
-function setBold(id){
-  var className = id.split('-')[0];
-  $('#' + id).removeClass(className).addClass(className + '-bold');
-  $('#storm_sites circle[id=' + id + ']').removeClass(className + '-bold').addClass(className)
+function setEmphasis(id) {
+  $('[id$=' + id + ']').addClass('emphasis');
 }
-function setNormal(id){
-  var className = id.split('-')[0];
-  $('#' + id).removeClass(className + '-bold').addClass(className);
+
+function clearEmphasis(){
+  $(".emphasis").removeClass("emphasis");
+  hovertext(" ");
 }
