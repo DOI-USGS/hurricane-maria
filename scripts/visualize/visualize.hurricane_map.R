@@ -174,7 +174,7 @@ visualize.hurricane_map_landscape <- function(viz = as.viz('hurricane-map-landsc
 add_legend <- function(parent.ele, colors, break.step){
   
   # lower left legend:
-  xml_add_child(parent.ele, 'text', "Total rainfall amount (inches; NOAA)", class='svg-text legend-text', dy="-1em",
+  xml_add_child(parent.ele, 'text', "NOAA total rainfall amount (inches)", class='svg-text legend-text', dy="-1em",
                 transform="translate(0,35)")
   g.rains <- xml_add_child(parent.ele, 'g', id = 'rain-legend')
   g.hurr <- xml_add_child(parent.ele, 'g', id = 'hurr-legend', transform="translate(15,-80)")
