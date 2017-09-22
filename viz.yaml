@@ -559,6 +559,9 @@ publish:
         url: https://owi.usgs.gov/vizlab/hurricane-irma/
         name: Hurricane Irma
         thumbLoc: https://owi.usgs.gov/vizlab/hurricane-irma/images/thumb-twitter.png
+      - name: Hurricane Harvey
+        org: USGS-VIZLAB
+        repo: hurricane-harvey
   -
     id: map-section
     publisher: section
