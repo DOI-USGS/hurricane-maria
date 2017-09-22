@@ -19,9 +19,9 @@ info:
   required-packages:
     vizlab:
       repo: github
-      version: 0.2.2
+      version: 0.2.2.9000
       name: USGS-VIZLAB/vizlab
-      ref: v0.2.2
+      ref: v0.2.2.9000
     rgeos:
       repo: CRAN
       version: 0.3.23
