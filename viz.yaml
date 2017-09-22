@@ -3,7 +3,7 @@ info:
   id: hurricane-maria
   name: Hurricane Maria's Water Footprint
   date: 2017-09-19
-  publish-date: 2017-10-03
+  publish-date: 2017-09-22
   path: /hurricane-maria
   analytics-id: UA-78530187-9
   description: >-
@@ -29,7 +29,7 @@ info:
     height: 400
     alttext: "Hurricane Maria"
   thumbnail:
-    url: images/thumb-main.png
+    url: https://owi.usgs.gov/vizlab/images/thumb-main.png
     width: 250
     height: 25
     alttext: "Hurricane Maria"
