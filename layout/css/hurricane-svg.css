@@ -101,6 +101,10 @@ line, polyline, path{
   stroke: white;
   stroke-width: 3.5; 
 }
+.treasure-spark {
+  stroke: white;
+  stroke-width: 2.5; 
+}
 .nwis-flooding-legend{
   stroke: white;
   sroke-width: 0.5;

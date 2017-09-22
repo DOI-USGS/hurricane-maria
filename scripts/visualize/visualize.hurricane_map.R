@@ -91,12 +91,13 @@ visualize_hurricane_map <- function(viz=as.viz('hurricane-map-mobile'), mode, ..
     
     # add the offline-gage spark line: stage points clipped to an x range.
     # offline clip path: only show points between x=x1 and x=x2
-#<<<<<<< HEAD
-    cp <- xml_add_child(d, "clipPath", id=sprintf("blocker-clip-%s", strsplit(blocker$id, '[-]')[[1]][2]))
-    xml_add_child(cp, 'rect', x=blocker$x1, y=blocker$y0, width=blocker$width, height=blocker$height) # main rectangle
-    
     offline <- x.offline[which(offline.ids == spark.id),]
     if (nrow(offline) == 1){
+      #offline-clip-id
+      cp <- xml_add_child(d, "clipPath", id=sprintf("offline-clip-%s", strsplit(offline$id, '[-]')[[1]][2]))
+      xml_add_child(cp, 'rect', x=offline$x1, y=offline$y0, width=offline$width, height=offline$height) # main rectangle
+      # remove
+      offline[c("x0","x1","width","x3","y0","height" )] <- NULL
       do.call(xml_add_child, append(list(.x = g.single, .value = 'path'), offline))
     }
 #=======
