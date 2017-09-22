@@ -12,13 +12,13 @@ info:
     water, hurricane, maria, USGS, NOAA, VIZLAB, NWIS, flood, Puerto Rico
   audience: 
   thumbnail-facebook:
-    url: images/thumb-facebook.png
+    url: https://owi.usgs.gov/vizlab/images/thumb-facebook.png
     width: 1560
     height: 820
     alttext: "Hurricane Maria"
     type: image/png
   thumbnail-twitter:
-    url: images/thumb-twitter.png
+    url: https://owi.usgs.gov/vizlab/images/thumb-twitter.png
     width: 560
     height: 300
     alttext: "Hurricane Maria"
