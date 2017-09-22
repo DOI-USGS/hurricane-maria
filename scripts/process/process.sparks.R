@@ -1,5 +1,6 @@
 sparkbox.height <- 0.35
 sparkbox.width <- 3.5
+
 grab_spark <- function(vals){
   
   xs <- seq_len(length(vals))
@@ -25,6 +26,32 @@ grab_clip_rect <- function(vals, flood){
   } else {
     return(y.out)
   }
+}
+
+offline_mark <- function(mask_values, gage_data, timesteps, vert_adjust, site_no){
+  
+  offline_index <- which(gage_data == mask_values)
+  
+  if(length(offline_index) == 0){
+    circle = "0,0"
+  } else {
+    offline_index <- offline_index[2]
+    offline_height <- gage_data[offline_index]
+    
+    x = svglite::xmlSVG({
+      par(omi=c(0,0,0,0), mai=c(0,0,0,0))
+      plot(offline_index, offline_height,axes=F, ann=F,
+           xlim = c(0,length(timesteps)),
+           ylim=c(range(gage_data)))
+    }, height=sparkbox.height, width=sparkbox.width)
+    
+    circle_x <- xml2::xml_attr(xml2::xml_find_first(x, '//*[local-name()="circle"]'),'cx')
+    circle_y <- xml2::xml_attr(xml2::xml_find_first(x, '//*[local-name()="circle"]'),'cy')
+    
+    circle = paste(circle_x, circle_y, sep=",")
+  }
+  
+  return(data.frame(circle = circle, stringsAsFactors = FALSE))
 }
 
 grab_blocker <- function(mask_values, gage_data, timesteps, vert_adjust, site_no) {
@@ -73,6 +100,7 @@ grab_blocker <- function(mask_values, gage_data, timesteps, vert_adjust, site_no
 }
 
 process.sparks <- function(viz = as.viz('sparks')){
+  
   library(dplyr)
   depends <- readDepends(viz)
   checkRequired(depends, c("gage-data", "sites", "nws-data", "timesteps"))
@@ -127,7 +155,31 @@ process.sparks <- function(viz = as.viz('sparks')){
       onclick=sprintf("openNWIS('%s', evt);", site_no),
       onmousemove="hovertext('No Data Available',evt);")
   
-  saveRDS(list(gage_sparks = gage_sparks, flood_sparks = flood_sparks, gage_blockers = blockers), viz[['location']])
+  offline <- bind_rows(lapply(sites$site_no, function(s) {
+    offline_mark(mask_values=mask_values[s], 
+                 gage_data=gage_data[[s]],
+                 timesteps$times,
+                 vert_adjust=0, 
+                 site_no=s)
+  })) %>%
+    mutate(
+      site_no = sites$site_no,
+      class = 'gage-blocker',
+      id = paste0('blocker-',site_no),
+      "mask" = "url(#flood-opacity);",
+      "clip-path"=sprintf("url(#blocker-clip-%s)", site_no), 
+      onmouseover=sprintf("setBold('nwis-%s');setBold('sparkline-%s');", site_no, site_no),
+      onmouseout=sprintf("setNormal('nwis-%s');setNormal('sparkline-%s');hovertext(' ');", site_no, site_no),
+      onclick=sprintf("openNWIS('%s', evt);", site_no),
+      onmousemove="hovertext('No Data Available',evt);") %>%
+    filter(circle != "0,0")
+  
+  
+  
+  saveRDS(list(gage_sparks = gage_sparks, 
+               flood_sparks = flood_sparks, 
+               gage_blockers = blockers,
+               offline_points = offline), viz[['location']])
 }
 
 
