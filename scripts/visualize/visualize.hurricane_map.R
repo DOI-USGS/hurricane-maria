@@ -111,12 +111,12 @@ dot_to_treasure <- function(svg, group.id){
   ys <- as.numeric(
     xml_attr(xml_children(parent.group), 'cy')
   )
-  bump <- 5 # longer than radius, since it will be clipped
+  
   for (i in seq_len(length(clip.ids))){
+    # make an x, translate it into the right place and scale it so it is hidden
     xml_add_child(treasure.g, 'path', class='treasure-mark',
                   d = "M-5,-5 l10,10 m0,-10 l-10,10", 
-                  transform = sprintf("translate(%1.2f, %1.2f)scale(0.6)", xs[i], ys[i]),
-                  "clip-path"=sprintf("url(#%s-treasure)", clip.ids[i])
+                  transform = sprintf("translate(%1.2f, %1.2f)scale(0.6)", xs[i], ys[i])
                   )
   }  
 }
