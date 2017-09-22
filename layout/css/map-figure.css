@@ -11,6 +11,12 @@
 html,
 body {
     font-family: "Source Sans Pro", sans-serif;
+    height:100%;
+}
+
+#overcast{
+  background: rgba(0,0,0,.2);
+  height:100%;
 }
 
 a{

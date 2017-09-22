@@ -589,11 +589,11 @@ publish:
     publisher: section
     template: layout/templates/image-section.mustache
     depends:
-      before-image: before-image
-      after-image: after-image
+      gage-image: gage-image
+      hydrograph-image: hydrograph-image
     context:
-      before-image: before-image
-      after-image: after-image
+      gage-image: gage-image
+      hydrograph-image: hydrograph-image
   -
     id: social-section
     publisher: section
@@ -668,14 +668,14 @@ publish:
     title: "play icon"
     alttext: "play icon"
   -
-    id: before-image
-    location: images/before.jpg
+    id: gage-image
+    location: images/gage-image.jpg
     mimetype: image/jpg
     title: "Before image"
     alttext: "Before Image"
   -
-    id: after-image
-    location: images/after.jpg
+    id: hydrograph-image
+    location: images/WC_hydrograph.jpg
     mimetype: image/jpg
     title: "After image"
     alttext: "After Image"
