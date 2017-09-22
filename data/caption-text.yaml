@@ -1,27 +1,34 @@
 ---
 description: |+
-  The map above animates Hurricane Maria’s path, cumulative precipitation, and its 
+  Hurricane Maria collided with Puerto Rico on September 20th, 2017 bringing with it
+  an mix of high winds and extreme rainfall. Much of the island experienced flooding 
+  and structural damage. 
+  
+  ### Details
+  Watch as the map above animates Hurricane Maria’s path, cumulative precipitation, and its 
   impact on river gage height. Every six hours, the data are refreshed to show the 
   most up-to-date information. Hydrographs in the right panel show normalized gage 
-  height at U.S. Geological Survey (USGS) gaging stations that are forecasted to or 
-  have exceeded National Weather Service flood stage. Variation in the shape of the 
-  hydrographs is due to a number of factors that impact the effect of precipitation 
+  height at the 24 U.S. Geological Survey (USGS) gaging stations that are used by the 
+  [National Weather Service](http://www.weather.gov/) to forecast flood conditions. 
+  The U.S. Geological Survey's robust streamgaging network, which held strong against the pummeling of 
+  [Hurricane Harvey](https://owi.usgs.gov/vizlab/hurricane-harvey/) 
+  and [Hurricane Irma](https://owi.usgs.gov/vizlab/hurricane-irma/), was not immune to Maria's
+  extreme conditions; see "x" markers appear when data were lost, conditions were beyond gage operating limits, 
+  or instruments were damaged. Variation in the shape of the hydrographs is due to a number of factors that impact the effect of precipitation 
   on flow, including: stream size, storm-surge, reservoir operations, and other local 
   conditions. The USGS has many more permanent 
   [gaging stations](https://maps.waterdata.usgs.gov/) across the country; 
   less than 1% are represented in this visualization. The USGS also collects additional 
-  information with [Short-Term Network gages](http://stn.wim.usgs.gov/FEV/#IrmaSep2017). 
+  information with [Short-Term Network gages](https://stn.wim.usgs.gov/FEV/#MariaSeptember2017). 
   More information about water science in Puerto Rico can be found at the [Caribbean 
   Water Science Center.](https://pr.water.usgs.gov/)
   
   ### Data Sources
   *Gage Height*: U.S. Geological Survey [National Water Information 
   System](https://waterdata.usgs.gov/nwis). Time series 
-  of gage height at selected sites impacted by the storm are shown through time, ordered 
-  by latitude and normalized to site-specific maximum gage height observed over the 
-  duration of the hurricane. Due to the severity of flooding from Hurricane Maria,
-  some gages may go offline temporarily. Gages' normalized stage is not shown and 
-  the location is an x on the map when offline.
+  of gage height at sites with [National Weather Service](http://www.weather.gov/) flood stage 
+  information are shown through time, ordered by longitude and normalized to site-specific 
+  maximum gage height observed over the duration of the animation. 
   
   *Precipitation*: [National Weather Service River Forecasting Center multi-sensor 
   (radar and rain gauge) precipitation estimate](http://www.srh.noaa.gov/ridge2/RFC_Precip/) 
