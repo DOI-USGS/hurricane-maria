@@ -94,7 +94,7 @@ line, polyline, path{
   fill: white;
   opacity: 1.0;
   stroke: white;
-  stroke-width: 2;
+  stroke-width: 3;
 }
 
 .treasure-mark {
